@@ -17,20 +17,29 @@ source("directed_graph.R")
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+nutrients <- data.frame(names(agData[12:37]))
+colnames(nutrients) <- c("Nutrient")
+
 
 # Define graph nodes
 nodes <- data.frame(
   id=agData$X,
-  label = toString(agData$X),
-  group=nchar(agData$FAO_CropName))
+  label = agData$X,
+  group=nchar(agData$FAO_CropName)
+  )
+
+nNodes <- data.frame(
+  id=nutrients$Nutrient,
+  label = agData$X,
+  group=nchar(agData$FAO_CropName)
+)
 
 
 # Define graph edges
-# edges <- data.frame(
-#   from = agData %>% filter(nchar(FAO_CropName) == 5),
-#   to = agData %>% filter(nchar(FAO_CropName) == 6),
-#   label = agData$FAO_CropName
-# )
+edges <- data.frame(
+  from = sample(agData$X, size=15),
+  to = sample(agData$X, size=15)
+)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -57,7 +66,7 @@ ui <- fluidPage(
     ),
         #Show a plot of the generated distribution
         mainPanel(
-           plotOutput("dGraph")
+           plotOutput("distPlot")
         )
     
 )
@@ -81,7 +90,7 @@ server <- function(input, output) {
 
     output$dGraph <- renderPlot({
       
-      visNetwork(nodes, height = "500px", width = "100%", main="Bipartite Graph") %>%
+      visNetwork(nodes, edges, height = "500px", width = "100%", main="Bipartite Graph") %>%
         visPhysics(solver = "forceAtlas2Based", 
                    forceAtlas2Based = list(gravitationalConstant = -500))
       
@@ -90,6 +99,7 @@ server <- function(input, output) {
     
     output$table <- renderDataTable(agData)
     
+    output$ntable <- renderDataTable(nodes)
     
 }
 
