@@ -5,6 +5,7 @@ directed_graph <- function() {
   
   agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
   
-  agData %>% ggplot(x = Country, y=FAO_CropName) + geom_bar()
+  ggplot(data = agData,
+         mapping=aes(x = Country, y=FAO_CropName))+ geom_bar()
   
 }
