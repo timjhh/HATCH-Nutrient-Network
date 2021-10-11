@@ -50,7 +50,7 @@ server <- function(input, output) {
     output$distPlot <- renderPlot({
       
       ggplot(data = agData,
-             mapping=aes(x = Country, y=FAO_CropName))+ geom_bar()
+             mapping=aes(x=Country, y=FAO_CropName))+ geom_jitter()
       #x <- as.numeric(data$Potassium)
       #bins <- seq(min(x), max(x), length.out = input$bins + 1)
     
