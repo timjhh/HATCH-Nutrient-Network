@@ -17,29 +17,38 @@ source("directed_graph.R")
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]))
-colnames(nutrients) <- c("Nutrient")
+nutrients <- data.frame(names(agData[12:37]), group="N")
+colnames(nutrients) <- c("Nutrient", "Group")
+agData$Group <- "C"
+
+numNR <- nrow(agData)
+agData$id = 0
+agData$Nutrient = agData$FAO_CropName
+agData <- agData %>% mutate(id = 1:n())
+nutrients$id = 0
+nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
+
+nn <- dplyr::bind_rows(agData, nutrients)
+
+
 
 
 # Define graph nodes
 nodes <- data.frame(
-  id=agData$X,
-  label = agData$X,
-  group=nchar(agData$FAO_CropName)
+  id = nn$id,
+  label = nn$Nutrient,
+  group = nn$Group
   )
-
-nNodes <- data.frame(
-  id=nutrients$Nutrient,
-  label = agData$X,
-  group=nchar(agData$FAO_CropName)
-)
 
 
 # Define graph edges
 edges <- data.frame(
-  from = sample(agData$X, size=15),
-  to = sample(agData$X, size=15)
+  from = nutrients$id
 )
+
+edges <- edges %>%
+  group_by(nutrients$id, nutrients$Group, nutrients$Nutrient, edges$from) %>%
+  summarise(to = seq(1, numNR, 1))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -66,10 +75,11 @@ ui <- fluidPage(
     ),
         #Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+           plotOutput("dGraph")
         )
     
 )
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -91,7 +101,8 @@ server <- function(input, output) {
     output$dGraph <- renderPlot({
       
       visNetwork(nodes, edges, height = "500px", width = "100%", main="Bipartite Graph") %>%
-        visPhysics(solver = "forceAtlas2Based", 
+        #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
+        visPhysics(solver = "forceAtlas2Based",
                    forceAtlas2Based = list(gravitationalConstant = -500))
       
     })

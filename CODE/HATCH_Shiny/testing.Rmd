@@ -25,12 +25,18 @@ When you click the **Knit** button a document will be generated that includes bo
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+nutrients <- data.frame(names(agData[12:37]), group="N")
+colnames(nutrients) <- c("Nutrient", "Group")
+agData$Group <- "C"
 
+numNR <- nrow(agData)
+agData$id = 0
+agData$Nutrient = agData$FAO_CropName
+agData <- agData %>% mutate(id = 1:n())
+nutrients$id = 0
+nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
 
-nutrients <- data.frame(names(agData[12:37]))
-colnames(nutrients) <- c("Nutrient")
-
-
+nn <- dplyr::bind_rows(agData, nutrients)
 
 ```
 
@@ -40,6 +46,7 @@ You can also embed plots, for example:
 
 ```{r tibbles, echo=FALSE}
 tibble(nutrients)
+tibble(nn)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
