@@ -25,6 +25,12 @@ nodes <- data.frame(
   group=nchar(agData$FAO_CropName))
 
 
+# Define graph edges
+# edges <- data.frame(
+#   from = agData %>% filter(nchar(FAO_CropName) == 5),
+#   to = agData %>% filter(nchar(FAO_CropName) == 6),
+#   label = agData$FAO_CropName
+# )
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
