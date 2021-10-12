@@ -43,11 +43,14 @@ nodes <- data.frame(
 
 # Define graph edges
 edges <- data.frame(
-  from = nutrients$id
+  from = nutrients$id,
+  Group = nutrients$Group,
+  Nutrient = nutrients$Nutrient
+  
 )
 
 edges <- edges %>%
-  group_by(nutrients$id, nutrients$Group, nutrients$Nutrient, edges$from) %>%
+  group_by(id) %>%
   summarise(to = seq(1, numNR, 1))
 
 # Define UI for application that draws a histogram

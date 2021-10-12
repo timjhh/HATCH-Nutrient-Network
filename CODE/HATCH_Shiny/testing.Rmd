@@ -29,14 +29,47 @@ nutrients <- data.frame(names(agData[12:37]), group="N")
 colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
+# List of nutrient names
+nnames <- names(agData[12:37])
+
+# num of unique crops in data set
 numNR <- nrow(agData)
+
+# Assign unique id # to each, for binding to edges
 agData$id = 0
 agData$Nutrient = agData$FAO_CropName
 agData <- agData %>% mutate(id = 1:n())
+
+# Do the same for each nutrient
 nutrients$id = 0
 nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
 
+# Unique id #s for crop data
+agList <- list(agData$id)
+
 nn <- dplyr::bind_rows(agData, nutrients)
+
+tmp <- data.frame(
+  from = nutrients$id,
+  Group = nutrients$Group,
+  Nutrient = nutrients$Nutrient
+)
+
+edges <- data.frame()
+
+
+
+for(i in 1:nrow(tmp)) {
+  for(j in 1:nrow(agData)) {
+    
+    nr <- tmp[i,]
+    nr$val <- agData[j,"Nutrient"]
+    nr$to <- agData[j,"id"]
+
+    edges <- dplyr::bind_rows(edges, nr)
+  
+    }
+}
 
 ```
 
@@ -45,8 +78,9 @@ nn <- dplyr::bind_rows(agData, nutrients)
 You can also embed plots, for example:
 
 ```{r tibbles, echo=FALSE}
-tibble(nutrients)
-tibble(nn)
+tibble(edges)
+
+names(agData[12:37])
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
