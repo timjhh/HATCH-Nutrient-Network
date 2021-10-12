@@ -21,16 +21,34 @@ nutrients <- data.frame(names(agData[12:37]), group="N")
 colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
+# List of nutrient names
+# Note: This MANUALLY reads in cols 12:37, it is not a smart search
+# This will need to be adjusted if data is adjusted
+nnames <- names(agData[12:37])
+
+# num of unique crops in data set
 numNR <- nrow(agData)
+
+# Assign unique id # to each, for binding to edges
 agData$id = 0
 agData$Nutrient = agData$FAO_CropName
 agData <- agData %>% mutate(id = 1:n())
+
+# Do the same for each nutrient
 nutrients$id = 0
 nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
 
+# Unique id #s for crop data
+agList <- list(agData$id)
+
 nn <- dplyr::bind_rows(agData, nutrients)
 
-
+tmp <- data.frame(
+  from = nutrients$id,
+  Group = nutrients$Group,
+  Nutrient = nutrients$Nutrient,
+  value=8
+)
 
 
 # Define graph nodes
@@ -38,20 +56,30 @@ nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
   group = nn$Group
-  )
-
-
-# Define graph edges
-edges <- data.frame(
-  from = nutrients$id,
-  Group = nutrients$Group,
-  Nutrient = nutrients$Nutrient
-  
 )
 
-edges <- edges %>%
-  group_by(id) %>%
-  summarise(to = seq(1, numNR, 1))
+edges <- data.frame()
+
+
+# O(N^2) loop to create edges
+# Find each instance of nutrient, find its associated value and bind new row to edges
+for(i in 1:nrow(tmp)) {
+  for(j in 1:nrow(agData)) {
+    
+    nr <- tmp[i,]
+    
+    # What amount of nutrient does this crop have
+    # NOTE: 11 is hardcoded, consider replacing with computed value
+    nr$strength <- agData[j,i+11]
+    
+    nr$to <- agData[j,"id"]
+    nr$value <- 1
+    
+    edges <- dplyr::bind_rows(edges, nr)
+    
+  }
+}
+
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(

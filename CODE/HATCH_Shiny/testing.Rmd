@@ -30,6 +30,8 @@ colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
 # List of nutrient names
+# Note: This MANUALLY reads in cols 12:37, it is not a smart search
+# This will need to be adjusted if data is adjusted
 nnames <- names(agData[12:37])
 
 # num of unique crops in data set
@@ -55,15 +57,28 @@ tmp <- data.frame(
   Nutrient = nutrients$Nutrient
 )
 
+
+# Define graph nodes
+nodes <- data.frame(
+  id = nn$id,
+  label = nn$Nutrient,
+  group = nn$Group
+  )
+
 edges <- data.frame()
 
 
-
+# O(N^2) loop to create edges
+# Find each instance of nutrient, find its associated value and bind new row to edges
 for(i in 1:nrow(tmp)) {
   for(j in 1:nrow(agData)) {
-    
+
     nr <- tmp[i,]
-    nr$val <- agData[j,"Nutrient"]
+    
+    # What amount of nutrient does this crop have
+    # NOTE: 11 is hardcoded, consider replacing with computed value
+    nr$strength <- agData[j,i+11]
+    
     nr$to <- agData[j,"id"]
 
     edges <- dplyr::bind_rows(edges, nr)
@@ -78,9 +93,9 @@ for(i in 1:nrow(tmp)) {
 You can also embed plots, for example:
 
 ```{r tibbles, echo=FALSE}
+tibble(agData)
 tibble(edges)
 
-names(agData[12:37])
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
