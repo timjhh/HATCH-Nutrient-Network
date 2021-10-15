@@ -95,7 +95,7 @@ for(i in 1:nrow(nutr)) {
     if(!(is.na(strength)) && strength > 0) {
       
       nr <- nutr[i,]
-      nr$from <- i
+      nr$from <- i+numNR
       nr$to <- j
       
       

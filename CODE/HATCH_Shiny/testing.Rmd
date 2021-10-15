@@ -94,27 +94,51 @@ nutr <- as.data.frame(t(agData[12:37]))
 colnames(nutr) <- as.list(agData$FAO_CropName)
 nutr <- cbind(nnames, nutr)
 
-edges <- data.frame()
+#edges <- data.frame()
+edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
 
 for(i in 1:nrow(nutr)) {
-  for(j in 2:ncol(nutr)) {
-    
+  for(j in 2:ncol(nutr)) {  
+    #nonzero <- nutr[i] %>% select(where(is.numeric && num_range(>0)))
     
     strength <- nutr[i,j]
     if(!(is.na(strength)) && strength > 0) {
 
+        
         nr <- nutr[i,]
-        nr$from <- i
+        nr$from <- i+numNR
         nr$to <- j
-      
+        nr$strength <- strength
+        
+        #edges %>% add_row(from = i, to = j, strength = strength)
       
        edges <- dplyr::bind_rows(edges, nr)
       
     }
-    
-    
   }
+    
 }
+
+# for(i in 1:nrow(nutr)) {
+#   for(j in 2:ncol(nutr)) {
+#     
+#     
+#     strength <- nutr[i,j]
+#     if(!(is.na(strength)) && strength > 0) {
+# 
+#         nr <- nutr[i,]
+#         nr$from <- i+numNR
+#         nr$to <- j
+#         nr$strength <- strength
+#       
+#       
+#        edges <- dplyr::bind_rows(edges, nr)
+#       
+#     }
+#     
+#     
+#   }
+# }
 
 ```
 
@@ -126,6 +150,7 @@ You can also embed plots, for example:
 tibble(nutr)
 tibble(agData)
 tibble(edges)
+tibble(nodes)
 
 ```
 
