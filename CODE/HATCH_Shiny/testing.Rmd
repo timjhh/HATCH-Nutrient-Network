@@ -72,16 +72,22 @@ edges <- data.frame()
 # Find each instance of nutrient, find its associated value and bind new row to edges
 for(i in 1:nrow(tmp)) {
   for(j in 1:nrow(agData)) {
-
-    nr <- tmp[i,]
     
-    # What amount of nutrient does this crop have
-    # NOTE: 11 is hardcoded, consider replacing with computed value
-    nr$strength <- agData[j,i+11]
-    
-    nr$to <- agData[j,"id"]
+    strength <- agData[j,i+11]
+    if(!(is.na(strength)) && strength > 0) {
 
-    edges <- dplyr::bind_rows(edges, nr)
+        nr <- tmp[i,]
+      
+        nr$to <- agData[j,"id"]
+      
+      
+      # What amount of nutrient does this crop have
+      # NOTE: 11 is hardcoded, consider replacing with computed value
+      nr$strength <- agData[j,i+11]  
+      
+       edges <- dplyr::bind_rows(edges, nr)
+      
+    }
   
     }
 }

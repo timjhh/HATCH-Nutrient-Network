@@ -66,16 +66,21 @@ edges <- data.frame()
 for(i in 1:nrow(tmp)) {
   for(j in 1:nrow(agData)) {
     
-    nr <- tmp[i,]
-    
-    # What amount of nutrient does this crop have
-    # NOTE: 11 is hardcoded, consider replacing with computed value
-    nr$strength <- agData[j,i+11]
-    
-    nr$to <- agData[j,"id"]
-    nr$value <- 1
-    
-    edges <- dplyr::bind_rows(edges, nr)
+    strength <- agData[j,i+11]
+    if(!(is.na(strength)) && strength > 0) {
+      
+      nr <- tmp[i,]
+      
+      nr$to <- agData[j,"id"]
+      
+      
+      # What amount of nutrient does this crop have
+      # NOTE: 11 is hardcoded, consider replacing with computed value
+      nr$strength <- agData[j,i+11]  
+      
+      edges <- dplyr::bind_rows(edges, nr)
+      
+    }
     
   }
 }
@@ -131,7 +136,7 @@ server <- function(input, output) {
 
     output$dGraph <- renderPlot({
       
-      visNetwork(nodes, edges, height = "500px", width = "100%", main="Bipartite Graph") %>%
+      visNetwork(nodes, edges, height = "1600px", width = "100%", main="Bipartite Graph") %>%
         #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
         visPhysics(solver = "forceAtlas2Based",
                    forceAtlas2Based = list(gravitationalConstant = -500))
