@@ -30,9 +30,9 @@ nnames <- names(agData[12:37])
 numNR <- nrow(agData)
 
 # Assign unique id # to each, for binding to edges
-agData$id = 0
 agData$Nutrient = agData$FAO_CropName
-agData <- agData %>% mutate(id = 1:n())
+agData <- agData %>% rename(id = X)
+
 
 # Do the same for each nutrient
 nutrients$id = 0
@@ -50,37 +50,59 @@ tmp <- data.frame(
   value=8
 )
 
-
 # Define graph nodes
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$Group,
+  Group = nutrients$Group,
+  value = 6
 )
+
+# # O(N^2) loop to create edges
+# # Find each instance of nutrient, find its associated value and bind new row to edges
+# for(i in 1:nrow(tmp)) {
+#   for(j in 1:nrow(agData)) {
+#     
+#     strength <- agData[j,i+11]
+#     if(!(is.na(strength)) && strength > 0) {
+#       
+#       nr <- tmp[i,]
+#       
+#       nr$to <- agData[j,"id"]
+#       
+#       
+#       # What amount of nutrient does this crop have
+#       # NOTE: 11 is hardcoded, consider replacing with computed value
+#       nr$strength <- agData[j,i+11]  
+#       
+#       edges <- dplyr::bind_rows(edges, nr)
+#       
+#     }
+#     
+#   }
+# }
+nutr <- as.data.frame(t(agData[12:37]))
+colnames(nutr) <- as.list(agData$FAO_CropName)
+nutr <- cbind(nnames, nutr)
 
 edges <- data.frame()
 
-
-# O(N^2) loop to create edges
-# Find each instance of nutrient, find its associated value and bind new row to edges
-for(i in 1:nrow(tmp)) {
-  for(j in 1:nrow(agData)) {
+for(i in 1:nrow(nutr)) {
+  for(j in 2:ncol(nutr)) {
     
-    strength <- agData[j,i+11]
+    
+    strength <- nutr[i,j]
     if(!(is.na(strength)) && strength > 0) {
       
-      nr <- tmp[i,]
+      nr <- nutr[i,]
+      nr$from <- i
+      nr$to <- j
       
-      nr$to <- agData[j,"id"]
-      
-      
-      # What amount of nutrient does this crop have
-      # NOTE: 11 is hardcoded, consider replacing with computed value
-      nr$strength <- agData[j,i+11]  
       
       edges <- dplyr::bind_rows(edges, nr)
       
     }
+    
     
   }
 }
