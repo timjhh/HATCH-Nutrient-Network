@@ -29,6 +29,10 @@ nutrients <- data.frame(names(agData[12:37]), group="N")
 colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
+
+# Maximum length of edges
+MAX_LEN <- 500
+
 # List of nutrient names
 # Note: This MANUALLY reads in cols 12:37, it is not a smart search
 # This will need to be adjusted if data is adjusted
@@ -62,7 +66,8 @@ tmp <- data.frame(
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$Group
+  group = nn$Group,
+  value = 6
   )
 
 edges <- data.frame()

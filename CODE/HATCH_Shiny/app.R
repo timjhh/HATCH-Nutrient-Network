@@ -55,7 +55,7 @@ tmp <- data.frame(
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$Group
+  group = nn$Group,
 )
 
 edges <- data.frame()
