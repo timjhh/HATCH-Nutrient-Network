@@ -17,7 +17,8 @@ source("directed_graph.R")
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]), group="N")
+nutrients <- data.frame(names(agData[12:37]), Group="N")
+
 colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
@@ -43,18 +44,18 @@ agList <- list(agData$id)
 
 nn <- dplyr::bind_rows(agData, nutrients)
 
-tmp <- data.frame(
-  from = nutrients$id,
-  Group = nutrients$Group,
-  Nutrient = nutrients$Nutrient,
-  value=8
-)
+# tmp <- data.frame(
+#   from = nutrients$id,
+#   Group = nutrients$Group,
+#   Nutrient = nutrients$Nutrient,
+#   value=8
+# )
 
 # Define graph nodes
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  Group = nutrients$Group,
+  group = nn$Group,
   value = 6
 )
 
@@ -151,14 +152,13 @@ server <- function(input, output) {
              mapping=aes(x=FAO_CropName, y=Calories))+ geom_area()
       #x <- as.numeric(data$Potassium)
       #bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
       #hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
    
 
     output$dGraph <- renderPlot({
       
-      visNetwork(nodes, edges, height = "1600px", width = "100%", main="Bipartite Graph") %>%
+      visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
         visPhysics(solver = "forceAtlas2Based",
                    forceAtlas2Based = list(gravitationalConstant = -500))

@@ -25,7 +25,7 @@ When you click the **Knit** button a document will be generated that includes bo
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]), group="N")
+nutrients <- data.frame(names(agData[12:37]), Group="N")
 colnames(nutrients) <- c("Nutrient", "Group")
 agData$Group <- "C"
 
@@ -99,7 +99,6 @@ edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "s
 
 for(i in 1:nrow(nutr)) {
   for(j in 2:ncol(nutr)) {  
-    #nonzero <- nutr[i] %>% select(where(is.numeric && num_range(>0)))
     
     strength <- nutr[i,j]
     if(!(is.na(strength)) && strength > 0) {
