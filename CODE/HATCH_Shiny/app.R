@@ -56,7 +56,9 @@ nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
   group = nn$Group,
-  value = 6
+  value = 20,
+  size = 20,
+  scaling = 4
 )
 
 # # O(N^2) loop to create edges
@@ -158,12 +160,13 @@ server <- function(input, output) {
 
     output$dGraph <- renderPlot({
       
-      visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
+      visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph")%>%
+        # visNodes(size = 10) %>%
         #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
         visPhysics(solver = "forceAtlas2Based",
                    forceAtlas2Based = list(gravitationalConstant = -500))
       
-    })
+    }) 
     
     
     output$table <- renderDataTable(agData)
