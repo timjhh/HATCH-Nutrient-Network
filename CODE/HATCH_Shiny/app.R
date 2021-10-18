@@ -17,13 +17,14 @@ source("directed_graph.R")
 
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]), Group="N")
-colnames(nutrients) <- c("Nutrient", "Group")
-agData$Group = "C"
+nutrients <- data.frame(names(agData[12:37]), group="N")
+colnames(nutrients) <- c("Nutrient", "group")
+agData$group = "C"
+agData$level = 1
 
 
 # Maximum length of edges
-MAX_LEN <- 500
+MAX_LEN <- 50
 MIN_LEN <- 10
 
 # List of nutrient names
@@ -40,7 +41,9 @@ agData <- agData %>% rename(id = X)
 
 # Do the same for each nutrient
 nutrients$id = 0
+nutrients$level = 2
 nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
+
 
 # Unique id #s for crop data
 agList <- as.list(agData$id)
@@ -52,15 +55,16 @@ nn <- dplyr::bind_rows(nutrients, agData)
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$Group
+  group = nn$group
   
 )
 
 edges <- data.frame()
 
 
-
+# Create data frame with nutrients as rows, crops as columns
 nutr <- as.data.frame(t(agData[12:37]))
+# Name the new crop columns
 colnames(nutr) <- as.list(agData$FAO_CropName)
 nutr <- cbind(nnames, nutr)
 
@@ -99,16 +103,15 @@ for(i in 1:nrow(nutr)) {
       nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
-      #nr$strength <- (str / maximum)
+      nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
-      nr$strength <- (str-mean)/stddev
+      #nr$strength <- (str-mean)/stddev
       
       # Assign a strength based on the maximum
       nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
       
 
-      
       # Finally, bind this row to the edge collection
       edges <- dplyr::bind_rows(edges, nr)
       
@@ -170,10 +173,10 @@ server <- function(input, output) {
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         visOptions(highlightNearest = TRUE) %>%
         # visNodes(size = 30, value = 30) %>%
-        #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
-        visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500)) %>%
-        visNodes(shape="square", value=10)
+        visHierarchicalLayout(sortMethod = "directed", direction = "LR", levelSeparation = 250) %>%
+        #visPhysics(solver = "forceAtlas2Based",
+        #           forceAtlas2Based = list(gravitationalConstant = -500)) %>%
+        visNodes(size=200)
       
     }) 
     
