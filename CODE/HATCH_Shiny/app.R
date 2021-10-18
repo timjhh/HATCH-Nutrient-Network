@@ -24,7 +24,7 @@ agData$level = 1
 
 
 # Maximum length of edges
-MAX_LEN <- 50
+MAX_LEN <- 200
 MIN_LEN <- 10
 
 # List of nutrient names
@@ -55,7 +55,9 @@ nn <- dplyr::bind_rows(nutrients, agData)
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$group
+  group = nn$group,
+  font.size = 40,
+  size=200
   
 )
 
@@ -173,11 +175,10 @@ server <- function(input, output) {
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         visOptions(highlightNearest = TRUE) %>%
         # visNodes(size = 30, value = 30) %>%
-        visHierarchicalLayout(sortMethod = "directed", direction = "LR", levelSeparation = 250) %>%
-        #visPhysics(solver = "forceAtlas2Based",
-        #           forceAtlas2Based = list(gravitationalConstant = -500)) %>%
-        visNodes(size=200)
-      
+        #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+        visPhysics(solver = "forceAtlas2Based",
+                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.1))
+
     }) 
     
     #visNodes(network, size=100)
