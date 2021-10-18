@@ -57,7 +57,7 @@ nodes <- data.frame(
   label = nn$Nutrient,
   group = nn$group,
   font.size = 40,
-  size=200
+  size=50
   
 )
 
@@ -105,10 +105,10 @@ for(i in 1:nrow(nutr)) {
       nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
-      nr$strength <- (str / maximum)
+      #nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
-      #nr$strength <- (str-mean)/stddev
+      nr$strength <- (str-mean)/stddev
       
       # Assign a strength based on the maximum
       nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
@@ -174,14 +174,11 @@ server <- function(input, output) {
       
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         visOptions(highlightNearest = TRUE) %>%
-        # visNodes(size = 30, value = 30) %>%
-        #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
-        visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.1))
+        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+        #visPhysics(solver = "forceAtlas2Based",
+        #           forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.2))
 
     }) 
-    
-    #visNodes(network, size=100)
     
     
     output$table <- renderDataTable(agData)
