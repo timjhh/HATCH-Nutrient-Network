@@ -59,7 +59,7 @@ nn <- dplyr::bind_rows(nutrients, agData)
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  Group = nn$Group
+  group = nn$Group
 
   )
 

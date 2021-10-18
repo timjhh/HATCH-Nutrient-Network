@@ -24,6 +24,7 @@ agData$Group = "C"
 
 # Maximum length of edges
 MAX_LEN <- 500
+MIN_LEN <- 10
 
 # List of nutrient names
 # Note: This MANUALLY reads in cols 12:37, it is not a smart search
@@ -42,17 +43,17 @@ nutrients$id = 0
 nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
 
 # Unique id #s for crop data
-agList <- list(agData$id)
+agList <- as.list(agData$id)
 
-nn <- dplyr::bind_rows(agData, nutrients)
+nn <- dplyr::bind_rows(nutrients, agData)
 
 
 # Define graph nodes
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  Group = nn$Group,
-  value = 6
+  group = nn$Group
+  
 )
 
 edges <- data.frame()
@@ -63,23 +64,52 @@ nutr <- as.data.frame(t(agData[12:37]))
 colnames(nutr) <- as.list(agData$FAO_CropName)
 nutr <- cbind(nnames, nutr)
 
-#edges <- data.frame()
+# Create shell for edges data with column names
 edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
 
 for(i in 1:nrow(nutr)) {
+  
+  # Manipulate array of each nutrient type, remove all NA values
+  name <- toString(nutr[i,] %>% select(nnames))
+  nums <- unlist(agData[,name])
+  nums <- nums[!is.na(nums)]
+  
+  # Find the maximum of each link to adjust the edge length accordingly
+  maximum <- max(nums)
+  
+  # To normalize the data, we'll need
+  stddev <- sd(nums)
+  mean <- mean(nums)
+  
+  
   for(j in 2:(ncol(nutr)-1)) {  
     
-    strength <- nutr[i,j]
-    if(!(is.na(strength)) && strength > 0) {
+    # Check for validity / existence of this node
+    str <- nutr[i,j]
+    
+    if(!(is.na(str)) && str > 0) {
       
+      # Create a new row with the nutrient name
+      nr <- nutr[i,] %>% select(nnames)
       
-      nr <- nutr[i,]
+      # The link will come from a crop
       nr$from <- i+numNR
+      
+      # The link will lead to a nutrient
       nr$to <- j
-      nr$strength <- strength
       
-      #edges %>% add_row(from = i, to = j, strength = strength)
+      # This is the cell connecting [crop,nutrient], how much one contains
+      #nr$strength <- (str / maximum)
       
+      #Alternatively, normalize the data point by its nutritional value
+      nr$strength <- (str-mean)/stddev
+      
+      # Assign a strength based on the maximum
+      nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
+      
+
+      
+      # Finally, bind this row to the edge collection
       edges <- dplyr::bind_rows(edges, nr)
       
     }
@@ -138,6 +168,7 @@ server <- function(input, output) {
     output$dGraph <- renderPlot({
       
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
+        visOptions(highlightNearest = TRUE) %>%
         # visNodes(size = 30, value = 30) %>%
         #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
         visPhysics(solver = "forceAtlas2Based",
