@@ -18,9 +18,12 @@ source("directed_graph.R")
 # Load data
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
 nutrients <- data.frame(names(agData[12:37]), Group="N")
-
 colnames(nutrients) <- c("Nutrient", "Group")
-agData$Group <- "C"
+agData$Group = "C"
+
+
+# Maximum length of edges
+MAX_LEN <- 500
 
 # List of nutrient names
 # Note: This MANUALLY reads in cols 12:37, it is not a smart search
@@ -34,7 +37,6 @@ numNR <- nrow(agData)
 agData$Nutrient = agData$FAO_CropName
 agData <- agData %>% rename(id = X)
 
-
 # Do the same for each nutrient
 nutrients$id = 0
 nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
@@ -44,70 +46,45 @@ agList <- list(agData$id)
 
 nn <- dplyr::bind_rows(agData, nutrients)
 
-# tmp <- data.frame(
-#   from = nutrients$id,
-#   Group = nutrients$Group,
-#   Nutrient = nutrients$Nutrient,
-#   value=8
-# )
 
 # Define graph nodes
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  group = nn$Group,
-  value = 20,
-  size = 20,
-  scaling = 4
+  Group = nn$Group,
+  value = 6
 )
 
-# # O(N^2) loop to create edges
-# # Find each instance of nutrient, find its associated value and bind new row to edges
-# for(i in 1:nrow(tmp)) {
-#   for(j in 1:nrow(agData)) {
-#     
-#     strength <- agData[j,i+11]
-#     if(!(is.na(strength)) && strength > 0) {
-#       
-#       nr <- tmp[i,]
-#       
-#       nr$to <- agData[j,"id"]
-#       
-#       
-#       # What amount of nutrient does this crop have
-#       # NOTE: 11 is hardcoded, consider replacing with computed value
-#       nr$strength <- agData[j,i+11]  
-#       
-#       edges <- dplyr::bind_rows(edges, nr)
-#       
-#     }
-#     
-#   }
-# }
+edges <- data.frame()
+
+
+
 nutr <- as.data.frame(t(agData[12:37]))
 colnames(nutr) <- as.list(agData$FAO_CropName)
 nutr <- cbind(nnames, nutr)
 
-edges <- data.frame()
+#edges <- data.frame()
+edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
 
 for(i in 1:nrow(nutr)) {
-  for(j in 2:ncol(nutr)) {
-    
+  for(j in 2:(ncol(nutr)-1)) {  
     
     strength <- nutr[i,j]
     if(!(is.na(strength)) && strength > 0) {
       
+      
       nr <- nutr[i,]
       nr$from <- i+numNR
       nr$to <- j
+      nr$strength <- strength
       
+      #edges %>% add_row(from = i, to = j, strength = strength)
       
       edges <- dplyr::bind_rows(edges, nr)
       
     }
-    
-    
   }
+  
 }
 
 
@@ -160,13 +137,16 @@ server <- function(input, output) {
 
     output$dGraph <- renderPlot({
       
-      visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph")%>%
-        # visNodes(size = 10) %>%
+    visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
+        # visNodes(size = 30, value = 30) %>%
         #visHierarchicalLayout(sortMethod = "hubsize", direction = "LR") 
         visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500))
+                   forceAtlas2Based = list(gravitationalConstant = -500)) %>%
+        visNodes(shape="square", value=10)
       
     }) 
+    
+    #visNodes(network, size=100)
     
     
     output$table <- renderDataTable(agData)

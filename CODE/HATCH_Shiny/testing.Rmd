@@ -27,7 +27,7 @@ When you click the **Knit** button a document will be generated that includes bo
 agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
 nutrients <- data.frame(names(agData[12:37]), Group="N")
 colnames(nutrients) <- c("Nutrient", "Group")
-agData$Group <- "C"
+agData$Group = "C"
 
 
 # Maximum length of edges
@@ -52,15 +52,15 @@ nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
 # Unique id #s for crop data
 agList <- list(agData$id)
 
-nn <- dplyr::bind_rows(agData, nutrients)
+nn <- dplyr::bind_rows(nutrients, agData)
 
 
 # Define graph nodes
 nodes <- data.frame(
   id = nn$id,
   label = nn$Nutrient,
-  Group = nutrients$Group,
-  value = 6
+  Group = nn$Group,
+
   )
 
 edges <- data.frame()
@@ -98,7 +98,7 @@ nutr <- cbind(nnames, nutr)
 edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
 
 for(i in 1:nrow(nutr)) {
-  for(j in 2:ncol(nutr)) {  
+  for(j in 2:(ncol(nutr)-1)) {  
     
     strength <- nutr[i,j]
     if(!(is.na(strength)) && strength > 0) {
