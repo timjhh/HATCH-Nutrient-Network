@@ -132,6 +132,14 @@ tibble(nutr)
 tibble(agData)
 tibble(edges)
 tibble(nodes)
+tibble(nutrients)
+
+nnames <- c("Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+
+nutrients <- agData %>% select(all_of(nnames))
+nutrients
 
 ```
 

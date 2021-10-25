@@ -16,9 +16,23 @@ source("directed_graph.R")
 
 
 # Load data
-agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]), group="N")
-colnames(nutrients) <- c("Nutrient", "group")
+#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+
+# List of nutrient names
+# Note: This MANUALLY reads in cols 12:37, it is not a smart search
+# This will need to be adjusted if data is adjusted
+nnames <- c("Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+
+nutrients <- agData %>% select(all_of(nnames))
+nutrients$group = "N"
+
+# Optional hard-coded nutrient selection
+#nutrients <- data.frame(names(agData[12:37]), group="N")
+
+#colnames(nutrients) <- c("Nutrient", "group")
 agData$group = "C"
 agData$level = 1
 
@@ -27,10 +41,7 @@ agData$level = 1
 MAX_LEN <- 200
 MIN_LEN <- 10
 
-# List of nutrient names
-# Note: This MANUALLY reads in cols 12:37, it is not a smart search
-# This will need to be adjusted if data is adjusted
-nnames <- names(agData[12:37])
+
 
 # num of unique crops in data set
 numNR <- nrow(agData)
@@ -174,9 +185,9 @@ server <- function(input, output) {
       
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         visOptions(highlightNearest = TRUE) %>%
-        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
-        #visPhysics(solver = "forceAtlas2Based",
-        #           forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.2))
+        #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+        visPhysics(solver = "forceAtlas2Based",
+                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.2))
 
     }) 
     
