@@ -128,18 +128,28 @@ for(i in 1:nrow(nutr)) {
 You can also embed plots, for example:
 
 ```{r tibbles, echo=FALSE}
-tibble(nutr)
-tibble(agData)
-tibble(edges)
-tibble(nodes)
-tibble(nutrients)
+# tibble(nutr)
+# tibble(agData)
+# tibble(edges)
+# tibble(nodes)
+#tibble(nutrients)
 
-nnames <- c("Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
 
 nutrients <- agData %>% select(all_of(nnames))
+nutrients <- cbind(agData$FAO_CropName, nutrients)
+names(nutrients)[1] <- "Label"
+
 nutrients
+nutr <- as.data.frame(t(nutrients))
+nutr
+newCols <- append("Label", as.list(agData$FAO_CropName))
+colnames(nutr) <- newCols
+
+nutr
+
 
 ```
 

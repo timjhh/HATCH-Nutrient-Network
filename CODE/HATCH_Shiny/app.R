@@ -20,14 +20,13 @@ source("directed_graph.R")
 agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
 
 # List of nutrient names
-# Note: This MANUALLY reads in cols 12:37, it is not a smart search
-# This will need to be adjusted if data is adjusted
-nnames <- c("Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
 
 nutrients <- agData %>% select(all_of(nnames))
 nutrients$group = "N"
+nutrients$Nutrient <- nutrients$FAO_CropName
 
 # Optional hard-coded nutrient selection
 #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -76,10 +75,16 @@ edges <- data.frame()
 
 
 # Create data frame with nutrients as rows, crops as columns
-nutr <- as.data.frame(t(agData[12:37]))
+#nutr <- as.data.frame(t(agData[11:37]))
+#nutr <- as.data.frame(t(nutrients[,1:ncol(nutrients)-1]))
+nutr <- as.data.frame(t(nutrients))
+
+
+
+
 # Name the new crop columns
-colnames(nutr) <- as.list(agData$FAO_CropName)
-nutr <- cbind(nnames, nutr)
+#colnames(nutr) <- as.list(agData$FAO_CropName)
+#nutr <- cbind(nnames, nutr)
 
 # Create shell for edges data with column names
 edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
