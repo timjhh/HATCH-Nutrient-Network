@@ -27,8 +27,9 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
 #nutrients <- agData %>% select(all_of(nnames))
 nutrients <- as.data.frame(nnames)
 nutrients$group = "N"
+#nutrients$Nutrient <- agData$nnames
 nutrients <- rename(nutrients, Nutrient = nnames)
-
+#names(nutrients)[1] <- "Label"
 
 # Optional hard-coded nutrient selection
 #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -76,8 +77,7 @@ nodes <- data.frame(
 
 
 # Create data frame with nutrients as rows, crops as columns
-#nutr <- as.data.frame(t(agData[11:37]))
-#nutr <- as.data.frame(t(nutrients[,1:ncol(nutrients)-1]))
+
 nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
 colnames(nutr) <- as.list(agData$FAO_CropName)
 
@@ -93,9 +93,10 @@ for(i in 1:nrow(nutr)) {
   
   # Manipulate array of each nutrient type, remove all NA values
   #name <- toString(agData[i,] %>% select(nnames))
-  name <- toString(nutr[i,])
+  #name <- toString(nutr[i,])
 
-  nums <- unlist(name)
+  #nums <- unlist(name)
+  nums <- unlist(nutr[i,])
   nums <- nums[!is.na(nums)]
   
   # Find the maximum of each link to adjust the edge length accordingly
@@ -114,23 +115,26 @@ for(i in 1:nrow(nutr)) {
     str <- nutr[i,j]
     
     # Check for validity / existence of this node
-    if(!(is.na(str)) && str > 0) {
+    if(!(is.na(str)) && as.numeric(str) > 0) {
       
       # Create a new row with the nutrient name
       #nr <- nutr[i,] %>% select(nnames)
       nr <- nutr[i,]
       
-      # The link will come from a crop
-      nr$from <- i
+      # The link will come from a nutrient
+      nr$from <- i+numNR
       
-      # The link will lead to a nutrient
-      nr$to <- j+numNR
+      # The link will lead to a crop
+      nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
       #nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
       nr$strength <- (str-mean)/stddev
+      
+
+      
       
       # Assign a strength based on the maximum
       nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
@@ -197,7 +201,7 @@ server <- function(input, output) {
         visOptions(highlightNearest = TRUE) %>%
         #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
         visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.2))
+                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.1))
 
     }) 
     

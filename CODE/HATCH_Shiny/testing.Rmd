@@ -236,16 +236,19 @@ for(i in 1:nrow(nutr)) {
   # Manipulate array of each nutrient type, remove all NA values
   #name <- toString(agData[i,] %>% select(nnames))
   name <- toString(nutr[i,])
-  print(name)
-  nums <- unlist(name)
+
+  nums <- unlist(nutr[i,])
+  nums
   nums <- nums[!is.na(nums)]
   
   # Find the maximum of each link to adjust the edge length accordingly
   maximum <- max(nums)
   
+  print(maximum)
   # To normalize the data, we'll need
   stddev <- sd(nums)
   mean <- mean(nums)
+  
   
   
   for(j in 1:(ncol(nutr))) {  
@@ -256,23 +259,26 @@ for(i in 1:nrow(nutr)) {
     str <- nutr[i,j]
     
     # Check for validity / existence of this node
-    if(!(is.na(str)) && str > 0) {
+    if(!(is.na(str)) && as.numeric(str) > 0) {
       
       # Create a new row with the nutrient name
       #nr <- nutr[i,] %>% select(nnames)
       nr <- nutr[i,]
       
-      # The link will come from a crop
-      nr$from <- i
+      # The link will come from a nutrient
+      nr$from <- i+numNR
       
-      # The link will lead to a nutrient
-      nr$to <- j+numNR
+      # The link will lead to a crop
+      nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
       #nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
       nr$strength <- (str-mean)/stddev
+      
+      nr$label <- (str-mean)/stddev
+      nr$font.size <- 40
       
       # Assign a strength based on the maximum
       nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
@@ -287,6 +293,7 @@ for(i in 1:nrow(nutr)) {
   
 nutrients
 nutr
+nodes
 
 ```
 
