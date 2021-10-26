@@ -16,8 +16,9 @@ source("directed_graph.R")
 
 
 # Load data
-#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Mexico_Production_2019.csv")
 
 # List of nutrient names
 nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -40,7 +41,7 @@ agData$level = 1
 
 
 # Maximum length of edges
-MAX_LEN <- 200
+MAX_LEN <- 100
 MIN_LEN <- 10
 
 
@@ -91,16 +92,14 @@ edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "s
 
 for(i in 1:nrow(nutr)) {
   
-  # Manipulate array of each nutrient type, remove all NA values
-  #name <- toString(agData[i,] %>% select(nnames))
-  #name <- toString(nutr[i,])
 
-  #nums <- unlist(name)
+  # Select each nutrient row, remove missing values
   nums <- unlist(nutr[i,])
   nums <- nums[!is.na(nums)]
   
   # Find the maximum of each link to adjust the edge length accordingly
   maximum <- max(nums)
+  minimum <- min(nums)
   
   # To normalize the data, we'll need
   stddev <- sd(nums)
@@ -117,8 +116,7 @@ for(i in 1:nrow(nutr)) {
     # Check for validity / existence of this node
     if(!(is.na(str)) && as.numeric(str) > 0) {
       
-      # Create a new row with the nutrient name
-      #nr <- nutr[i,] %>% select(nnames)
+      # Create a new row with the nutrient information
       nr <- nutr[i,]
       
       # The link will come from a nutrient
@@ -128,16 +126,17 @@ for(i in 1:nrow(nutr)) {
       nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
-      #nr$strength <- (str / maximum)
+      nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
-      nr$strength <- (str-mean)/stddev
+      #nr$strength <- (str-minimum)/(maximum-minimum)
       
 
       
       
       # Assign a strength based on the maximum
-      nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
+      ### NOTE - A better weighting system will have to be applied, as most links are not strong
+      nr$length <- ((MAX_LEN/2) - (nr$strength * MAX_LEN)) + MIN_LEN
       
       
       # Finally, bind this row to the edge collection
@@ -201,7 +200,7 @@ server <- function(input, output) {
         visOptions(highlightNearest = TRUE) %>%
         #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
         visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.1))
+                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
 
     }) 
     

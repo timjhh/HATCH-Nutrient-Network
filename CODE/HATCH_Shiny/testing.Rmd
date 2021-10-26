@@ -231,6 +231,9 @@ colnames(nutr) <- as.list(agData$FAO_CropName)
 # Create shell for edges data with column names
 edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
 
+
+
+
 for(i in 1:nrow(nutr)) {
   
   # Manipulate array of each nutrient type, remove all NA values
@@ -243,11 +246,13 @@ for(i in 1:nrow(nutr)) {
   
   # Find the maximum of each link to adjust the edge length accordingly
   maximum <- max(nums)
+  minimum <- min(nums)
   
-  print(maximum)
+
   # To normalize the data, we'll need
   stddev <- sd(nums)
   mean <- mean(nums)
+  
   
   
   
@@ -272,17 +277,15 @@ for(i in 1:nrow(nutr)) {
       nr$to <- j
       
       # This is the cell connecting [crop,nutrient], how much one contains
-      #nr$strength <- (str / maximum)
+      nr$strength <- (str / maximum)
       
       #Alternatively, normalize the data point by its nutritional value
-      nr$strength <- (str-mean)/stddev
+      #nr$strength <- (str-minimum)/(maximum-minimum)
       
-      nr$label <- (str-mean)/stddev
-      nr$font.size <- 40
       
       # Assign a strength based on the maximum
-      nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
-      
+      ### NOTE - A better weighting system will have to be applied, as most links are not strong
+      nr$length <- ((MAX_LEN/2) - (nr$strength * MAX_LEN)) + MIN_LEN
 
       # Finally, bind this row to the edge collection
       edges <- dplyr::bind_rows(edges, nr)
@@ -291,6 +294,17 @@ for(i in 1:nrow(nutr)) {
   }
 }
   
+
+# Length histogram with log 10 transformation
+ggplot(edges, aes(x=length)) + 
+  geom_histogram(binwidth=10) + 
+  scale_y_log10()
+
+# Strength histogram with log 10 transformation
+ggplot(edges, aes(x=strength)) + 
+  geom_histogram(binwidth=0.01) + 
+  scale_y_log10()
+
 nutrients
 nutr
 nodes
