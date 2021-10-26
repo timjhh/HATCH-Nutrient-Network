@@ -24,9 +24,11 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
 
-nutrients <- agData %>% select(all_of(nnames))
+#nutrients <- agData %>% select(all_of(nnames))
+nutrients <- as.data.frame(nnames)
 nutrients$group = "N"
-nutrients$Nutrient <- nutrients$FAO_CropName
+nutrients <- rename(nutrients, Nutrient = nnames)
+
 
 # Optional hard-coded nutrient selection
 #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -71,15 +73,13 @@ nodes <- data.frame(
   
 )
 
-edges <- data.frame()
 
 
 # Create data frame with nutrients as rows, crops as columns
 #nutr <- as.data.frame(t(agData[11:37]))
 #nutr <- as.data.frame(t(nutrients[,1:ncol(nutrients)-1]))
-nutr <- as.data.frame(t(nutrients))
-
-
+nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
+colnames(nutr) <- as.list(agData$FAO_CropName)
 
 
 # Name the new crop columns
@@ -92,8 +92,10 @@ edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "s
 for(i in 1:nrow(nutr)) {
   
   # Manipulate array of each nutrient type, remove all NA values
-  name <- toString(nutr[i,] %>% select(nnames))
-  nums <- unlist(agData[,name])
+  #name <- toString(agData[i,] %>% select(nnames))
+  name <- toString(nutr[i,])
+
+  nums <- unlist(name)
   nums <- nums[!is.na(nums)]
   
   # Find the maximum of each link to adjust the edge length accordingly
@@ -104,21 +106,25 @@ for(i in 1:nrow(nutr)) {
   mean <- mean(nums)
   
   
-  for(j in 2:(ncol(nutr)-1)) {  
+  for(j in 1:(ncol(nutr))) {  
     
-    # Check for validity / existence of this node
+    # Strength is the intersection of:
+    # i - The nutrient
+    # j - The crop
     str <- nutr[i,j]
     
+    # Check for validity / existence of this node
     if(!(is.na(str)) && str > 0) {
       
       # Create a new row with the nutrient name
-      nr <- nutr[i,] %>% select(nnames)
+      #nr <- nutr[i,] %>% select(nnames)
+      nr <- nutr[i,]
       
       # The link will come from a crop
-      nr$from <- i+numNR
+      nr$from <- i
       
       # The link will lead to a nutrient
-      nr$to <- j
+      nr$to <- j+numNR
       
       # This is the cell connecting [crop,nutrient], how much one contains
       #nr$strength <- (str / maximum)
@@ -129,13 +135,12 @@ for(i in 1:nrow(nutr)) {
       # Assign a strength based on the maximum
       nr$length <- (MAX_LEN - (nr$strength * MAX_LEN)) + MIN_LEN
       
-
+      
       # Finally, bind this row to the edge collection
       edges <- dplyr::bind_rows(edges, nr)
       
     }
   }
-  
 }
 
 
