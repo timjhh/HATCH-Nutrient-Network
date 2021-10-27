@@ -153,30 +153,19 @@ for(i in 1:nrow(nutr)) {
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
-
-
-    mainPanel(
-      #fluidRow(
-       plotOutput("dGraph")
-      #)
-      
-    ),
-    # Application title
     titlePanel("HATCH Project"),
+
+    sidebarPanel(
+      
+      sliderInput("bins",
+                  "Number of bins:",
+                  min = 1,
+                  max = 50,
+                  value = 30)
+    ),
     
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-      
-      sidebarPanel(
-        dataTableOutput('table'),
-        sliderInput("bins",
-                    "Number of bins:",
-                    min = 1,
-                    max = 50,
-                    value = 30)
-      )
-      
-    )
+     
+    mainPanel( visNetworkOutput("dGraph") )
     
 )
 
@@ -196,14 +185,24 @@ server <- function(input, output) {
     })
    
 
-    output$dGraph <- renderPlot({
-      #vn <- 
-    visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
-        visOptions(highlightNearest = TRUE) %>%
+    output$dGraph <- renderVisNetwork({
+
+    visNetwork(nodes, edges, height = "100%", width = "100%", main="HATCH Graph") %>%
+        visOptions(highlightNearest = TRUE,
+               selectedBy = list(
+                 variable = "Themes",
+                 style = "width:500px",
+                 values = c("cars", "train", "walk", "bike", "bus", "car"),
+                 multiple = TRUE
+                   
+               )
+                   
+                   
+                   
+                   ) %>%
         visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
         #visPhysics(solver = "forceAtlas2Based",
-       # forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
-      #vn %>% bind_shiny(plot_id="vn")
+        # forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
 
     }) 
     
