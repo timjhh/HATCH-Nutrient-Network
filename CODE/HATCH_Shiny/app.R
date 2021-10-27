@@ -16,9 +16,12 @@ source("directed_graph.R")
 
 
 # Load data
-agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
 #agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
 #agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Mexico_Production_2019.csv")
+
+agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Madagascar_ProductionImportsGlobalConstrained_2019.csv")
+
 
 # List of nutrient names
 nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -162,18 +165,21 @@ ui <- fluidPage(
                         max = 50,
                         value = 30)
         ),
-        sidebarPanel(
+        sidebarPanel (
           fluidRow(
             column(12,
-                   dataTableOutput('table')
+              dataTableOutput('table')
             )
            )
         )
     ),
         #Show a plot of the generated distribution
         mainPanel(
+          fluidRow(
            plotOutput("dGraph")
-        )
+          )
+          
+           )
     
 )
 
@@ -181,7 +187,6 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    
   
     output$distPlot <- renderPlot({
       
@@ -198,9 +203,9 @@ server <- function(input, output) {
       
     visNetwork(nodes, edges, height = "1000px", width = "100%", main="Bipartite Graph") %>%
         visOptions(highlightNearest = TRUE) %>%
-        #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
-        visPhysics(solver = "forceAtlas2Based",
-                   forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
+        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+        #visPhysics(solver = "forceAtlas2Based",
+       #            forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
 
     }) 
     
