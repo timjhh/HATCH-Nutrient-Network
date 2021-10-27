@@ -222,20 +222,14 @@ server <- function(input, output) {
     ###
     ### GET AVAILABLE FILE OPTIONS
     ###
-    allFiles <- list.files("../../DATA_INPUTS/Tabular_data_inputs/")
+    allFiles <- tools::file_path_sans_ext(list.files("../../DATA_INPUTS/Tabular_data_inputs/"))
     
     # Function to get the country name from a string
     # By splitting with our separator _ and returning the first word
     getToken <- function(d, idx) {
       unlist(strsplit(d, '_'))[idx]
     }
-    
-    # List all unique countries
-    #output$countries <- unique(lapply(allFiles, getToken, idx = 1))
-    
-    # List all unique types of data per country
-    #output$ctypes <- unique(lapply(allFiles, getToken, idx = 2))
-    
+
     # Dynamic UI rendering for country types
     output$countries <- renderUI({
       countries <- unique(lapply(allFiles, getToken, idx = 1))
@@ -244,15 +238,47 @@ server <- function(input, output) {
     
     # Dynamic UI rendering for country types
     output$countryTypes <- renderUI({
-      ctypes <- unique(lapply(allFiles, getToken, idx = 2))
-      selectInput('ctypes','Select Type',ctypes)
+
+      # Get selected country
+      selected <- input$country
+
+      # Find all files for each country
+      possible <- grep(selected, allFiles, value=TRUE)
+
+      # Find unique file types from the second token in each string
+      ctypes <- unique(lapply(possible, getToken, idx = 2))
+      
+      if(length(ctypes) > 0) {
+        selectInput('ctypes','Select Type',ctypes)
+      }
     })
     
-    # Dynamic UI rendering for country types
+    
+    
+    
+    # Dynamic UI rendering for years
     output$countryYears <- renderUI({
-      cyears <- unique(lapply(allFiles, getToken, idx = 3))
-      selectInput('cyears','Select Type',cyears)
-    })
+      
+      # Get selected country
+      selectedC <- input$country
+      selectedT <- input$ctypes
+      
+      # Find all files for each country
+      possibleC <- grep(selectedC, allFiles, value=TRUE)
+      
+      # Find all years for each type
+      possible <- grep(selectedT, possibleC, value=TRUE)
+      
+      # Find unique file types from the second token in each string   
+      cyears <- unique(lapply(possible, getToken, idx = 3))
+    
+      
+      if(length(cyears) > 0) {
+        selectInput('cyears','Select Year',cyears)
+      }
+      
+
+          })
     
   
     
