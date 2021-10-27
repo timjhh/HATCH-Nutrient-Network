@@ -21,105 +21,16 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r setup}
-
-
-# Load data
-agData <- read.csv("../../DATA_INPUTS/Spatial_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-nutrients <- data.frame(names(agData[12:37]), Group="N")
-colnames(nutrients) <- c("Nutrient", "Group")
-agData$Group = "C"
-
-
-# Maximum length of edges
-MAX_LEN <- 500
-
-# List of nutrient names
-# Note: This MANUALLY reads in cols 12:37, it is not a smart search
-# This will need to be adjusted if data is adjusted
-nnames <- names(agData[12:37])
-
-# num of unique crops in data set
-numNR <- nrow(agData)
-
-# Assign unique id # to each, for binding to edges
-agData$Nutrient = agData$FAO_CropName
-agData <- agData %>% rename(id = X)
-
-# Do the same for each nutrient
-nutrients$id = 0
-nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
-
-# Unique id #s for crop data
-agList <- as.list(agData$id)
-
-nn <- dplyr::bind_rows(nutrients, agData)
-
-
-# Define graph nodes
-nodes <- data.frame(
-  id = nn$id,
-  label = nn$Nutrient,
-  group = nn$Group
-
-  )
-
-edges <- data.frame()
-
-
-
-nutr <- as.data.frame(t(agData[12:37]))
-colnames(nutr) <- as.list(agData$FAO_CropName)
-nutr <- cbind(nnames, nutr)
-
-# Create shell for edges data with column names
-edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
-
-for(i in 1:nrow(nutr)) {
-  
-  # Manipulate array of each nutrient type, remove all NA values
-  name <- toString(nutr[i,] %>% select(nnames))
-  nums <- unlist(agData[,name])
-  nums <- nums[!is.na(nums)]
-  
-  # Find the maximum of each link to adjust the edge length accordingly
-  maximum <- max(nums)
-
-  # To normalize the data, we'll need
-  stddev <- sd(nums)
-  mean <- mean(nums)
-
-  
-  for(j in 2:(ncol(nutr)-1)) {  
-    
-    strength <- nutr[i,j]
-    if(!(is.na(strength)) && strength > 0) {
-
-        # Create a new row with the nutrient name
-        nr <- nutr[i,] %>% select(nnames)
-        
-        # The link will come from a crop
-        nr$from <- i+numNR
-        
-        # The link will lead to a nutrient
-        nr$to <- j
-        
-        # This is the cell connecting [crop,nutrient], how much one contains
-        nr$strength <- strength
-        
-        # Assign a strength based on the maximum
-        nr$length <- (strength / maximum) * MAX_LEN
-        
-        #edges %>% add_row(from = i, to = j, strength = strength)
-      
-       # Finally, bind this row to the edge collection
-       edges <- dplyr::bind_rows(edges, nr)
-      
-    }
-  }
-    
+getToken <- function(d) {
+  unlist(strsplit(d, '_'))[1]
 }
 
+allFiles <- list.files("../../DATA_INPUTS/Tabular_data_inputs/")
+countries <- unique(lapply(allFiles, getToken))
 
+
+#allFiles[1]
+countries
 
 ```
 
