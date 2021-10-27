@@ -22,14 +22,11 @@ ui <- fluidPage(
     titlePanel("HATCH Project"),
 
     sidebarPanel(
-      
-    #   selectInput(
-    #     label = "Select Data Set",
-    #     inputId = "dSelect",
-    #     choices = c("a", "b", "c"))
-    # ),
+
     selectInput('selectfile','Select Country',countries),
-    textOutput('fileselected')
+    textOutput('fileselected'),
+    #selectInput('selectfile','Select Type',ctypes),
+    #textOutput('fileselected')
     ),
     mainPanel( visNetworkOutput("dGraph") )
     
@@ -227,21 +224,19 @@ server <- function(input, output) {
     
     # Function to get the country name from a string
     # By splitting with our separator _ and returning the first word
-    getToken <- function(d) {
-      unlist(strsplit(d, '_'))[1]
+    getToken <- function(d, idx) {
+      unlist(strsplit(d, '_'))[idx]
     }
     
     # List all unique countries
-    countries <- unique(lapply(allFiles, getToken))
+    countries <- unique(lapply(allFiles, getToken, idx = 1))
+    
+    # List all unique types of data per country
+    ctypes <- unique(lapply(allFiles, getToken, idx = 2))
     
     
     
-    
-    
-    
-    
-    
-    
+  
     
     
     
