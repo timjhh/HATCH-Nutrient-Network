@@ -23,10 +23,12 @@ ui <- fluidPage(
 
     sidebarPanel(
 
-    selectInput('selectfile','Select Country',countries),
-    textOutput('fileselected'),
-    #selectInput('selectfile','Select Type',ctypes),
-    #textOutput('fileselected')
+        
+        uiOutput("countries"),
+        uiOutput("countryTypes"),
+        uiOutput("countryYears")
+    # selectInput('selectfile','Select Country',input$countries),
+
     ),
     mainPanel( visNetworkOutput("dGraph") )
     
@@ -229,12 +231,28 @@ server <- function(input, output) {
     }
     
     # List all unique countries
-    countries <- unique(lapply(allFiles, getToken, idx = 1))
+    #output$countries <- unique(lapply(allFiles, getToken, idx = 1))
     
     # List all unique types of data per country
-    ctypes <- unique(lapply(allFiles, getToken, idx = 2))
+    #output$ctypes <- unique(lapply(allFiles, getToken, idx = 2))
     
+    # Dynamic UI rendering for country types
+    output$countries <- renderUI({
+      countries <- unique(lapply(allFiles, getToken, idx = 1))
+      selectInput('country','Select Country',countries)
+    })
     
+    # Dynamic UI rendering for country types
+    output$countryTypes <- renderUI({
+      ctypes <- unique(lapply(allFiles, getToken, idx = 2))
+      selectInput('ctypes','Select Type',ctypes)
+    })
+    
+    # Dynamic UI rendering for country types
+    output$countryYears <- renderUI({
+      cyears <- unique(lapply(allFiles, getToken, idx = 3))
+      selectInput('cyears','Select Type',cyears)
+    })
     
   
     
