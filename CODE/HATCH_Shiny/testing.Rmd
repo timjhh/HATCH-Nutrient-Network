@@ -32,11 +32,6 @@ When you click the **Knit** button a document will be generated that includes bo
 
 
 
-lst <- grep("a", c("ab", "ac", "dc", "ef", "zz"), value=TRUE)
-
-
-print(lst)
-
 
 ```
 
@@ -212,19 +207,27 @@ for(i in 1:nrow(nutr)) {
 }
   
 
-# Length histogram with log 10 transformation
-ggplot(edges, aes(x=length)) + 
-  geom_histogram(binwidth=10) + 
-  scale_y_log10()
+# # Length histogram with log 10 transformation
+# ggplot(edges, aes(x=length)) + 
+#   geom_histogram(binwidth=10) + 
+#   scale_y_log10()
+# 
+# # Strength histogram with log 10 transformation
+# ggplot(edges, aes(x=strength)) + 
+#   geom_histogram(binwidth=0.01) + 
+#   scale_y_log10()
+# 
+# nutrients
+# nutr
+# nodes
 
-# Strength histogram with log 10 transformation
-ggplot(edges, aes(x=strength)) + 
-  geom_histogram(binwidth=0.01) + 
-  scale_y_log10()
+# edges
+# nutr
 
-nutrients
-nutr
-nodes
+#mymat <- read.delim("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv", row.names=1)   # Not run.
+g<- bip_railway(nutr, label=T)
+#g + coord_flip()
+g
 
 ```
 

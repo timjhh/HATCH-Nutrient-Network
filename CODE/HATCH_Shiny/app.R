@@ -7,8 +7,12 @@
 #    http://shiny.rstudio.com/
 #
 
+
+devtools::install_github("pedroj/bipartite_plots")
+
 library(shiny)
 library(ggplot2)
+library(ggbipart)
 library(tidyverse)
 library(dplyr)
 library(visNetwork)
@@ -26,7 +30,9 @@ ui <- fluidPage(
         
         uiOutput("countries"),
         uiOutput("countryTypes"),
-        uiOutput("countryYears")
+        uiOutput("countryYears"),
+        
+        uiOutput("graphType")
     # selectInput('selectfile','Select Country',input$countries),
 
     ),
@@ -121,6 +127,18 @@ server <- function(input, output) {
       colnames(nutr) <- as.list(agData$FAO_CropName)
       
       
+      
+      
+      
+      if(input$gtype == "Bipartite") {
+        
+        
+        g<- bip_railway(nutr, label=T)
+        #g + coord_flip()
+        g
+        
+      } else {
+        
       # Name the new crop columns
       #colnames(nutr) <- as.list(agData$FAO_CropName)
       #nutr <- cbind(nnames, nutr)
@@ -210,16 +228,16 @@ server <- function(input, output) {
     # Or use option visEdges(smooth = FALSE)
     # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
     # 
-    visNetwork(nodes, edges, height = "100%", width = "100%", 
+    visNetwork(nodes, edges, height = "100%", width = "100%",
                # Append title dynamically from selected country
                main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
         visOptions(highlightNearest = TRUE) %>%
-        
+
         #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
         visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
           forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
     
-
+  }
     
       
     
@@ -310,6 +328,16 @@ server <- function(input, output) {
       
 
       })
+    
+    # Dynamic UI rendering for years
+    output$graphType <- renderUI({
+      
+      radioButtons('gtype', 'Graph Type', c('Force-Directed', 'Bipartite'),
+          'Force-Directed', inline=TRUE) 
+
+      
+      
+    })
     
   
     
