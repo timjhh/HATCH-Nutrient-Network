@@ -227,7 +227,7 @@ for(i in 1:nrow(nutr)) {
 #mymat <- read.delim("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv", row.names=1)   # Not run.
 # g<- bip_railway(nutr, label=T, nodesize = 4) + geom_text(aes(label= colnames(nutr)), angle<- ifelse(colnames(nutr)[1:dim(nutr)[1]], 0, 45), nudge_x<- ifelse(colnames(nutr)[1:dim(nutr)[1]], 0.5, -0.5))
 #g + coord_flip()
-g
+
 
 
       # visNetwork(nodes, edges, height = "100%", width = "100%",
@@ -239,7 +239,9 @@ g
 nodes
 
 edges
+agData
 
+nutr
       #
       # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
       # Or use option visEdges(smooth = FALSE)

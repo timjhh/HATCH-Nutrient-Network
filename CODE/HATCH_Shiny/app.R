@@ -172,11 +172,21 @@ server <- function(input, output) {
   
     })
     
+    
+    
+    
+    
+    
+    
+    
+    
     output$bVisGraph <- renderVisNetwork({
       
       
       nutr <- getNutr()
+      nodes <- getNodes()
       
+      numNR <- nrow(nodes)-nrow(nutr)
       
       # Name the new crop columns
       #colnames(nutr) <- as.list(agData$FAO_CropName)
@@ -241,22 +251,8 @@ server <- function(input, output) {
         }
       }
       
-      nn <- getnn()
       
       
-      # Define graph nodes
-      nodes <- data.frame(
-        id = nn$id,
-        level = nn$level,
-        label = nn$Nutrient,
-        group = nn$group,
-        font.size = 10,
-        size=10
-        
-      )
-      
-      
-      nodes
       
       #
       # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -267,7 +263,7 @@ server <- function(input, output) {
                  # Append title dynamically from selected country
                  main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
         visOptions(highlightNearest = TRUE) %>%
-        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 250,nodeSpacing=100, parentCentralization= FALSE)
+        visHierarchicalLayout(sortMethod = "directed",nodeSpacing=50, parentCentralization= FALSE)
       
       
       
@@ -283,7 +279,7 @@ server <- function(input, output) {
     
     
     
-    getnn <- reactive({
+    getNodes <- reactive({
       
       
       # Load data
@@ -336,7 +332,20 @@ server <- function(input, output) {
       
       nn <- dplyr::bind_rows(nutrients, agData)
       
-      nn
+      
+      # Define graph nodes
+      nodes <- data.frame(
+        id = nn$id,
+        level = nn$level,
+        label = nn$Nutrient,
+        group = nn$group,
+        font.size = 5,
+        size=10
+        
+      )
+      
+      
+      nodes
       
       
     })
