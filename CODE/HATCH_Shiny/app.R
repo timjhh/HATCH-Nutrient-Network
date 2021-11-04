@@ -45,7 +45,8 @@ ui <- fluidPage(
     ),
     conditionalPanel(
       condition = "input.gtype == 'Force-Directed'",
-      visNetworkOutput("dGraph")
+      #visNetworkOutput("dGraph")
+      print("Force Directed")
     )
     #mainPanel( plotOutput("bGraph") )
     #mainPanel( visNetworkOutput("dGraph") )
@@ -171,7 +172,7 @@ server <- function(input, output) {
   
     })
     
-    output$bVisGraph <- renderPlot({
+    output$bVisGraph <- renderVisNetwork({
       
       
       nutr <- getNutr()
@@ -240,9 +241,22 @@ server <- function(input, output) {
         }
       }
       
+      nn <- getnn()
       
       
+      # Define graph nodes
+      nodes <- data.frame(
+        id = nn$id,
+        level = nn$level,
+        label = nn$Nutrient,
+        group = nn$group,
+        font.size = 10,
+        size=10
+        
+      )
       
+      
+      nodes
       
       #
       # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -253,8 +267,7 @@ server <- function(input, output) {
                  # Append title dynamically from selected country
                  main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
         visOptions(highlightNearest = TRUE) %>%
-      
-        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+        visHierarchicalLayout(sortMethod = "directed",levelSeparation = 250,nodeSpacing=100, parentCentralization= FALSE)
       
       
       
@@ -265,6 +278,80 @@ server <- function(input, output) {
       paste0('You have selected: ', input$selectfile)
 
     })
+    
+    
+    
+    
+    
+    getnn <- reactive({
+      
+      
+      # Load data
+      file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
+      
+      
+      agData <- read.csv(paste("../../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+      
+      # List of nutrient names
+      nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+                  "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+                  "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+      
+      
+      nutrients <- as.data.frame(nnames)
+      nutrients$group = "N"
+      
+      nutrients <- rename(nutrients, Nutrient = nnames)
+      
+      
+      # Optional hard-coded nutrient selection
+      #nutrients <- data.frame(names(agData[12:37]), group="N")
+      
+      #colnames(nutrients) <- c("Nutrient", "group")
+      agData$group = "C"
+      agData$level = 1
+      
+      
+      # Maximum length of edges
+      MAX_LEN <- 100
+      MIN_LEN <- 10
+      
+      
+      
+      # num of unique crops in data set
+      numNR <- nrow(agData)
+      
+      # Assign unique id # to each, for binding to edges
+      agData$Nutrient = agData$FAO_CropName
+      agData <- agData %>% rename(id = X)
+      
+      # Do the same for each nutrient
+      nutrients$id = 0
+      nutrients$level = 2
+      nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
+      
+      
+      # Unique id #s for crop data
+      agList <- as.list(agData$id)
+      
+      nn <- dplyr::bind_rows(nutrients, agData)
+      
+      nn
+      
+      
+    })
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     getNutr <- reactive({
@@ -431,7 +518,7 @@ server <- function(input, output) {
     output$graphType <- renderUI({
       
       radioButtons('gtype', 'Graph Type', c('Force-Directed', 'Bipartite'),
-          'Bipartite', inline=TRUE) 
+          'Force-Directed', inline=TRUE) 
 
       
       
