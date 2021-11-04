@@ -225,7 +225,7 @@ for(i in 1:nrow(nutr)) {
 # nutr
 
 #mymat <- read.delim("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv", row.names=1)   # Not run.
-g<- bip_railway(nutr, label=T)
+g<- bip_railway(nutr, label=T, nodesize = 4)
 #g + coord_flip()
 g
 

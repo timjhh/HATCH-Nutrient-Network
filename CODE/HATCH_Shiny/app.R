@@ -19,7 +19,6 @@ library(visNetwork)
 source("directed_graph.R")
 
 
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -36,8 +35,16 @@ ui <- fluidPage(
     # selectInput('selectfile','Select Country',input$countries),
 
     ),
-    mainPanel( visNetworkOutput("dGraph") )
-    
+    conditionalPanel(
+      condition = "input.gtype == 'Bipartite'",
+      plotOutput("bGraph")
+    ),
+    conditionalPanel(
+      condition = "input.gtype == 'Force-Directed'",
+      visNetworkOutput("dGraph")
+    )
+    #mainPanel( plotOutput("bGraph") )
+    #mainPanel( visNetworkOutput("dGraph") )
 )
 
 
@@ -53,15 +60,135 @@ server <- function(input, output) {
 
     })
    
+    
 
     output$dGraph <- renderVisNetwork({
+      
+      
+      nutr <- getNutr()
 
-  
+        
+        # Name the new crop columns
+        #colnames(nutr) <- as.list(agData$FAO_CropName)
+        #nutr <- cbind(nnames, nutr)
+        
+        # Create shell for edges data with column names
+        edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
+        
+        for(i in 1:nrow(nutr)) {
+          
+          
+          # Select each nutrient row, remove missing values
+          nums <- unlist(nutr[i,])
+          nums <- nums[!is.na(nums)]
+          
+          # Find the maximum of each link to adjust the edge length accordingly
+          maximum <- max(nums)
+          minimum <- min(nums)
+          
+          # To normalize the data, we'll need
+          stddev <- sd(nums)
+          mean <- mean(nums)
+          
+          
+          for(j in 1:(ncol(nutr))) {  
+            
+            # Strength is the intersection of:
+            # i - The nutrient
+            # j - The crop
+            str <- nutr[i,j]
+            
+            # Check for validity / existence of this node
+            if(!(is.na(str)) && as.numeric(str) > 0) {
+              
+              # Create a new row with the nutrient information
+              nr <- nutr[i,]
+              
+              # The link will come from a nutrient
+              nr$from <- i+numNR
+              
+              # The link will lead to a crop
+              nr$to <- j
+              
+              # This is the cell connecting [crop,nutrient], how much one contains
+              nr$strength <- (str / maximum)
+              
+              #Alternatively, normalize the data point by its nutritional value
+              #nr$strength <- (str-minimum)/(maximum-minimum)
+              
+              
+              
+              
+              # Assign a strength based on the maximum
+              ### NOTE - A better weighting system will have to be applied, as most links are not strong
+              nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
+              
+              
+              # Finally, bind this row to the edge collection
+              edges <- dplyr::bind_rows(edges, nr)
+              
+            }
+          }
+        }
+        
+        
+        
+        
+
+        
+        
+        
+        #
+        # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
+        # Or use option visEdges(smooth = FALSE)
+        # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
+        # 
+        visNetwork(nodes, edges, height = "100%", width = "100%",
+                   # Append title dynamically from selected country
+                   main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+          visOptions(highlightNearest = TRUE) %>%
+          
+          #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+          visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
+                     forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
+        
+
+    })
+    
+
+    
+    output$bgraph <- renderPlot({
+      
+      
+      
+      
+
+      
+      nutr <- getNutr()
+      
+      
+      
+      
+      g<- bip_railway(nutr, label=T)
+      #g + coord_flip()
+      g
+      
+    })
+    
+    
+    output$dInput <- reactive({
+      paste0('You have selected: ', input$selectfile)
+
+    })
+    
+    
+    getNutr <- reactive({
+      
+      
       # Load data
       file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
       
-
-    
+      
       agData <- read.csv(paste("../../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
       
       # List of nutrient names
@@ -69,12 +196,12 @@ server <- function(input, output) {
                   "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
                   "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
       
-
+      
       nutrients <- as.data.frame(nnames)
       nutrients$group = "N"
-
+      
       nutrients <- rename(nutrients, Nutrient = nnames)
-
+      
       
       # Optional hard-coded nutrient selection
       #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -127,126 +254,12 @@ server <- function(input, output) {
       colnames(nutr) <- as.list(agData$FAO_CropName)
       
       
+      nutr
       
       
       
-      if(input$gtype == "Bipartite") {
-        
-        
-        g<- bip_railway(nutr, label=T)
-        #g + coord_flip()
-        g
-        
-      } else {
-        
-      # Name the new crop columns
-      #colnames(nutr) <- as.list(agData$FAO_CropName)
-      #nutr <- cbind(nnames, nutr)
-      
-      # Create shell for edges data with column names
-      edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
-      
-      for(i in 1:nrow(nutr)) {
-        
-        
-        # Select each nutrient row, remove missing values
-        nums <- unlist(nutr[i,])
-        nums <- nums[!is.na(nums)]
-        
-        # Find the maximum of each link to adjust the edge length accordingly
-        maximum <- max(nums)
-        minimum <- min(nums)
-        
-        # To normalize the data, we'll need
-        stddev <- sd(nums)
-        mean <- mean(nums)
-        
-        
-        for(j in 1:(ncol(nutr))) {  
-          
-          # Strength is the intersection of:
-          # i - The nutrient
-          # j - The crop
-          str <- nutr[i,j]
-          
-          # Check for validity / existence of this node
-          if(!(is.na(str)) && as.numeric(str) > 0) {
-            
-            # Create a new row with the nutrient information
-            nr <- nutr[i,]
-            
-            # The link will come from a nutrient
-            nr$from <- i+numNR
-            
-            # The link will lead to a crop
-            nr$to <- j
-            
-            # This is the cell connecting [crop,nutrient], how much one contains
-            nr$strength <- (str / maximum)
-            
-            #Alternatively, normalize the data point by its nutritional value
-            #nr$strength <- (str-minimum)/(maximum-minimum)
-            
-            
-            
-            
-            # Assign a strength based on the maximum
-            ### NOTE - A better weighting system will have to be applied, as most links are not strong
-            nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
-            
-            
-            # Finally, bind this row to the edge collection
-            edges <- dplyr::bind_rows(edges, nr)
-            
-          }
-        }
-      }
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-    #
-    # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
-    # Or use option visEdges(smooth = FALSE)
-    # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
-    # 
-    visNetwork(nodes, edges, height = "100%", width = "100%",
-               # Append title dynamically from selected country
-               main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-        visOptions(highlightNearest = TRUE) %>%
-
-        #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
-        visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
-          forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
-    
-  }
-    
-      
-    
-    }) 
-    
-    output$dInput <- reactive({
-      paste0('You have selected: ', input$selectfile)
-
     })
+    
     
     output$table <- renderDataTable(agData)
     
