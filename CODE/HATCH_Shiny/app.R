@@ -45,8 +45,8 @@ ui <- fluidPage(
     ),
     conditionalPanel(
       condition = "input.gtype == 'Force-Directed'",
-      #visNetworkOutput("dGraph")
-      print("Force Directed")
+      visNetworkOutput("dGraph")
+      #print("Force Directed")
     )
     #mainPanel( plotOutput("bGraph") )
     #mainPanel( visNetworkOutput("dGraph") )
@@ -71,7 +71,12 @@ server <- function(input, output) {
       
       
       nutr <- getNutr()
-
+      nodes <- getNodes()
+      MAX_LEN <- 200
+      MIN_LEN <- 10
+      numNR <- nrow(nodes)-nrow(nutr)
+      
+      
         
         # Name the new crop columns
         #colnames(nutr) <- as.list(agData$FAO_CropName)
@@ -185,7 +190,8 @@ server <- function(input, output) {
       
       nutr <- getNutr()
       nodes <- getNodes()
-      
+      MAX_LEN <- 200
+      MIN_LEN <- 50
       numNR <- nrow(nodes)-nrow(nutr)
       
       # Name the new crop columns
@@ -270,12 +276,8 @@ server <- function(input, output) {
     })
     
     
-    output$dInput <- reactive({
-      paste0('You have selected: ', input$selectfile)
+    
 
-    })
-    
-    
     
     
     
@@ -316,6 +318,7 @@ server <- function(input, output) {
       
       # num of unique crops in data set
       numNR <- nrow(agData)
+      #numNR <- nrow(nodes)-nrow(nutr)
       
       # Assign unique id # to each, for binding to edges
       agData$Nutrient = agData$FAO_CropName
@@ -334,16 +337,24 @@ server <- function(input, output) {
       
       
       # Define graph nodes
+      # nodes <- data.frame(
+      #   id = nn$id,
+      #   level = nn$level,
+      #   label = nn$Nutrient,
+      #   group = nn$group,
+      #   font.size = 5,
+      #   size=10
+      # 
+      # )
       nodes <- data.frame(
         id = nn$id,
         level = nn$level,
         label = nn$Nutrient,
         group = nn$group,
-        font.size = 5,
-        size=10
+        font.size = 40,
+        size=50
         
       )
-      
       
       nodes
       
