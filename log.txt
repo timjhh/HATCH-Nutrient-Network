@@ -1,0 +1,7 @@
+11/8/21
+
+Accomplished:
+Resizing graph, reverted both graphs to VisNetwork types. I also abstracted some methods for getting data for less complexity
+
+Trying to accomplish:
+Resizing nodes based on graph type, calling fewer methods to ascertain data

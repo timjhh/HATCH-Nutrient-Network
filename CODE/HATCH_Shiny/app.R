@@ -39,17 +39,17 @@ ui <- fluidPage(
     #   condition = "input.gtype == 'Bipartite'",
     #   plotOutput("bGraph")
     # ),
-    conditionalPanel(
-      condition = "input.gtype == 'Bipartite'",
-      visNetworkOutput("bVisGraph")
-    ),
-    conditionalPanel(
-      condition = "input.gtype == 'Force-Directed'",
-      visNetworkOutput("dGraph")
-      #print("Force Directed")
-    )
+    # conditionalPanel(
+    #   condition = "input.gtype == 'Bipartite'",
+    #   visNetworkOutput("bVisGraph")
+    # ),
+    # conditionalPanel(
+    #   condition = "input.gtype == 'Force-Directed'",
+    #   visNetworkOutput("dGraph")
+    #   #print("Force Directed")
+    # )
     #mainPanel( plotOutput("bGraph") )
-    #mainPanel( visNetworkOutput("dGraph") )
+    mainPanel( visNetworkOutput("dGraph") )
 )
 
 
@@ -144,20 +144,51 @@ server <- function(input, output) {
 
         
         
-        
-        #
-        # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
-        # Or use option visEdges(smooth = FALSE)
-        # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
-        # 
-        visNetwork(nodes, edges, height = "100%", width = "100%",
-                   # Append title dynamically from selected country
-                   main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-          visOptions(highlightNearest = TRUE) %>%
+        if(input$gtype == "Force-Directed") {
           
-          #visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
-          visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
-                     forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))
+          
+
+          nodes$font.size = 80
+          nodes$size=80          
+
+                    #
+          # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
+          # Or use option visEdges(smooth = FALSE)
+          # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
+          # 
+          visNetwork(nodes, edges, height = "100%", width = "100%",
+                     # Append title dynamically from selected country
+                     main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+            visOptions(highlightNearest = TRUE) %>%
+            visEvents(type = "once", afterDrawing = "function() {
+            this.moveTo({scale:0.05})}") %>%
+            visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
+                       forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))   
+          
+          
+        } else {
+          
+          
+          nodes$font.size = 5
+          nodes$size=10
+          
+          
+          #
+          # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
+          # Or use option visEdges(smooth = FALSE)
+          # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
+          # 
+          visNetwork(nodes, edges, height = "100%", width = "100%",
+                     # Append title dynamically from selected country
+                     main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+            visOptions(highlightNearest = TRUE) %>%
+            visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+          
+          
+          
+        }
+        
+
         
 
     })
@@ -176,11 +207,6 @@ server <- function(input, output) {
       bip_railway(nutr, label=T, nodesize = 4)
   
     })
-    
-    
-    
-    
-    
     
     
     
@@ -315,7 +341,6 @@ server <- function(input, output) {
       MIN_LEN <- 10
       
       
-      
       # num of unique crops in data set
       numNR <- nrow(agData)
       #numNR <- nrow(nodes)-nrow(nutr)
@@ -336,7 +361,7 @@ server <- function(input, output) {
       nn <- dplyr::bind_rows(nutrients, agData)
       
       
-      # Define graph nodes
+      #Define graph nodes
       # nodes <- data.frame(
       #   id = nn$id,
       #   level = nn$level,
@@ -346,16 +371,27 @@ server <- function(input, output) {
       #   size=10
       # 
       # )
+      
+      # nodes <- data.frame(
+      #   id = nn$id,
+      #   level = nn$level,
+      #   label = nn$Nutrient,
+      #   group = nn$group,
+      #   font.size = 40,
+      #   size=50
+      #   
+      # )
+      
       nodes <- data.frame(
         id = nn$id,
         level = nn$level,
         label = nn$Nutrient,
-        group = nn$group,
-        font.size = 40,
-        size=50
+        group = nn$group
         
       )
       
+      
+      # Return nodes
       nodes
       
       
