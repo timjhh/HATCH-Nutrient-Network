@@ -118,7 +118,7 @@ server <- function(input, output) {
               nr$width <- nr$strength*7
               
               # Constant edge color
-              nr$color <- "rgba(75, 59, 115,0.8)"
+              nr$color <- "rgba(75, 59, 115,0.6)"
               
 
               
@@ -152,7 +152,8 @@ server <- function(input, output) {
           visNetwork(nodes, edges, height = 3200, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = list(enabled = TRUE, degree = 1, algorithm="hierarchical", degree=list(from=1,to=1)), dev.size("px")[1]*1.5) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
+                       height=dev.size("px")[1]*1.5) %>%
             visEvents(type = "once", afterDrawing = "function() {
             this.moveTo({scale:0.05})}") %>%
             visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
