@@ -160,15 +160,17 @@ server <- function(input, output) {
           nodes$size=10
           
           
-
-          getLevel <- function(d, edges) {
-            links <- edges %>% filter(to == d$id)
-            print(links)
-            d$level
+          getLevel <- function(d) {
+            if(d != 1) {
+              d = sample(2:3,1)
+            }
+            else {
+              d = 1
+            }
           }
           
           
-          lapply(nodes, getLevel, edges = edges)
+          nodes$level <- as.numeric(lapply(nodes$level, getLevel))
           
           #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -227,7 +229,7 @@ server <- function(input, output) {
       
       #colnames(nutrients) <- c("Nutrient", "group")
       agData$group = "C"
-      agData$level = 1
+      agData$level = 2
       
       
       # Maximum length of edges
@@ -245,7 +247,7 @@ server <- function(input, output) {
       
       # Do the same for each nutrient
       nutrients$id = 0
-      nutrients$level = 2
+      nutrients$level = 1
       nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
       
       
@@ -254,27 +256,7 @@ server <- function(input, output) {
       
       nn <- dplyr::bind_rows(nutrients, agData)
       
-      
-      #Define graph nodes
-      # nodes <- data.frame(
-      #   id = nn$id,
-      #   level = nn$level,
-      #   label = nn$Nutrient,
-      #   group = nn$group,
-      #   font.size = 5,
-      #   size=10
-      # 
-      # )
-      
-      # nodes <- data.frame(
-      #   id = nn$id,
-      #   level = nn$level,
-      #   label = nn$Nutrient,
-      #   group = nn$group,
-      #   font.size = 40,
-      #   size=50
-      #   
-      # )
+
       
       nodes <- data.frame(
         id = nn$id,
@@ -343,7 +325,7 @@ server <- function(input, output) {
       
       # Do the same for each nutrient
       nutrients$id = 0
-      nutrients$level = 2
+      nutrients$level = 1
       nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
       
       

@@ -66,6 +66,7 @@ nutr
 ```
 
 
+
 ``` {r t3, echo=FALSE}
 
 
@@ -255,5 +256,131 @@ nutr
       
 
 ```
+
+
+
+
+```{r newData}
+
+
+agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+
+# List of nutrient names
+nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+
+      nutrients <- as.data.frame(nnames)
+      nutrients$group = "N"
+      
+      nutrients <- rename(nutrients, Nutrient = nnames)
+      
+      
+      # Optional hard-coded nutrient selection
+      #nutrients <- data.frame(names(agData[12:37]), group="N")
+      
+      #colnames(nutrients) <- c("Nutrient", "group")
+      agData$group = "C"
+      agData$level = 1
+      
+      
+      # Maximum length of edges
+      MAX_LEN <- 100
+      MIN_LEN <- 10
+      
+      
+      # num of unique crops in data set
+      numNR <- nrow(agData)
+      #numNR <- nrow(nodes)-nrow(nutr)
+      
+      # Assign unique id # to each, for binding to edges
+      agData$Nutrient = agData$FAO_CropName
+      agData <- agData %>% rename(id = X)
+      
+      # Do the same for each nutrient
+      nutrients$id = 0
+      nutrients$level = 2
+      nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
+      
+      
+      # Unique id #s for crop data
+      agList <- as.list(agData$id)
+      
+      nn <- dplyr::bind_rows(nutrients, agData)
+      
+      
+      #Define graph nodes
+      # nodes <- data.frame(
+      #   id = nn$id,
+      #   level = nn$level,
+      #   label = nn$Nutrient,
+      #   group = nn$group,
+      #   font.size = 5,
+      #   size=10
+      # 
+      # )
+      
+      # nodes <- data.frame(
+      #   id = nn$id,
+      #   level = nn$level,
+      #   label = nn$Nutrient,
+      #   group = nn$group,
+      #   font.size = 40,
+      #   size=50
+      #   
+      # )
+      
+      nodes <- data.frame(
+        id = nn$id,
+        level = nn$level,
+        label = nn$Nutrient,
+        group = nn$group
+        
+      )
+
+```
+
+``` {r bipLevel}
+
+#
+# getLevel <- function(d) {
+# 
+#   if(d[['level']] == 1) {
+#     print(sample(2:3,1))
+#     d[['level']] <- sample(2:3,1)
+#   }
+#   
+#   # tmp <- edges %>% filter(edges$to == d[['id']])
+#   # str <- mean(tmp$strength)
+# 
+#   d
+#   
+# }
+
+#  
+# apply(nodes, 1, getLevel)
+ nodes
+
+getLevel <- function(d) {
+  if(d != 1) {
+    d = sample(2:3,1)
+  }
+  else {
+    d = 2
+  }
+}
+
+
+nodes$level <- as.numeric(lapply(nodes$level, getLevel))
+nodes
+
+#subset <- nodes %>% filter(nodes$level == 1)
+#apply(subset)
+
+#realNodes <- getLevel(nodes)
+
+```
+
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
