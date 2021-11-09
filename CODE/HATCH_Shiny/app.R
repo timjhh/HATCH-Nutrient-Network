@@ -147,7 +147,7 @@ server <- function(input, output) {
           visNetwork(nodes, edges, height = 3200, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = TRUE) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, degree = 1, algorithm="hierarchical", degree=list(from=1,to=1))) %>%
             visEvents(type = "once", afterDrawing = "function() {
             this.moveTo({scale:0.05})}") %>%
             visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
@@ -183,8 +183,7 @@ server <- function(input, output) {
           visNetwork(nodes, edges, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = list(enabled = TRUE, degree = 1)) %>%
-            visEdges(color = list(highlight = "red", hover = "green", hideColor="purple")) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1))) %>%
             # visEvents(type = "once", afterDrawing = "function() {
             # this.moveTo({scale:1.5})}") %>%
             visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=200, parentCentralization= FALSE)
