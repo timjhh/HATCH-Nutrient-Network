@@ -2,6 +2,13 @@
 
 Accomplished:
 Resizing graph, reverted both graphs to VisNetwork types. I also abstracted some methods for getting data for less complexity
+I removed a lot of old code, and simplified some function calls
+I added more layering to the bipartite graph, and found a way to highlight nodes more effectively.
+The coloring seems buggy, but now nodes are distinctly viewable
 
 Trying to accomplish:
-Resizing nodes based on graph type, calling fewer methods to ascertain data
+Resizing nodes based on graph type, calling fewer methods to ascertain data.
+I'd love to find a way to make bipartite graphs easier to read, and start them more zoomed in
+It seems line thickness is also tricky, as you cannot go much thinner than the default - perhaps
+changing opacity would be better?
+Finally, I worked with the canvas size but failed to make it any bigger

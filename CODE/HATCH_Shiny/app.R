@@ -112,8 +112,9 @@ server <- function(input, output) {
               #Alternatively, normalize the data point by its nutritional value
               #nr$strength <- (str-minimum)/(maximum-minimum)
               
+              nr$width <- nrow(nr$strength*4)
               
-              
+              nr$arrow <- c("to")
               
               # Assign a strength based on the maximum
               ### NOTE - A better weighting system will have to be applied, as most links are not strong
@@ -157,12 +158,13 @@ server <- function(input, output) {
           
           
           nodes$font.size = 10
+          nodes$font.align = "top"
           nodes$size=10
           
-          
-          getLevel <- function(d) {
+          # Generate random level from [2,4] for more readable hierarchal view
+          randLevel <- function(d) {
             if(d != 1) {
-              d = sample(2:3,1)
+              d = sample(2:4,1)
             }
             else {
               d = 1
@@ -170,7 +172,7 @@ server <- function(input, output) {
           }
           
           
-          nodes$level <- as.numeric(lapply(nodes$level, getLevel))
+          nodes$level <- as.numeric(lapply(nodes$level, randLevel))
           
           #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -180,7 +182,10 @@ server <- function(input, output) {
           visNetwork(nodes, edges, height = "100%", width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = TRUE) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, degree = 1)) %>%
+            visEdges(color = list(highlight = "red", hover = "green", hideColor="purple")) %>%
+            # visEvents(type = "once", afterDrawing = "function() {
+            # this.moveTo({scale:1.5})}") %>%
             visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=200, parentCentralization= FALSE)
           
           
