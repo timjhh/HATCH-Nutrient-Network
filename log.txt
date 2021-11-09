@@ -12,3 +12,10 @@ I'd love to find a way to make bipartite graphs easier to read, and start them m
 It seems line thickness is also tricky, as you cannot go much thinner than the default - perhaps
 changing opacity would be better?
 Finally, I worked with the canvas size but failed to make it any bigger
+
+11/9/21
+
+Accomplished:
+Met with Charlie and discussed progress, reorganized bipartite/force-directed inputs during meeting
+
+Fixed two-way viewing of nodes/edges, and i'm currently changing edge colors to give contrast between nodes and edges. Also playing with opacity for edges

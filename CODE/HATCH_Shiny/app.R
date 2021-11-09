@@ -35,7 +35,7 @@ ui <- fluidPage(
 
     ),
 
-    mainPanel( visNetworkOutput("dGraph"), height = 3200 )
+    mainPanel( visNetworkOutput("dGraph"), height = "100%" )
 )
 
 
@@ -113,9 +113,14 @@ server <- function(input, output) {
               #nr$strength <- (str-minimum)/(maximum-minimum)
               
               # Constant for maximum link width
-              nr$width <- nr$strength*6
+              # This will scale strength[0,1] by a scalar factor so
+              # stronger connections appear thicker
+              nr$width <- nr$strength*7
               
-              nr$arrow <- c("to")
+              # Constant edge color
+              nr$color <- "rgba(75, 59, 115,0.8)"
+              
+
               
               # Assign a strength based on the maximum
               ### NOTE - A better weighting system will have to be applied, as most links are not strong
@@ -147,7 +152,7 @@ server <- function(input, output) {
           visNetwork(nodes, edges, height = 3200, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = list(enabled = TRUE, degree = 1, algorithm="hierarchical", degree=list(from=1,to=1))) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, degree = 1, algorithm="hierarchical", degree=list(from=1,to=1)), dev.size("px")[1]*1.5) %>%
             visEvents(type = "once", afterDrawing = "function() {
             this.moveTo({scale:0.05})}") %>%
             visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
@@ -183,10 +188,11 @@ server <- function(input, output) {
           visNetwork(nodes, edges, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1))) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
+            height=dev.size("px")[1]*1.5) %>%
             # visEvents(type = "once", afterDrawing = "function() {
             # this.moveTo({scale:1.5})}") %>%
-            visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=200, parentCentralization= FALSE)
+            visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=10, parentCentralization= FALSE)
           
           
           

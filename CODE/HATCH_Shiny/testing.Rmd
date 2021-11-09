@@ -379,6 +379,10 @@ nodes
 
 #realNodes <- getLevel(nodes)
 
+ dev.size("px")[1]
+ agData
+ nodes
+
 ```
 
 
