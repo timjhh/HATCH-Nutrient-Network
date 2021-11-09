@@ -35,7 +35,7 @@ ui <- fluidPage(
 
     ),
 
-    mainPanel( visNetworkOutput("dGraph"), style = "height: 400%;" )
+    mainPanel( visNetworkOutput("dGraph"), height = 3200 )
 )
 
 
@@ -112,7 +112,8 @@ server <- function(input, output) {
               #Alternatively, normalize the data point by its nutritional value
               #nr$strength <- (str-minimum)/(maximum-minimum)
               
-              nr$width <- nrow(nr$strength*4)
+              # Constant for maximum link width
+              nr$width <- nr$strength*6
               
               nr$arrow <- c("to")
               
@@ -143,7 +144,7 @@ server <- function(input, output) {
           # Or use option visEdges(smooth = FALSE)
           # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
           # 
-          visNetwork(nodes, edges, height = "100%", width = "100%",
+          visNetwork(nodes, edges, height = 3200, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
             visOptions(highlightNearest = TRUE) %>%
@@ -179,7 +180,7 @@ server <- function(input, output) {
           # Or use option visEdges(smooth = FALSE)
           # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
           # 
-          visNetwork(nodes, edges, height = "100%", width = "100%",
+          visNetwork(nodes, edges, width = "100%",
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
             visOptions(highlightNearest = list(enabled = TRUE, degree = 1)) %>%
@@ -447,7 +448,7 @@ server <- function(input, output) {
     # Dynamic UI rendering for years
     output$graphType <- renderUI({
       
-      radioButtons('gtype', 'Graph Type', c('Force-Directed', 'Bipartite'),
+      radioButtons('gtype', 'Graph Type', c('Bipartite', 'Force-Directed'),
           'Bipartite', inline=TRUE) 
 
       
