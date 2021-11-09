@@ -12,7 +12,6 @@ devtools::install_github("pedroj/bipartite_plots")
 
 library(shiny)
 library(ggplot2)
-library(ggbipart)
 library(tidyverse)
 library(dplyr)
 library(visNetwork)
@@ -32,24 +31,11 @@ ui <- fluidPage(
         uiOutput("countryYears"),
         
         uiOutput("graphType")
-    # selectInput('selectfile','Select Country',input$countries),
+
 
     ),
-    # conditionalPanel(
-    #   condition = "input.gtype == 'Bipartite'",
-    #   plotOutput("bGraph")
-    # ),
-    # conditionalPanel(
-    #   condition = "input.gtype == 'Bipartite'",
-    #   visNetworkOutput("bVisGraph")
-    # ),
-    # conditionalPanel(
-    #   condition = "input.gtype == 'Force-Directed'",
-    #   visNetworkOutput("dGraph")
-    #   #print("Force Directed")
-    # )
-    #mainPanel( plotOutput("bGraph") )
-    mainPanel( visNetworkOutput("dGraph") )
+
+    mainPanel( visNetworkOutput("dGraph"), style = "height: 400%;" )
 )
 
 
@@ -151,7 +137,7 @@ server <- function(input, output) {
           nodes$font.size = 80
           nodes$size=80          
 
-                    #
+          #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
           # Or use option visEdges(smooth = FALSE)
           # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
@@ -169,9 +155,20 @@ server <- function(input, output) {
         } else {
           
           
-          nodes$font.size = 5
+          
+          nodes$font.size = 10
           nodes$size=10
           
+          
+
+          getLevel <- function(d, edges) {
+            links <- edges %>% filter(to == d$id)
+            print(links)
+            d$level
+          }
+          
+          
+          lapply(nodes, getLevel, edges = edges)
           
           #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -182,7 +179,7 @@ server <- function(input, output) {
                      # Append title dynamically from selected country
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
             visOptions(highlightNearest = TRUE) %>%
-            visHierarchicalLayout(sortMethod = "directed",levelSeparation = 750,nodeSpacing=200, parentCentralization= FALSE)
+            visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=200, parentCentralization= FALSE)
           
           
           
@@ -193,116 +190,13 @@ server <- function(input, output) {
 
     })
     
-
     
-    output$bGraph <- renderPlot({
-      
-
-      nutr <- getNutr()
-      
-      
-      print("abcd")
-      print(nutr)
-      
-      bip_railway(nutr, label=T, nodesize = 4)
-  
-    })
-    
-    
-    
-    
-    output$bVisGraph <- renderVisNetwork({
-      
-      
-      nutr <- getNutr()
-      nodes <- getNodes()
-      MAX_LEN <- 200
-      MIN_LEN <- 50
-      numNR <- nrow(nodes)-nrow(nutr)
-      
-      # Name the new crop columns
-      #colnames(nutr) <- as.list(agData$FAO_CropName)
-      #nutr <- cbind(nnames, nutr)
-      
-      # Create shell for edges data with column names
-      edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
-      
-      for(i in 1:nrow(nutr)) {
-        
-        
-        # Select each nutrient row, remove missing values
-        nums <- unlist(nutr[i,])
-        nums <- nums[!is.na(nums)]
-        
-        # Find the maximum of each link to adjust the edge length accordingly
-        maximum <- max(nums)
-        minimum <- min(nums)
-        
-        # To normalize the data, we'll need
-        stddev <- sd(nums)
-        mean <- mean(nums)
-        
-        
-        for(j in 1:(ncol(nutr))) {  
-          
-          # Strength is the intersection of:
-          # i - The nutrient
-          # j - The crop
-          str <- nutr[i,j]
-          
-          # Check for validity / existence of this node
-          if(!(is.na(str)) && as.numeric(str) > 0) {
-            
-            # Create a new row with the nutrient information
-            nr <- nutr[i,]
-            
-            # The link will come from a nutrient
-            nr$from <- i+numNR
-            
-            # The link will lead to a crop
-            nr$to <- j
-            
-            # This is the cell connecting [crop,nutrient], how much one contains
-            nr$strength <- (str / maximum)
-            
-            #Alternatively, normalize the data point by its nutritional value
-            #nr$strength <- (str-minimum)/(maximum-minimum)
-            
-            
-            
-            
-            # Assign a strength based on the maximum
-            ### NOTE - A better weighting system will have to be applied, as most links are not strong
-            nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
-            
-            
-            # Finally, bind this row to the edge collection
-            edges <- dplyr::bind_rows(edges, nr)
-            
-          }
-        }
-      }
-      
-      
-      
-      
-      #
-      # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
-      # Or use option visEdges(smooth = FALSE)
-      # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
-      # 
-      visNetwork(nodes, edges, height = "100%", width = "100%",
-                 # Append title dynamically from selected country
-                 main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-        visOptions(highlightNearest = TRUE) %>%
-        visHierarchicalLayout(sortMethod = "directed",nodeSpacing=50, parentCentralization= FALSE)
-      
-      
-      
-    })
-    
-    
-    
+    # 
+    # adjustNodes <- reactive({
+    #   
+    #     
+    #   
+    # })
 
     
     
@@ -405,11 +299,6 @@ server <- function(input, output) {
     
     
     
-    
-    
-    
-    
-    
     getNutr <- reactive({
 
       
@@ -495,8 +384,6 @@ server <- function(input, output) {
     
     
     
-    
-    
 
     
     
@@ -574,20 +461,11 @@ server <- function(input, output) {
     output$graphType <- renderUI({
       
       radioButtons('gtype', 'Graph Type', c('Force-Directed', 'Bipartite'),
-          'Force-Directed', inline=TRUE) 
+          'Bipartite', inline=TRUE) 
 
       
       
     })
-    
-  
-    
-    
-    
-    
-    
-    
-    
     
     
     
