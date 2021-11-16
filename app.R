@@ -8,8 +8,6 @@
 #
 
 
-devtools::install_github("pedroj/bipartite_plots")
-
 library(shiny)
 library(ggplot2)
 library(tidyverse)
