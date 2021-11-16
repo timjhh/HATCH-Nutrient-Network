@@ -1,0 +1,11 @@
+name: code
+title:
+username:
+account: nutrinet
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5138565
+bundleId: 5258767
+url: https://nutrinet.shinyapps.io/code/
+when: 1637082653.56535
+lastSyncTime: 1637082653.56535

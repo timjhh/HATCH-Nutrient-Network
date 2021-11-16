@@ -15,7 +15,7 @@ library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(visNetwork)
-source("directed_graph.R")
+library(rsconnect)
 
 
 # Define UI for application that draws a histogram
@@ -227,7 +227,7 @@ server <- function(input, output) {
       file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
       
       
-      agData <- read.csv(paste("../../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+      agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
       
       # List of nutrient names
       nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -306,7 +306,7 @@ server <- function(input, output) {
       file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
       
       
-      agData <- read.csv(paste("../../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+      agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
       
       # List of nutrient names
       nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -382,7 +382,7 @@ server <- function(input, output) {
     ### GET AVAILABLE FILE OPTIONS
     ### STRIP EXTENSIONS FROM FILE NAMES
     ###
-    allFiles <- tools::file_path_sans_ext(list.files("../../DATA_INPUTS/Tabular_data_inputs/"))
+    allFiles <- tools::file_path_sans_ext(list.files("../DATA_INPUTS/Tabular_data_inputs/"))
     
     # Function to get the country name from a string
     # By splitting with our separator _ and returning the first word

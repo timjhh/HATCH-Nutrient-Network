@@ -27,7 +27,7 @@ When you click the **Knit** button a document will be generated that includes bo
 #   unlist(strsplit(d, '_'))[1]
 # }
 # 
-# allFiles <- list.files("../../DATA_INPUTS/Tabular_data_inputs/")
+# allFiles <- list.files("../DATA_INPUTS/Tabular_data_inputs/")
 # countries <- unique(lapply(allFiles, getToken))
 
 
@@ -71,8 +71,8 @@ nutr
 
 
 # Load data
-#agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
-agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+#agData <- read.csv("../DATA_INPUTS/Tabular_data_inputs/Afghanistan_ImportsGlobalConstrained_2019.csv")
+agData <- read.csv("../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
 
 # List of nutrient names
 nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -225,7 +225,7 @@ for(i in 1:nrow(nutr)) {
 # edges
 # nutr
 
-#mymat <- read.delim("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv", row.names=1)   # Not run.
+#mymat <- read.delim("../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv", row.names=1)   # Not run.
 # g<- bip_railway(nutr, label=T, nodesize = 4) + geom_text(aes(label= colnames(nutr)), angle<- ifelse(colnames(nutr)[1:dim(nutr)[1]], 0, 45), nudge_x<- ifelse(colnames(nutr)[1:dim(nutr)[1]], 0.5, -0.5))
 #g + coord_flip()
 
@@ -263,7 +263,7 @@ nutr
 ```{r newData}
 
 
-agData <- read.csv("../../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+agData <- read.csv("../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
 
 # List of nutrient names
 nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
