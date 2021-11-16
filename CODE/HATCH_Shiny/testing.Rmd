@@ -337,6 +337,8 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
         group = nn$group
         
       )
+      
+      nodes
 
 ```
 
@@ -360,19 +362,57 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
 #  
 # apply(nodes, 1, getLevel)
  nodes
+# 
+# getLevel <- function(d) {
+#   if(d != 1) {
+#     d = sample(2:3,1)
+#   }
+#   else {
+#     d = 2
+#   }
+# }
 
+# Take two
+# getLevel <- function(d) {
+#   if(!d %in% nnames) {
+#     letter = tolower(substr(d,1,1))
+#     if(letter < 'g') {
+#       2
+#     } else if(letter >= 'g' && letter < 'p') {
+#       3
+#     } else {
+#      4 
+#     }
+#   }
+# 
+# }
+# 
+# nodes$level <- as.numeric(lapply(nodes$label, getLevel))
+# nodes
+
+
+# Take three
 getLevel <- function(d) {
-  if(d != 1) {
-    d = sample(2:3,1)
+  if(!d %in% nnames) {
+    letter = tolower(substr(d,1,1))
+    if(letter < 'g') {
+      return(2)
+    } else if(letter >= 'g' && letter < 'p') {
+      return(3)
+    } else {
+     return(4)
+    }
+  } else {
+    return(1)
   }
-  else {
-    d = 2
-  }
+
 }
 
-
-nodes$level <- as.numeric(lapply(nodes$level, getLevel))
+nodes$level <- as.numeric(lapply(nodes$label, getLevel))
 nodes
+
+
+
 
 #subset <- nodes %>% filter(nodes$level == 1)
 #apply(subset)

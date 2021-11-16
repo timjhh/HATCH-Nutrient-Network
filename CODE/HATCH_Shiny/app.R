@@ -21,11 +21,10 @@ source("directed_graph.R")
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
-    titlePanel("HATCH Project"),
+    #titlePanel("HATCH Project"),
 
     sidebarPanel(
 
-        
         uiOutput("countries"),
         uiOutput("countryTypes"),
         uiOutput("countryYears"),
@@ -118,9 +117,9 @@ server <- function(input, output) {
               nr$width <- nr$strength*7
               
               # Constant edge color
-              nr$color <- "rgba(75, 59, 115,0.6)"
-              
-
+              #nr$color <- "rgba(75, 59, 115,0.6)"
+              #nr$color <- "rgba(160,160,160,0.8)"
+              nr$color <- "rgba(62,125,196,0.8)"
               
               # Assign a strength based on the maximum
               ### NOTE - A better weighting system will have to be applied, as most links are not strong
@@ -143,7 +142,7 @@ server <- function(input, output) {
 
           nodes$font.size = 80
           nodes$size=80          
-
+          
           #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
           # Or use option visEdges(smooth = FALSE)
@@ -169,17 +168,35 @@ server <- function(input, output) {
           nodes$size=10
           
           # Generate random level from [2,4] for more readable hierarchal view
-          randLevel <- function(d) {
-            if(d != 1) {
-              d = sample(2:4,1)
+          # randLevel <- function(d) {
+          #   if(d != 1) {
+          #     d = sample(2:4,1)
+          #   }
+          #   else {
+          #     d = 1
+          #   }
+          # }
+          
+          # Generate a level by sorting labels alphabetically
+          getLevel <- function(d) {
+            if(!d %in% nnames) {
+              letter = tolower(substr(d,1,1))
+              if(letter < 'g') {
+                return(2)
+              } else if(letter >= 'g' && letter < 'p') {
+                return(3)
+              } else {
+                return(4)
+              }
+            } else {
+              return(1)
             }
-            else {
-              d = 1
-            }
+            
           }
           
+          nodes$level <- as.numeric(lapply(nodes$label, getLevel))
           
-          nodes$level <- as.numeric(lapply(nodes$level, randLevel))
+          #nodes$level <- as.numeric(lapply(nodes$level, randLevel))
           
           #
           # To further increase performance, consider placing ', stabilization = FALSE' into visPhysics()
@@ -191,8 +208,6 @@ server <- function(input, output) {
                      main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
             visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
             height=dev.size("px")[1]*1.5) %>%
-            # visEvents(type = "once", afterDrawing = "function() {
-            # this.moveTo({scale:1.5})}") %>%
             visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=10, parentCentralization= FALSE)
           
           
@@ -203,16 +218,6 @@ server <- function(input, output) {
         
 
     })
-    
-    
-    # 
-    # adjustNodes <- reactive({
-    #   
-    #     
-    #   
-    # })
-
-    
     
     
     getNodes <- reactive({
@@ -274,7 +279,8 @@ server <- function(input, output) {
         id = nn$id,
         level = nn$level,
         label = nn$Nutrient,
-        group = nn$group
+        group = nn$group,
+        font.strokeWidth = 4
         
       )
       
@@ -346,16 +352,7 @@ server <- function(input, output) {
       
       nn <- dplyr::bind_rows(nutrients, agData)
       
-      
-      # Define graph nodes
-      nodes <- data.frame(
-        id = nn$id,
-        label = nn$Nutrient,
-        group = nn$group,
-        font.size = 60,
-        size=40
-        
-      )
+
       
       
       
