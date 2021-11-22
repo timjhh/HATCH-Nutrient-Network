@@ -8,23 +8,18 @@ library(rsconnect)
 fluidPage(
   
   
-  fluidRow(column(12, titlePanel("NutriNet Visualizations")
+  fluidRow(column(width=6 , titlePanel("NutriNet Visualizations")
     ,style=('text-align: center;'),),
     
     
     ),
-  # fluidRow(
-  #   align="center",
-  #   style="margin:1%",
-  #   actionButton('insertBtn', 'Insert Graph'), 
-  #   actionButton('removeBtn', 'Remove Graph'), 
-  #   tags$div(id = 'placeholder') 
-  # ),
+
   fluidRow(
     align="center",
     style="margin:1%",
-    actionButton('toggleBtn', 'Add Secondary Graph'), 
-    tags$div(id = 'placeholder') 
+    #actionButton('toggleBtn', 'Add Secondary Graph'), 
+    uiOutput("showTwo")
+    #tags$div(id = 'placeholder') 
   ),
   
   fluidRow(
@@ -38,6 +33,13 @@ fluidPage(
   ),
   fluidRow(
     visNetworkOutput("dGraph")
+  ),
+  conditionalPanel(
+    condition = ("'input.showTwo' == TRUE"),
+    column(width=6 , visNetworkOutput("dGraph2")
+                    ,style=('text-align: center;'))
+    
+    
   )
 
   # sidebarPanel(
