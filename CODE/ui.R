@@ -13,17 +13,23 @@ fluidPage(
     
     
     ),
+  # fluidRow(
+  #   align="center",
+  #   style="margin:1%",
+  #   actionButton('insertBtn', 'Insert Graph'), 
+  #   actionButton('removeBtn', 'Remove Graph'), 
+  #   tags$div(id = 'placeholder') 
+  # ),
   fluidRow(
     align="center",
     style="margin:1%",
-    actionButton('insertBtn', 'Insert Graph'), 
-    actionButton('removeBtn', 'Remove Graph'), 
+    actionButton('toggleBtn', 'Add Secondary Graph'), 
     tags$div(id = 'placeholder') 
   ),
   
   fluidRow(
     style=('background-color:coral;
-    width:50%; display:flex; flex-wrap:wrap; margin:1%; padding:1%;'),
+    width:50%; display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
     uiOutput("countries"),
     uiOutput("countryTypes"),
     uiOutput("countryYears"),
@@ -31,7 +37,7 @@ fluidPage(
     
   ),
   fluidRow(
-    visNetworkOutput("dGraph"), height = "100%"
+    visNetworkOutput("dGraph")
   )
 
   # sidebarPanel(

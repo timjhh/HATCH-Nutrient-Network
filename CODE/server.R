@@ -18,15 +18,18 @@ function(input, output) {
   
   inserted <- c()
   
-  observeEvent(input$insertBtn, {
-    btn <- input$insertBtn
+  observeEvent(input$toggleBtn, {
+    btn <- input$toggleBtn
     id <- paste0('txt', btn)
     insertUI(
       selector = '#placeholder',
       ## wrap element in a div with id for ease of removal
       ui = tags$div(
-        tags$p(paste('Element number', btn)), 
+        #tags$p(paste('Element number', btn)), 
+        #tags$p(paste('Element number', btn)),
+        visNetworkOutput("dGraph2")
         id = id
+        
       )
     )
     inserted <<- c(id, inserted)
@@ -43,7 +46,7 @@ function(input, output) {
   
   
   
-  output$dGraph <- renderVisNetwork({
+  output$dGraph <- output$dGraph2 <- renderVisNetwork({
     
     
     nodesNutr <- getNodes()
@@ -240,7 +243,7 @@ function(input, output) {
     
     # Load data
     file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
-    print(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+    
     agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
     
     # List of nutrient names
