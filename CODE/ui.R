@@ -14,20 +14,19 @@ fluidPage(
     
     ),
   fluidRow(
-    style=('display:center-align;'),
+    align="center",
+    style="margin:1%",
     actionButton('insertBtn', 'Insert Graph'), 
     actionButton('removeBtn', 'Remove Graph'), 
     tags$div(id = 'placeholder') 
   ),
   
   fluidRow(
-    
     style=('background-color:coral;
-    width:50%; display:flex; flex-wrap:wrap;'),
+    width:50%; display:flex; flex-wrap:wrap; margin:1%; padding:1%;'),
     uiOutput("countries"),
     uiOutput("countryTypes"),
     uiOutput("countryYears"),
-
     uiOutput("graphType")
     
   ),

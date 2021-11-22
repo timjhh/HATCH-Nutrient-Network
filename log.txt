@@ -24,3 +24,4 @@ Fixed two-way viewing of nodes/edges, and i'm currently changing edge colors to 
 
 Accomplished:
 Re-writing code to remove getNutr() and getNodes(), to have one main method that returns nutr and nodes
+Re-wrote UI elements to put graph and selectors into one box, allowing for multiple graphs to exist
