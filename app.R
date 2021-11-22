@@ -53,11 +53,20 @@ server <- function(input, output) {
     output$dGraph <- renderVisNetwork({
       
       
-      nutr <- getNutr()
-      nodes <- getNodes()
+      #nutr <- getNutr()
+      #nodes <- getNodes()
+      
+      # Create data frame with nutrients as rows, crops as columns
+  
+      nodesNutr <- getNodes()
+      nodes <- nodesNutr[['nodes']]
+      nutr <- nodesNutr[['nutr']]
+
       MAX_LEN <- 200
       MIN_LEN <- 10
       numNR <- nrow(nodes)-nrow(nutr)
+      
+      
       
       
         
@@ -247,6 +256,8 @@ server <- function(input, output) {
       agData$level = 2
       
       
+      
+      
       # Maximum length of edges
       MAX_LEN <- 100
       MIN_LEN <- 10
@@ -282,9 +293,11 @@ server <- function(input, output) {
         
       )
       
+      nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
+      colnames(nutr) <- as.list(agData$FAO_CropName)
       
       # Return nodes
-      nodes
+      list(nodes=nodes,nutr=nutr)
       
       
     })
@@ -323,7 +336,7 @@ server <- function(input, output) {
       
       #colnames(nutrients) <- c("Nutrient", "group")
       agData$group = "C"
-      agData$level = 1
+      agData$level = 2
       
       
       # Maximum length of edges
@@ -349,8 +362,6 @@ server <- function(input, output) {
       agList <- as.list(agData$id)
       
       nn <- dplyr::bind_rows(nutrients, agData)
-      
-
       
       
       

@@ -262,14 +262,21 @@ nutr
 
 ```{r newData}
 
-
-agData <- read.csv("../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
-
-# List of nutrient names
-nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
-
+getNodes <- function() {
+      
+      
+      # Load data
+      #file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
+      agData <- read.csv("../DATA_INPUTS/Tabular_data_inputs/Algeria_Production_2019.csv")
+      
+      #agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+      
+      # List of nutrient names
+      nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+                  "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+                  "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+      
+      
       nutrients <- as.data.frame(nnames)
       nutrients$group = "N"
       
@@ -281,7 +288,7 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
       
       #colnames(nutrients) <- c("Nutrient", "group")
       agData$group = "C"
-      agData$level = 1
+      agData$level = 2
       
       
       # Maximum length of edges
@@ -299,7 +306,7 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
       
       # Do the same for each nutrient
       nutrients$id = 0
-      nutrients$level = 2
+      nutrients$level = 1
       nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
       
       
@@ -308,37 +315,28 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
       
       nn <- dplyr::bind_rows(nutrients, agData)
       
-      
-      #Define graph nodes
-      # nodes <- data.frame(
-      #   id = nn$id,
-      #   level = nn$level,
-      #   label = nn$Nutrient,
-      #   group = nn$group,
-      #   font.size = 5,
-      #   size=10
-      # 
-      # )
-      
-      # nodes <- data.frame(
-      #   id = nn$id,
-      #   level = nn$level,
-      #   label = nn$Nutrient,
-      #   group = nn$group,
-      #   font.size = 40,
-      #   size=50
-      #   
-      # )
+
       
       nodes <- data.frame(
         id = nn$id,
         level = nn$level,
         label = nn$Nutrient,
-        group = nn$group
+        group = nn$group,
+        font.strokeWidth = 4
         
       )
       
-      nodes
+      nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
+      colnames(nutr) <- as.list(agData$FAO_CropName)
+      
+      # Return nodes
+      list(nodes = nodes,nutr = nutr)
+      
+      
+    }
+
+  ab <- getNodes()
+  ab[['nutr']]
 
 ```
 
