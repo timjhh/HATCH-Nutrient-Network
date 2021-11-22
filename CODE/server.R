@@ -16,13 +16,36 @@ function(input, output) {
     
   })
   
+  inserted <- c()
+  
+  observeEvent(input$insertBtn, {
+    btn <- input$insertBtn
+    id <- paste0('txt', btn)
+    insertUI(
+      selector = '#placeholder',
+      ## wrap element in a div with id for ease of removal
+      ui = tags$div(
+        tags$p(paste('Element number', btn)), 
+        id = id
+      )
+    )
+    inserted <<- c(id, inserted)
+  })
+  
+  observeEvent(input$removeBtn, {
+    removeUI(
+      ## pass in appropriate div id
+      selector = paste0('#', inserted[length(inserted)])
+    )
+    inserted <<- inserted[-length(inserted)]
+  })
+  
+  
   
   
   output$dGraph <- renderVisNetwork({
     
     
-    #nutr <- getNutr()
-    #nodes <- getNodes()
     nodesNutr <- getNodes()
     nodes <- nodesNutr[['nodes']]
     nutr <- nodesNutr[['nutr']]
@@ -38,6 +61,23 @@ function(input, output) {
     
     # Create shell for edges data with column names
     edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     for(i in 1:nrow(nutr)) {
       
@@ -193,6 +233,8 @@ function(input, output) {
   })
   
   
+  
+  
   getNodes <- reactive({
     
     
@@ -269,82 +311,6 @@ function(input, output) {
     
   })
   
-  
-  
-  
-  
-  
-  
-  
-  
-  getNutr <- reactive({
-    
-    
-    # Load data
-    file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
-    
-    
-    agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
-    
-    # List of nutrient names
-    nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-                "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-                "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
-    
-    
-    nutrients <- as.data.frame(nnames)
-    nutrients$group = "N"
-    
-    nutrients <- rename(nutrients, Nutrient = nnames)
-    
-    
-    # Optional hard-coded nutrient selection
-    #nutrients <- data.frame(names(agData[12:37]), group="N")
-    
-    #colnames(nutrients) <- c("Nutrient", "group")
-    agData$group = "C"
-    agData$level = 1
-    
-    
-    # Maximum length of edges
-    MAX_LEN <- 100
-    MIN_LEN <- 10
-    
-    
-    
-    # num of unique crops in data set
-    numNR <- nrow(agData)
-    
-    # Assign unique id # to each, for binding to edges
-    agData$Nutrient = agData$FAO_CropName
-    agData <- agData %>% rename(id = X)
-    
-    # Do the same for each nutrient
-    nutrients$id = 0
-    nutrients$level = 1
-    nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
-    
-    
-    # Unique id #s for crop data
-    agList <- as.list(agData$id)
-    
-    nn <- dplyr::bind_rows(nutrients, agData)
-    
-    
-    
-    
-    
-    # Create data frame with nutrients as rows, crops as columns
-    
-    nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
-    colnames(nutr) <- as.list(agData$FAO_CropName)
-    
-    
-    nutr
-    
-    
-    
-  })
   
   
   output$table <- renderDataTable(agData)
