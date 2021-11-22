@@ -19,3 +19,8 @@ Accomplished:
 Met with Charlie and discussed progress, reorganized bipartite/force-directed inputs during meeting
 
 Fixed two-way viewing of nodes/edges, and i'm currently changing edge colors to give contrast between nodes and edges. Also playing with opacity for edges
+
+11/22/21
+
+Accomplished:
+Re-writing code to remove getNutr() and getNodes(), to have one main method that returns nutr and nodes

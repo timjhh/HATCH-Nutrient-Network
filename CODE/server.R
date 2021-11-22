@@ -21,8 +21,11 @@ function(input, output) {
   output$dGraph <- renderVisNetwork({
     
     
-    nutr <- getNutr()
-    nodes <- getNodes()
+    #nutr <- getNutr()
+    #nodes <- getNodes()
+    nodesNutr <- getNodes()
+    nodes <- nodesNutr[['nodes']]
+    nutr <- nodesNutr[['nutr']]
     MAX_LEN <- 200
     MIN_LEN <- 10
     numNR <- nrow(nodes)-nrow(nutr)
@@ -127,6 +130,10 @@ function(input, output) {
       
     } else {
       
+      # List of nutrient names
+      nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+                  "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+                  "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
       
       
       nodes$font.size = 10
@@ -191,8 +198,7 @@ function(input, output) {
     
     # Load data
     file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
-    
-    
+    print(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
     agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
     
     # List of nutrient names
@@ -213,6 +219,8 @@ function(input, output) {
     #colnames(nutrients) <- c("Nutrient", "group")
     agData$group = "C"
     agData$level = 2
+    
+    
     
     
     # Maximum length of edges
@@ -250,9 +258,13 @@ function(input, output) {
       
     )
     
+    nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
+    colnames(nutr) <- as.list(agData$FAO_CropName)
     
-    # Return nodes
-    nodes
+    # Return nodes and nutrient data frame as list
+    list(nodes=nodes,nutr=nutr)
+    
+
     
     
   })
