@@ -25,3 +25,11 @@ Fixed two-way viewing of nodes/edges, and i'm currently changing edge colors to 
 Accomplished:
 Re-writing code to remove getNutr() and getNodes(), to have one main method that returns nutr and nodes
 Re-wrote UI elements to put graph and selectors into one box, allowing for multiple graphs to exist
+
+11/29/21
+
+Accomplished:
+Fitting two graphs into one page via some extra html and a conditionalpanel. Currently, the second graph does render, but is hidden. Also, the controls for the second graph do not work.
+
+Trying to accomplish:
+Fixing functionality for second graph, making it obey its own check boxes. Allowing second graph to conditionally RENDER as opposed to conditionally appear would be helpful.
