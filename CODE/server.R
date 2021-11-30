@@ -162,9 +162,10 @@ function(input, output) {
       # Or use option visEdges(smooth = FALSE)
       # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
       # 
-      visNetwork(nodes, edges, height = 3200, width = "100%",
+      visNetwork(nodes, edges, height = 3200, width = "100%"
                  # Append title dynamically from selected country
-                 main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+                 # main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+                 ) %>%
         visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
                    height=dev.size("px")[1]*1.5) %>%
         visEvents(type = "once", afterDrawing = "function() {
@@ -352,6 +353,18 @@ function(input, output) {
     
   })
   
+  output$countries2 <- renderUI({
+    
+    # Get unique countries from all file list
+    countries <- unique(lapply(allFiles, getToken, idx = 1))
+    
+    # Render only if countries exist in list
+    if(length(countries) > 0) {
+      selectInput('country2','Select Country',countries)
+    }
+    
+  })
+  
   # Dynamic UI rendering for country types
   output$countryTypes <- renderUI({
     
@@ -370,7 +383,22 @@ function(input, output) {
     }
   })
   
-  
+  output$countryTypes2 <- renderUI({
+    
+    # Get selected country
+    selected <- input$country
+    
+    # Find all files for each country
+    possible <- grep(selected, allFiles, value=TRUE)
+    
+    # Find unique file types from the second token in each string
+    ctypes <- unique(lapply(possible, getToken, idx = 2))
+    
+    # Render only if elements exist
+    if(length(ctypes) > 0) {
+      selectInput('ctypes2','Select Type',ctypes)
+    }
+  })
   
   
   # Dynamic UI rendering for years
@@ -397,6 +425,29 @@ function(input, output) {
     
   })
   
+  output$countryYears2 <- renderUI({
+    
+    # Get selected country
+    selectedC <- input$country
+    selectedT <- input$ctypes
+    
+    # Find all files for each country
+    possibleC <- grep(selectedC, allFiles, value=TRUE)
+    
+    # Find all years for each type
+    possible <- grep(selectedT, possibleC, value=TRUE)
+    
+    # Find unique file types from the second token in each string   
+    cyears <- unique(lapply(possible, getToken, idx = 3))
+    
+    # Render only if elements exist
+    if(length(cyears) > 0) {
+      selectInput('cyears2','Select Year',cyears)
+    }
+    
+    
+  })
+  
   # Dynamic UI rendering for years
   output$graphType <- renderUI({
     
@@ -405,6 +456,15 @@ function(input, output) {
     
   
   })
+  # Dynamic UI rendering for years
+  output$graphType2 <- renderUI({
+    
+    radioButtons('gtype2', 'Graph Type', c('Bipartite', 'Force-Directed'),
+                 'Bipartite', inline=TRUE) 
+    
+    
+  })
+  
   # Dynamic UI rendering for years
   output$showTwo <- renderUI({
     
