@@ -23,6 +23,8 @@ fluidPage(
     
   # BEGIN FIRST GRAPH
 
+  
+    
   column(width=6,
 
   fluidRow(
@@ -79,3 +81,31 @@ fluidPage(
 
 
 )
+
+# graphUI <- function(id, colNums) {
+#   
+#   
+#   
+#   ns <- NS(id)
+#   column(width=colNums,
+#    
+#    fluidRow(
+#      style=('background-color:coral;
+#   display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
+#      uiOutput("countries"),
+#      uiOutput("countryTypes"),
+#      uiOutput("countryYears"),
+#      uiOutput("graphType")
+#      
+#    ),
+#    conditionalPanel(
+#      condition = ("input.cyears"),
+#      
+#      fluidRow(
+#        visNetworkOutput("dGraph")
+#      )
+#    )
+# )
+# 
+#   
+# }
