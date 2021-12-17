@@ -7,104 +7,55 @@ library(rsconnect)
 
 
 
-  # select_options <- server method to get options
-  # vis_mod_server <- server method to generate graph with given options
-
-
-  vis_mod_server <- function(input, output, country, ctype, cyear) {
-  
-
-    
-    getNodes <- reactive({
-      
-      
-      # Load data
-      #file_ext <- paste(input$country, input$ctypes, input$cyears , sep="_")
-      file_ext <- paste(country, ctype, cyear , sep="_")
-      
-      agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
-      
-      # List of nutrient names
-      nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-                  "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-                  "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
-      
-      
-      nutrients <- as.data.frame(nnames)
-      nutrients$group = "N"
-      
-      nutrients <- rename(nutrients, Nutrient = nnames)
-      
-      
-      # Optional hard-coded nutrient selection
-      #nutrients <- data.frame(names(agData[12:37]), group="N")
-      
-      #colnames(nutrients) <- c("Nutrient", "group")
-      agData$group = "C"
-      agData$level = 2
-      
-      
-      
-      
-      # Maximum length of edges
-      MAX_LEN <- 100
-      MIN_LEN <- 10
-      
-      
-      # num of unique crops in data set
-      numNR <- nrow(agData)
-      #numNR <- nrow(nodes)-nrow(nutr)
-      
-      # Assign unique id # to each, for binding to edges
-      agData$Nutrient = agData$FAO_CropName
-      agData <- agData %>% rename(id = X)
-      
-      # Do the same for each nutrient
-      nutrients$id = 0
-      nutrients$level = 1
-      nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
-      
-      
-      # Unique id #s for crop data
-      agList <- as.list(agData$id)
-      
-      nn <- dplyr::bind_rows(nutrients, agData)
-      
-      
-      
-      nodes <- data.frame(
-        id = nn$id,
-        level = nn$level,
-        label = nn$Nutrient,
-        group = nn$group,
-        font.strokeWidth = 4
-        
-      )
-      
-      nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
-      colnames(nutr) <- as.list(agData$FAO_CropName)
-      
-      # Return nodes and nutrient data frame as list
-      list(nodes=nodes,nutr=nutr)
-      
-      
-      
-      
-    })
     
     
-    # 
-    # output$dGraph <- getVisNet(nodes = getNodes(), inType = "Bipartite")
-    #   
-    # output$dGraph2 <- getVisNet(nodes = getNodes(), inType = "Bipartite")
-    
-    getVisNet <- function(nodes, inType) {
+    function(input, output) {
       
       
-      renderVisNetwork({
+      output$distPlot <- renderPlot({
         
         
-        #odesNutr <- getNodes()
+        ggplot(data = agData,
+               mapping=aes(x=FAO_CropName, y=Calories))+ geom_area()
+        
+      })
+      
+      
+      
+      observeEvent(input$toggleBtn, {
+        #btn <- input$toggleBtn
+        input$showTwo <- TRUE
+        #id <- paste0('txt', btn)
+        # insertUI(
+        #   
+        #   selector = '#placeholder',
+        #   ## wrap element in a div with id for ease of removal
+        #   ui = tags$div(
+        #     #tags$p(paste('Element number', btn)), 
+        #     #tags$p(paste('Element number', btn)),
+        #     visNetworkOutput("dGraph2"),
+        #     id = id
+        #     
+        #   )
+        # )
+        
+      })
+      
+      observeEvent(input$removeBtn, {
+        removeUI(
+          ## pass in appropriate div id
+          selector = paste0('#', inserted[length(inserted)])
+        )
+        inserted <<- inserted[-length(inserted)]
+      })
+      
+      
+      
+      
+      output$dGraph <- output$dGraph2 <- renderVisNetwork({
+        
+        
+        nodesNutr <- getNodes()
         nodes <- nodesNutr[['nodes']]
         nutr <- nodesNutr[['nutr']]
         MAX_LEN <- 200
@@ -119,6 +70,12 @@ library(rsconnect)
         
         # Create shell for edges data with column names
         edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
+        
+        
+        
+        
+        
+        
         
         
         
@@ -189,7 +146,7 @@ library(rsconnect)
         
         
         
-        if(inType == "Force-Directed") {
+        if(input$gtype == "Force-Directed") {
           
           
           
@@ -201,18 +158,17 @@ library(rsconnect)
           # Or use option visEdges(smooth = FALSE)
           # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
           # 
-          return(
-            visNetwork(nodes, edges, height = 3200, width = "100%"
-                       # Append title dynamically from selected country
-                       # main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-            ) %>%
-              visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
-                         height=dev.size("px")[1]*1.5) %>%
-              visEvents(type = "once", afterDrawing = "function() {
+          visNetwork(nodes, edges, height = 3200, width = "100%"
+                     # Append title dynamically from selected country
+                     # main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+          ) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
+                       height=dev.size("px")[1]*1.5) %>%
+            visEvents(type = "once", afterDrawing = "function() {
             this.moveTo({scale:0.05})}") %>%
-              visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
-                         forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))   
-          )
+            visPhysics(solver = "forceAtlas2Based", stabilization = FALSE,
+                       forceAtlas2Based = list(gravitationalConstant = -500, centralGravity=0.05))   
+          
           
         } else {
           
@@ -262,14 +218,13 @@ library(rsconnect)
           # Or use option visEdges(smooth = FALSE)
           # Or visEdges(smooth = list(enabled = FALSE, type = "cubicBezier")) %>%
           # 
-          return(
-            visNetwork(nodes, edges, width = "100%",
-                       # Append title dynamically from selected country
-                       main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
-              visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
-                         height=dev.size("px")[1]*1.5) %>%
-              visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=10, parentCentralization= FALSE)
-          )      
+          visNetwork(nodes, edges, width = "100%",
+                     # Append title dynamically from selected country
+                     main=paste(input$country, input$ctypes, input$cyears, sep=" | ")) %>%
+            visOptions(highlightNearest = list(enabled = TRUE, algorithm="hierarchical", degree=list(from=1,to=1)), 
+                       height=dev.size("px")[1]*1.5) %>%
+            visHierarchicalLayout(direction="LR",levelSeparation = 500,nodeSpacing=10, parentCentralization= FALSE)
+          
           
           
         }
@@ -278,173 +233,247 @@ library(rsconnect)
         
         
       })
+      
+      
+      
+      
+      getNodes <- reactive({
+        
+        
+        # Load data
+        file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
+        
+        agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+        
+        # List of nutrient names
+        nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+                    "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+                    "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+        
+        
+        nutrients <- as.data.frame(nnames)
+        nutrients$group = "N"
+        
+        nutrients <- rename(nutrients, Nutrient = nnames)
+        
+        
+        # Optional hard-coded nutrient selection
+        #nutrients <- data.frame(names(agData[12:37]), group="N")
+        
+        #colnames(nutrients) <- c("Nutrient", "group")
+        agData$group = "C"
+        agData$level = 2
+        
+        
+        
+        
+        # Maximum length of edges
+        MAX_LEN <- 100
+        MIN_LEN <- 10
+        
+        
+        # num of unique crops in data set
+        numNR <- nrow(agData)
+        #numNR <- nrow(nodes)-nrow(nutr)
+        
+        # Assign unique id # to each, for binding to edges
+        agData$Nutrient = agData$FAO_CropName
+        agData <- agData %>% rename(id = X)
+        
+        # Do the same for each nutrient
+        nutrients$id = 0
+        nutrients$level = 1
+        nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
+        
+        
+        # Unique id #s for crop data
+        agList <- as.list(agData$id)
+        
+        nn <- dplyr::bind_rows(nutrients, agData)
+        
+        
+        
+        nodes <- data.frame(
+          id = nn$id,
+          level = nn$level,
+          label = nn$Nutrient,
+          group = nn$group,
+          font.strokeWidth = 4
+          
+        )
+        
+        nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
+        colnames(nutr) <- as.list(agData$FAO_CropName)
+        
+        # Return nodes and nutrient data frame as list
+        list(nodes=nodes,nutr=nutr)
+        
+        
+        
+        
+      })
+      
+      
+      
+      output$table <- renderDataTable(agData)
+      
+      output$ntable <- renderDataTable(nodes)
+      
+      
+      
+      
+      
+      
+      ###
+      ### GET AVAILABLE FILE OPTIONS
+      ### STRIP EXTENSIONS FROM FILE NAMES
+      ###
+      allFiles <- tools::file_path_sans_ext(list.files("../DATA_INPUTS/Tabular_data_inputs/"))
+      
+      # Function to get the country name from a string
+      # By splitting with our separator _ and returning the first word
+      getToken <- function(d, idx) {
+        unlist(strsplit(d, '_'))[idx]
+      }
+      
+      # Dynamic UI rendering for country types
+      output$countries <- renderUI({
+        
+        # Get unique countries from all file list
+        countries <- unique(lapply(allFiles, getToken, idx = 1))
+        
+        # Render only if countries exist in list
+        if(length(countries) > 0) {
+          selectInput('country','Select Country',countries)
+        }
+        
+      })
+      
+      output$countries2 <- renderUI({
+        
+        # Get unique countries from all file list
+        countries <- unique(lapply(allFiles, getToken, idx = 1))
+        
+        # Render only if countries exist in list
+        if(length(countries) > 0) {
+          selectInput('country2','Select Country',countries)
+        }
+        
+      })
+      
+      # Dynamic UI rendering for country types
+      output$countryTypes <- renderUI({
+        
+        # Get selected country
+        selected <- input$country
+        
+        # Find all files for each country
+        possible <- grep(selected, allFiles, value=TRUE)
+        
+        # Find unique file types from the second token in each string
+        ctypes <- unique(lapply(possible, getToken, idx = 2))
+        
+        # Render only if elements exist
+        if(length(ctypes) > 0) {
+          selectInput('ctypes','Select Type',ctypes)
+        }
+      })
+      
+      output$countryTypes2 <- renderUI({
+        
+        # Get selected country
+        selected <- input$country
+        
+        # Find all files for each country
+        possible <- grep(selected, allFiles, value=TRUE)
+        
+        # Find unique file types from the second token in each string
+        ctypes <- unique(lapply(possible, getToken, idx = 2))
+        
+        # Render only if elements exist
+        if(length(ctypes) > 0) {
+          selectInput('ctypes2','Select Type',ctypes)
+        }
+      })
+      
+      
+      # Dynamic UI rendering for years
+      output$countryYears <- renderUI({
+        
+        # Get selected country
+        selectedC <- input$country
+        selectedT <- input$ctypes
+        
+        # Find all files for each country
+        possibleC <- grep(selectedC, allFiles, value=TRUE)
+        
+        # Find all years for each type
+        possible <- grep(selectedT, possibleC, value=TRUE)
+        
+        # Find unique file types from the second token in each string   
+        cyears <- unique(lapply(possible, getToken, idx = 3))
+        
+        # Render only if elements exist
+        if(length(cyears) > 0) {
+          selectInput('cyears','Select Year',cyears)
+        }
+        
+        
+      })
+      
+      output$countryYears2 <- renderUI({
+        
+        # Get selected country
+        selectedC <- input$country
+        selectedT <- input$ctypes
+        
+        # Find all files for each country
+        possibleC <- grep(selectedC, allFiles, value=TRUE)
+        
+        # Find all years for each type
+        possible <- grep(selectedT, possibleC, value=TRUE)
+        
+        # Find unique file types from the second token in each string   
+        cyears <- unique(lapply(possible, getToken, idx = 3))
+        
+        # Render only if elements exist
+        if(length(cyears) > 0) {
+          selectInput('cyears2','Select Year',cyears)
+        }
+        
+        
+      })
+      
+      # Dynamic UI rendering for years
+      output$graphType <- renderUI({
+        
+        radioButtons('gtype', 'Graph Type', c('Bipartite', 'Force-Directed'),
+                     'Bipartite', inline=TRUE) 
+        
+        
+      })
+      # Dynamic UI rendering for years
+      output$graphType2 <- renderUI({
+        
+        radioButtons('gtype2', 'Graph Type', c('Bipartite', 'Force-Directed'),
+                     'Bipartite', inline=TRUE) 
+        
+        
+      })
+      
+      # Dynamic UI rendering for years
+      output$showTwo <- renderUI({
+        
+        # radioButtons('gtype', 'Graph Type', c('Bipartite', 'Force-Directed'),
+        #              'Bipartite', inline=TRUE) 
+        
+        checkboxInput("showTwo", "Show Two Graphs", FALSE)
+        
+      })
+      
+      
+      
+      
     }
     
-    
-    
-    
-    
-  }
-  
-
-  
-
-
-
-  select_options <- function(input, output, session) {
-  
-  
-  ###
-  ### GET AVAILABLE FILE OPTIONS
-  ### STRIP EXTENSIONS FROM FILE NAMES
-  ###
-  allFiles <- tools::file_path_sans_ext(list.files("../DATA_INPUTS/Tabular_data_inputs/"))
-  
-  # Function to get the country name from a string
-  # By splitting with our separator _ and returning the first word
-  getToken <- function(d, idx) {
-    unlist(strsplit(d, '_'))[idx]
-  }
-  
-  
-  # Dynamic UI rendering for country types
-  output$countries <- renderUI({
-    
-    # Get unique countries from all file list
-    countries <- unique(lapply(allFiles, getToken, idx = 1))
-    
-    # Render only if countries exist in list
-    if(length(countries) > 0) {
-      selectInput('country','Select Country',countries)
-    }
-    
-  })
-  
-  output$countries2 <- renderUI({
-    
-    # Get unique countries from all file list
-    countries <- unique(lapply(allFiles, getToken, idx = 1))
-    
-    # Render only if countries exist in list
-    if(length(countries) > 0) {
-      selectInput('country2','Select Country',countries)
-    }
-    
-  })
-  
-  # Dynamic UI rendering for country types
-  output$countryTypes <- renderUI({
-    
-    # Get selected country
-    selected <- input$country
-    
-    # Find all files for each country
-    possible <- grep(selected, allFiles, value=TRUE)
-    
-    # Find unique file types from the second token in each string
-    ctypes <- unique(lapply(possible, getToken, idx = 2))
-    
-    # Render only if elements exist
-    if(length(ctypes) > 0) {
-      selectInput('ctypes','Select Type',ctypes)
-    }
-  })
-  
-  output$countryTypes2 <- renderUI({
-    
-    # Get selected country
-    selected <- input$country
-    
-    # Find all files for each country
-    possible <- grep(selected, allFiles, value=TRUE)
-    
-    # Find unique file types from the second token in each string
-    ctypes <- unique(lapply(possible, getToken, idx = 2))
-    
-    # Render only if elements exist
-    if(length(ctypes) > 0) {
-      selectInput('ctypes2','Select Type',ctypes)
-    }
-  })
-  
-  
-  # Dynamic UI rendering for years
-  output$countryYears <- renderUI({
-    
-    # Get selected country
-    selectedC <- input$country
-    selectedT <- input$ctypes
-    
-    # Find all files for each country
-    possibleC <- grep(selectedC, allFiles, value=TRUE)
-    
-    # Find all years for each type
-    possible <- grep(selectedT, possibleC, value=TRUE)
-    
-    # Find unique file types from the second token in each string   
-    cyears <- unique(lapply(possible, getToken, idx = 3))
-    
-    # Render only if elements exist
-    if(length(cyears) > 0) {
-      selectInput('cyears','Select Year',cyears)
-    }
-    
-    
-  })
-  
-  output$countryYears2 <- renderUI({
-    
-    # Get selected country
-    selectedC <- input$country
-    selectedT <- input$ctypes
-    
-    # Find all files for each country
-    possibleC <- grep(selectedC, allFiles, value=TRUE)
-    
-    # Find all years for each type
-    possible <- grep(selectedT, possibleC, value=TRUE)
-    
-    # Find unique file types from the second token in each string   
-    cyears <- unique(lapply(possible, getToken, idx = 3))
-    
-    # Render only if elements exist
-    if(length(cyears) > 0) {
-      selectInput('cyears2','Select Year',cyears)
-    }
-    
-    
-  })
-  
-  # Dynamic UI rendering for years
-  output$graphType <- renderUI({
-    
-    radioButtons('gtype', 'Graph Type', c('Bipartite', 'Force-Directed'),
-                 'Bipartite', inline=TRUE) 
-    
-  
-  })
-  # Dynamic UI rendering for years
-  output$graphType2 <- renderUI({
-    
-    radioButtons('gtype2', 'Graph Type', c('Bipartite', 'Force-Directed'),
-                 'Bipartite', inline=TRUE) 
-    
-    
-  })
-  
-  # Dynamic UI rendering for years
-  output$showTwo <- renderUI({
-    
-    # radioButtons('gtype', 'Graph Type', c('Bipartite', 'Force-Directed'),
-    #              'Bipartite', inline=TRUE) 
-    
-    checkboxInput("showTwo", "Show Two Graphs", FALSE)
-    
-  })
-  
-  
-  
-  
-}
-
 
