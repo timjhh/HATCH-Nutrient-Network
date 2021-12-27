@@ -5,32 +5,6 @@ library(dplyr)
 library(visNetwork)
 library(rsconnect)
 
-
-graphUI <- function(id, colNums = 6) {
-  
-  ns <- NS(id)
-  column(width=colNums,
-         
-         fluidRow(
-           style=('background-color:coral;
-  display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
-           uiOutput("countries2"),
-           uiOutput("countryTypes2"),
-           uiOutput("countryYears2"),
-           uiOutput("graphType2")
-           
-         ),
-         conditionalPanel(
-           condition = ("input.cyears"),
-           
-           fluidRow(
-             visNetworkOutput("dGraph")
-           )
-         )
-  )
-  
-}
-
 fluidPage(
   
   
@@ -48,10 +22,7 @@ fluidPage(
   fluidRow(
     
   # BEGIN FIRST GRAPH
-
-  
-    
-  column(width=as.numeric(ifelse("input$showTwo" == TRUE, 6, 12)),
+  column(width=6,
 
   fluidRow(
     style=('background-color:coral;
@@ -97,16 +68,8 @@ fluidPage(
     )
   )
   )
-  
-  
-  
-  
-  
-  
-  
+
   )
-
-
 )
 
 
