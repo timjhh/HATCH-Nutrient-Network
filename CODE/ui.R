@@ -51,7 +51,7 @@ fluidPage(
 
   
     
-  column(width=6,
+  column(width=as.numeric(ifelse("input$showTwo" == TRUE, 6, 12)),
 
   fluidRow(
     style=('background-color:coral;
