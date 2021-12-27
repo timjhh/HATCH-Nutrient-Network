@@ -5,6 +5,32 @@ library(dplyr)
 library(visNetwork)
 library(rsconnect)
 
+
+graphUI <- function(id, colNums = 6) {
+  
+  ns <- NS(id)
+  column(width=colNums,
+         
+         fluidRow(
+           style=('background-color:coral;
+  display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
+           uiOutput("countries2"),
+           uiOutput("countryTypes2"),
+           uiOutput("countryYears2"),
+           uiOutput("graphType2")
+           
+         ),
+         conditionalPanel(
+           condition = ("input.cyears"),
+           
+           fluidRow(
+             visNetworkOutput("dGraph")
+           )
+         )
+  )
+  
+}
+
 fluidPage(
   
   
@@ -48,6 +74,7 @@ fluidPage(
   
 
   # BEGIN SECOND GRAPH
+  #graphUI("graph1")
   column(width=6,
   conditionalPanel(
     condition = ("input.showTwo"),
@@ -82,30 +109,5 @@ fluidPage(
 
 )
 
-# graphUI <- function(id, colNums) {
-#   
-#   
-#   
-#   ns <- NS(id)
-#   column(width=colNums,
-#    
-#    fluidRow(
-#      style=('background-color:coral;
-#   display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
-#      uiOutput("countries"),
-#      uiOutput("countryTypes"),
-#      uiOutput("countryYears"),
-#      uiOutput("graphType")
-#      
-#    ),
-#    conditionalPanel(
-#      condition = ("input.cyears"),
-#      
-#      fluidRow(
-#        visNetworkOutput("dGraph")
-#      )
-#    )
-# )
-# 
-#   
-# }
+
+

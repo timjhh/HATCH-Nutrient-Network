@@ -10,8 +10,9 @@ library(rsconnect)
   # select_options <- server method to get options
   # vis_mod_server <- server method to generate graph with given options
 
-
-  vis_mod_server <- function(input, output, country, ctype, cyear) {
+  #, country, ctype, cyear
+  # vis_mod_server <- 
+  function(input, output, session) {
   
 
     
