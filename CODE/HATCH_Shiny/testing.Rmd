@@ -273,8 +273,14 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
       nutrients <- as.data.frame(nnames)
       nutrients$group = "N"
       
+      
+      
       nutrients <- rename(nutrients, Nutrient = nnames)
       
+      
+
+      nutrients <- nutrients[order(nutrients$Nutrient),]
+
       
       # Optional hard-coded nutrient selection
       #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -338,7 +344,13 @@ nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin
         
       )
       
+      
+
+
+   
+      nutrients   
       nodes
+
 
 ```
 
@@ -420,7 +432,7 @@ nodes
 #realNodes <- getLevel(nodes)
 
  dev.size("px")[1]
- agData
+
  nodes
 
 ```

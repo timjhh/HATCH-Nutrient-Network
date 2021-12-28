@@ -380,6 +380,8 @@ function(input, output) {
     
     nutrients <- rename(nutrients, Nutrient = nnames)
     
+    nutrients <- nutrients[order(nutrients$Nutrient),]
+    
     
     # Optional hard-coded nutrient selection
     #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -395,7 +397,7 @@ function(input, output) {
     
     # num of unique crops in data set
     numNR <- nrow(agData)
-    #numNR <- nrow(nodes)-nrow(nutr)
+
     
     # Assign unique id # to each, for binding to edges
     agData$Nutrient = agData$FAO_CropName
@@ -410,6 +412,12 @@ function(input, output) {
     # Unique id #s for crop data
     agList <- as.list(agData$id)
     
+    
+    #attach(nutrients)
+    nutrients <- nutrients[order(nutrients$Nutrient),]
+    #detach(nutrients)
+    print(nutrients)
+    
     nn <- dplyr::bind_rows(nutrients, agData)
     
     
@@ -423,6 +431,8 @@ function(input, output) {
       
     )
     
+    
+      
     nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
     colnames(nutr) <- as.list(agData$FAO_CropName)
     
