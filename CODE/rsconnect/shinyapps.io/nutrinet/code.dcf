@@ -5,7 +5,7 @@ account: nutrinet
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5138565
-bundleId: 5258822
+bundleId: 5413243
 url: https://nutrinet.shinyapps.io/code/
-when: 1637083696.45468
-lastSyncTime: 1637083696.45468
+when: 1640655865.11633
+lastSyncTime: 1640655865.11633

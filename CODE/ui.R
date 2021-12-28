@@ -8,6 +8,7 @@ library(rsconnect)
 fluidPage(
   
   
+
   fluidRow(
     
     titlePanel("NutriNet Visualizations"),
@@ -20,32 +21,16 @@ fluidPage(
   
   # MAIN FLUID ROW
   fluidRow(
-    
+  
+  uiOutput("mainBox"),
   # BEGIN FIRST GRAPH
-  column(width=6,
 
-  fluidRow(
-    style=('background-color:coral;
-    display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
-    uiOutput("countries"),
-    uiOutput("countryTypes"),
-    uiOutput("countryYears"),
-    uiOutput("graphType")
-
-  ),
-  conditionalPanel(
-    condition = ("input.cyears"),
-    
-    fluidRow(
-      visNetworkOutput("dGraph")
-    )
-  )
-  ),
   # END FIRST GRAPH
   
 
   # BEGIN SECOND GRAPH
-  #graphUI("graph1")
+
+  
   column(width=6,
   conditionalPanel(
     condition = ("input.showTwo"),

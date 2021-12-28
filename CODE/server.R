@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
+library(leaflet)
 library(visNetwork)
 library(rsconnect)
 
@@ -412,11 +413,8 @@ function(input, output) {
     # Unique id #s for crop data
     agList <- as.list(agData$id)
     
-    
-    #attach(nutrients)
+
     nutrients <- nutrients[order(nutrients$Nutrient),]
-    #detach(nutrients)
-    print(nutrients)
     
     nn <- dplyr::bind_rows(nutrients, agData)
     
@@ -573,7 +571,7 @@ function(input, output) {
     
     # Render only if elements exist
     if(length(ctypes) > 0) {
-      selectInput('ctypes','Select Type',ctypes)
+      selectInput('ctypes','Select Source',ctypes)
     }
   })
   
@@ -669,6 +667,31 @@ function(input, output) {
     
   })
   
+  
+  output$mainBox <- renderUI({
+    
+    column(width=ifelse(input$showTwo, 6, 12),
+                
+                  fluidRow(
+                    style=('background-color:coral;
+    display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
+                    uiOutput("countries"),
+                    uiOutput("countryTypes"),
+                    uiOutput("countryYears"),
+                    uiOutput("graphType")
+                    
+                  ),
+                  conditionalPanel(
+                    condition = ("input.cyears"),
+                    
+                    fluidRow(
+                      visNetworkOutput("dGraph")
+                    )
+                  )
+           )
+    
+    
+  })
   
   
   
