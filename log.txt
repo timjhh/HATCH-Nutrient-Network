@@ -33,3 +33,11 @@ Fitting two graphs into one page via some extra html and a conditionalpanel. Cur
 
 Trying to accomplish:
 Fixing functionality for second graph, making it obey its own check boxes. Allowing second graph to conditionally RENDER as opposed to conditionally appear would be helpful.
+
+12/27/21
+
+Accomplished:
+Sorted nodes alphabetically, fixed dual graph rendering with different options. Tried to implement tabbed view, but i'm having trouble getting reactive data to pervade in tabs
+
+Trying to accomplish:
+Thinking about longer term implementation of project

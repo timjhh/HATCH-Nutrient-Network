@@ -35,7 +35,7 @@ fluidPage(
   conditionalPanel(
     condition = ("input.showTwo"),
     fluidRow(
-      style=('background-color:coral;
+      style=('background-color:coral; border-radius: 6px;
       display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
       uiOutput("countries2"),
       uiOutput("countryTypes2"),

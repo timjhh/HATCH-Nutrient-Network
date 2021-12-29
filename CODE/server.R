@@ -673,7 +673,7 @@ function(input, output) {
     column(width=ifelse(input$showTwo, 6, 12),
                 
                   fluidRow(
-                    style=('background-color:coral;
+                    style=('background-color:coral; border-radius: 6px;
     display:flex; flex-wrap:wrap; margin:1%; padding:2%;'),
                     uiOutput("countries"),
                     uiOutput("countryTypes"),
