@@ -2,7 +2,6 @@ library(shiny)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
-library(leaflet)
 library(visNetwork)
 library(rsconnect)
 
