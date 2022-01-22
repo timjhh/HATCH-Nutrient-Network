@@ -38,8 +38,8 @@ function App() {
       <Grid item xs={8}>
 
     <Routes>
-        <Route path='/graph' element={<GraphController/>}/>
         <Route path='/maps' element={<MapController/>}/>
+        <Route path='/graph' element={<GraphController/>}/>
     </Routes>
 
 
