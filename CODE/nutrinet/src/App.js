@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import GraphController from './GraphController.jsx'
-import MapController from './MapController.jsx'
+import MapController from './map/MapController.jsx'
 
 import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
 

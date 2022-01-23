@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+
 import * as d3 from "d3";
-import Graph from './Graph.jsx';
-import FileSelect from './FileSelect.jsx';
+
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -51,19 +50,12 @@ function Map(props) {
 //   const color = scale(domain, range);
 //   if (unknown !== undefined) color.unknown(unknown);
 
-//   const [selected, setSelected] = useState(null);
-//   const [bipartite, setBipartite] = useState(false);
+
 
 
 
 
 let magmaClr = (d) => d3.interpolateMagma( d/233 );
-
-
-var colors = d3.scaleThreshold()
-  .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
-  .range(d3.schemeBlues[7]);
-
 
 const width = 1000,
 height = 800;
@@ -85,15 +77,11 @@ fetch('./world.geo.json').then(response => {
           let path = d3.geoPath()
             .projection(projection);
 
-          const zoom = d3.zoom()
-              .scaleExtent([1, 8])
-              .extent([[0, 0], [width, height]])
-              .on("zoom", (d) => g.attr("transform", d.subject.transform));
-          
-          svg.call(zoom);
+
 
             const svg = d3.select("#map")
                 .append("svg")
+                .style("border", "1px solid black")
                 .attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", [0, 0, width, height])
@@ -108,7 +96,19 @@ fetch('./world.geo.json').then(response => {
           .enter()
           .append("path")
           .attr("d", d => path(d))
-          .attr("fill", (d,idx) => magmaClr(idx));
+          .attr("fill", (d,idx) => magmaClr(idx))
+          .on("click", (e, d) => {
+              console.log(d.properties.name)
+          });
+
+          const zoom = d3.zoom()
+              .scaleExtent([1, 8])
+              .extent([[0, 0], [width, height]])
+              .on("zoom", (d) => g.attr("transform", d.transform));
+          
+          svg.call(zoom);
+
+
 
 
 
@@ -139,6 +139,10 @@ fetch('./world.geo.json').then(response => {
 
 }, []);
 
+useEffect(() => {
+
+
+}, [props.selected])
 
 //   // Construct a path generator.
 //   const path = d3.geoPath(projection);

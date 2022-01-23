@@ -31,7 +31,7 @@ function GraphController() {
       </Stack>
 
 
-      <Graph />
+      <Graph switch={bipartite} />
 
     </>
 

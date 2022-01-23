@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import {event as currentEvent} from 'd3-selection';
 
 
-function Graph() {
+function Graph(props) {
 
 const radius = 2;
 
@@ -18,7 +18,7 @@ const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
 height = 500 - (margin.top+margin.bottom);
 
-//d3.csv(deedo, function(dad) { console.log(dad) })
+
 
 
 const [parsedData, setParsedData] = useState([]);
@@ -133,6 +133,7 @@ const [parsedData, setParsedData] = useState([]);
     .style("border", "1px solid black")
     //.style("position", "absolute")
     .attr("viewBox", "0 0 " + (width) + " " + (height))
+    .append("g");
 
 
     // var forceX = d3.forceX(null).strength(0.5);
@@ -142,14 +143,14 @@ const [parsedData, setParsedData] = useState([]);
 
 
     var bip = d3.select("#bipSwitch").attr("checked");
-    console.log(bip);
-    if(bip) {
+
+    if(!bip) {
 
       return d.group === 2 ? width/3 : (2*width)/3;
 
 
     }
-    return 0.01;
+
 
     // var order_by = $("#order-select > option:selected").prop("label");
 
@@ -186,12 +187,14 @@ const [parsedData, setParsedData] = useState([]);
 
       // Otherwise, bind the graph together to show special ordering
       return 0.01;
+    }).strength(() => {
+      return d3.select("#bipSwitch").attr("checked") ? 0.01 : 1;
     });
 
 
   var forceY = d3.forceY(null).strength(0);
 
-    var simulation = d3.forceSimulation()
+    const simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(d => d.id))
     .force("charge", d3.forceManyBody())
     .force("repel", d3.forceManyBody().strength(-50))
@@ -276,17 +279,22 @@ const [parsedData, setParsedData] = useState([]);
     simulation.force("link")
     .links(links);
 
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .extent([[0, 0], [width, height]])
+        .on("zoom", (d) => svg.attr("transform", d.transform));
+    
+    svg.call(zoom);
+
+    // function zoomaction(d) { //zoom functionality
+    //   svg.attr("transform", d.transform);
+    // }
 
 
-    function zoomaction(d) { //zoom functionality
-      svg.attr("transform", d.transform);
-    }
+    //   var zoom_handler = d3.zoom()
+    //       .on("zoom", zoomaction);
 
-
-      var zoom_handler = d3.zoom()
-          .on("zoom", zoomaction);
-
-    zoom_handler(svg);
+    // zoom_handler(svg);
 
 
 
@@ -398,6 +406,15 @@ const [parsedData, setParsedData] = useState([]);
 
 
   }, [])
+
+  useEffect(() => {
+
+
+    console.log(props.switch);
+    let svg = d3.select("graph").select("svg");
+
+
+  }, [props.switch]);
 
 
 
