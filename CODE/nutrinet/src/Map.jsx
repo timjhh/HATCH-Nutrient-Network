@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 
 
 
-function Map() {
+function Map(props) {
 // function Map(data, {
 //   id = d => d.id, // given d in data, returns the feature id
 //   value = () => undefined, // given d in data, returns the quantitative value
@@ -56,28 +56,112 @@ function Map() {
 
 
 
-//   // Construct a path generator.
-//   const path = d3.geoPath(projection);
 
-//   const svg = d3.create("svg")
-//       .attr("width", width)
-//       .attr("height", height)
-//       .attr("viewBox", [0, 0, width, height])
-//       .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+let magmaClr = (d) => d3.interpolateMagma( d/233 );
+
+
+var colors = d3.scaleThreshold()
+  .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
+  .range(d3.schemeBlues[7]);
+
+
+const width = 1000,
+height = 800;
+
+
+
+useEffect(() => {
+
+var worldData = {};
+
+fetch('./world.geo.json').then(response => {
+
+          return response.json();
+        }).then(data => {
+
+
+          let projection = d3.geoMercator();
+
+          let path = d3.geoPath()
+            .projection(projection);
+
+          const zoom = d3.zoom()
+              .scaleExtent([1, 8])
+              .extent([[0, 0], [width, height]])
+              .on("zoom", (d) => g.attr("transform", d.subject.transform));
+          
+          svg.call(zoom);
+
+            const svg = d3.select("#map")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", [0, 0, width, height])
+                .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+
+
+
+          const g = svg.append("g")
+          .selectAll("path")
+          .data(data.features)
+          // .join("path")
+          .enter()
+          .append("path")
+          .attr("d", d => path(d))
+          .attr("fill", (d,idx) => magmaClr(idx));
+
+
+
+
+        }).catch(err => {
+          // Do something for an error here
+          console.log("Error Reading data " + err);
+
+});
+
+
+
+
+
+  // const svg = d3.create("svg")
+  //     .attr("width", width)
+  //     .attr("height", height)
+  //     .attr("viewBox", [0, 0, width, height])
+  //     .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 //   if (outline != null) svg.append("path")
 //       .attr("fill", fill)
 //       .attr("stroke", "currentColor")
 //       .attr("d", path(outline));
 
-//   svg.append("g")
-//     .selectAll("path")
-//     .data(features.features)
-//     .join("path")
-//       .attr("fill", (d, i) => color(V[Im.get(If[i])]))
-//       .attr("d", path)
-//     .append("title")
-//       .text((d, i) => title(d, Im.get(If[i])));
+
+
+
+}, []);
+
+
+//   // Construct a path generator.
+//   const path = d3.geoPath(projection);
+
+
+
+
+// d3.json(props.data, function(err, geojson) {
+//       svg.append("path").attr("d", path(geojson.features));})
+
+
+  // svg.append("g")
+  //   .selectAll("path")
+  //   .data(props.data.features)
+  //   .join("path")
+  //       .attr("fill", (d, i) => colors(d))
+  //     // .attr("fill", (d, i) => color(V[Im.get(If[i])]))
+  //     .attr("d", path(props.data))
+  //   .append("title")
+  //     .text((d, i) => "Title");
+
+
+      //.text((d, i) => title(d, Im.get(If[i])));
 
 //   if (borders != null) svg.append("path")
 //       .attr("pointer-events", "none")
