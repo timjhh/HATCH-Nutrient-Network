@@ -55,16 +55,25 @@ function Map(props) {
 
 
 
-let magmaClr = (d) => d3.interpolateMagma( d/233 );
+// let magmaClr = (d) => d3.interpolateMagma( d/233 );
 
 const width = 1000,
 height = 800;
+
+console.log(props.current);
 
 
 
 useEffect(() => {
 
 var worldData = {};
+
+var max = Number.MAX_VALUE;
+var min = Number.MIN_VALUE;
+
+
+
+
 
 fetch('./world.geo.json').then(response => {
 
@@ -77,15 +86,27 @@ fetch('./world.geo.json').then(response => {
           let path = d3.geoPath()
             .projection(projection);
 
+        if(props.current != []) {
+
+          Object.entries(props.current).forEach(d => {
+
+            min = Math.min(min, d[1][1]);
+            max = Math.max(max, d[1][1]);
+
+          });
 
 
-            const svg = d3.select("#map")
-                .append("svg")
-                .style("border", "1px solid black")
-                .attr("width", width)
-                .attr("height", height)
-                .attr("viewBox", [0, 0, width, height])
-                .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+        }
+        let magmaClr = (d) => d3.interpolateMagma( d/max );
+
+
+        const svg = d3.select("#map")
+            .append("svg")
+            .style("border", "1px solid black")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height])
+            .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 
 
@@ -96,7 +117,12 @@ fetch('./world.geo.json').then(response => {
           .enter()
           .append("path")
           .attr("d", d => path(d))
-          .attr("fill", (d,idx) => magmaClr(idx))
+          .attr("fill", (d,idx) => {
+            console.log(props.current[d.properties.name_long][1])
+            console.log(max)
+            return props.current[d.properties.name_long] ? props.current[d.properties.name_long][1] : 500;
+            //return props.current[d.properties.name_long][1];
+          })
           .on("click", (e, d) => {
               console.log(d.properties.name)
           });
@@ -137,7 +163,7 @@ fetch('./world.geo.json').then(response => {
 
 
 
-}, []);
+}, [props.current]);
 
 useEffect(() => {
 

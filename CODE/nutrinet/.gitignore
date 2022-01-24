@@ -11,6 +11,7 @@
 # production
 /build
 /src/DATA_INPUTS
+/public/DATA_INPUTS
 
 # misc
 .DS_Store

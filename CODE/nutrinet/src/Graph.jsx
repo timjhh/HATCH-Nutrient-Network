@@ -29,11 +29,6 @@ const [parsedData, setParsedData] = useState([]);
 
 
 
-
-
-
-
-
   useEffect(() => {
 
 

@@ -27,17 +27,88 @@ import Typography from '@mui/material/Typography';
 function MapController(props) {
 
   const [nutrient, setNutrient] = useState("Calories");
+  const [current, setCurrent] = useState({});
+  const [range, setRange] = useState([0,0]);
 
   useEffect(() => {
 
 
     let regex = new RegExp(`_${props.method}_`);
 
+    var filtered = props.files.filter(d => d.match(regex));
+    var curr = {};
+    var max = Number.MAX_VALUE;
+    var min = Number.MIN_VALUE;
 
-    var data = props.files.filter(d => d.match(regex));
+    filtered.forEach(d => {
+
+
+
+      d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then(res => {
+        
+
+        let idx = res.columns.indexOf(nutrient); // Index of selected nutrient
+        //let avg = res.reduce()
+        
+        let len = Object.entries(res).length;
+        
+        let sum = 0;
+        // max = res[0][nutrient];
+        // min = res[0][nutrient];
+
+
+
+        res.forEach(val => {
+          let num = val[nutrient]
+          if(num != null && num != "NA") {
+            
+            sum += parseFloat(num);
+
+          }
+        })
+
+        if(res[0]) {
+          curr[res[0]["Country"]] = [sum, sum/len];
+        }
+        
+        //console.log(res[0]["Country"] + " " + nutrient + " " + avg);
+
+
+      });
+
+
+    })
+
+    setCurrent(curr);
 
 
   }, [nutrient, props.method])
+
+
+
+
+  async function getData(link) {
+
+    var csvFilePath = require(link);
+
+
+      return new Promise(function(resolve, error) {
+        
+        Papa.parse(csvFilePath, {
+          header: true,
+          download: true,
+          skipEmptyLines: true,
+          dynamicTyping: true,
+          complete: (res) => { resolve(res.data) }
+        }); 
+
+      });
+
+  }
+
+
+
+
 
 
   return (
@@ -53,7 +124,7 @@ function MapController(props) {
 
 
 
-      <Map nutrient={nutrient} />
+      <Map nutrient={nutrient} current={current} range={range} />
 
 
     </>
