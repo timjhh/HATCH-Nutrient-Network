@@ -11,10 +11,6 @@ import Paper from '@mui/material/Paper';
 function NutriSelect(props) {
 
 
-const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
-
 
 
 useEffect(() => {
@@ -54,34 +50,34 @@ useEffect(() => {
       <Select
         labelId="mcountry-select-label"
         id="country-select"
-        value={props.selected}
+        value={props.nutrient}
         label="Nutrient"
-        onChange={(e) => { props.setSelected(e.target.value) }}
+        onChange={(e) => { props.setNutrient(e.target.value) }}
       >
-      {nutrients.map(d => (
+      {props.nutrients.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
 
 
     </FormControl>
-{/*    <FormControl sx={{ m:2 }}>
+    <FormControl sx={{ m:2 }}>
 
       <InputLabel id="method-select-label">Method</InputLabel>
       <Select
         labelId="method-select-label"
         id="method-select"
-        value={method}
+        value={props.method}
         label="Method"
-        onChange={(e) => { handleChange(); setMethod(e.target.value) }}
+        onChange={(e) => { props.setMethod(e.target.value) }}
       >
-      {methods.map(d => (
+      {props.methods.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
 
     </FormControl>
-    <FormControl sx={{ m:2 }}>
+{/*    <FormControl sx={{ m:2 }}>
 
       <InputLabel id="year-select-label">Year</InputLabel>
       <Select

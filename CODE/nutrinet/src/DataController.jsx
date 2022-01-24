@@ -1,0 +1,93 @@
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import Graph from './Graph.jsx';
+import FileSelect from './FileSelect.jsx';
+import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+// import AntSwitch from '@mui/material/AntSwitch';
+import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
+
+import GraphController from './GraphController.jsx'
+import MapController from './map/MapController.jsx'
+
+function DataController() {
+
+  const [selected, setSelected] = useState(null);
+  const [bipartite, setBipartite] = useState(false);
+
+
+
+  var countries = [];
+  var years = [];
+  var methods = [];
+
+  function importAll(r) {
+    return r.keys();
+  }
+
+
+
+const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
+
+
+
+  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /\.(csv)$/));
+
+  files.forEach(d => {
+    let arr = d.substring(2).split("_");
+    arr[2] = arr[2].split(".")[0];
+    if(!countries.includes(arr[0])) countries.push(arr[0]);
+    if(!methods.includes(arr[1])) methods.push(arr[1]);
+    if(!years.includes(arr[2])) years.push(arr[2]);
+  })
+
+
+
+  const [country, setCountry] = useState(countries[0]);
+  const [method, setMethod] = useState(methods[0]);
+  const [year, setYear] = useState(years[0]);
+
+  return (
+
+    <>
+
+    <Routes>
+        <Route path='/maps'
+          element={<MapController
+          files={files}
+          nutrients={nutrients}
+          selected={selected} setSelected={setSelected}
+          country={country} setCountry={setCountry}
+          method={method} setMethod={setMethod}
+          year={year} setYear={setYear}
+          countries={countries} methods={methods} years={years}/>}/>
+
+        <Route path='/graph'
+          files={files}
+         element={<GraphController selected={selected} setSelected={setSelected}
+         country={country} setCountry={setCountry}
+         method={method} setMethod={setMethod}
+         year={year} setYear={setYear}
+         countries={countries} methods={methods} years={years}/>}/>
+    </Routes>
+
+
+    </>
+
+
+  );
+}
+
+export default DataController;
+
+
+
+
+
+

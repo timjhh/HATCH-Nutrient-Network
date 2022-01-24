@@ -15,36 +15,45 @@ import Typography from '@mui/material/Typography';
 // import AntSwitch from '@mui/material/AntSwitch';
 
 
-const prom = new Promise((resolutionFunc, rejectionFunc) => {
-  // call your async return values after succesfull response
-  setTimeout(function () {
-    resolutionFunc(<h1> Hello World </h1>);
-  }, 5000);
-});
-
-function MapController() {
-
-  const [selected, setSelected] = useState("Calories");
-  const [bipartite, setBipartite] = useState(false);
+// const prom = new Promise((resolutionFunc, rejectionFunc) => {
+//   // call your async return values after succesfull response
+//   setTimeout(function () {
+//     resolutionFunc(<h1> Hello World </h1>);
+//   }, 5000);
+// });
 
 
 
-    // d3.json('./DATA_INPUTS/Spatial_data_inputs/countries.geojson', function(d) {
+function MapController(props) {
 
-    //   console.log(d);
+  const [nutrient, setNutrient] = useState("Calories");
 
-    // });
+  useEffect(() => {
+
+
+    let regex = new RegExp(`_${props.method}_`);
+
+
+    var data = props.files.filter(d => d.match(regex));
+
+
+  }, [nutrient, props.method])
 
 
   return (
 
     <>
 
-      <NutriSelect selected={selected} setSelected={setSelected} />
+      <NutriSelect
+        methods={props.methods} 
+        nutrient={nutrient}
+        setNutrient={setNutrient} 
+        nutrients={props.nutrients}
+        {...props} />
 
 
 
-      <Map selected={selected} />
+      <Map nutrient={nutrient} />
 
 
     </>

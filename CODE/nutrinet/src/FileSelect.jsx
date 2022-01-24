@@ -11,49 +11,6 @@ import * as fs from 'fs';
 function FileSelect(props) {
 
 
-
-function importAll(r) {
-  return r.keys();
-}
-
-
-var countries = [];
-var years = [];
-var methods = [];
-
-useEffect(() => {
-
-
-
-
-}, [])
-
-
-const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /\.(csv)$/));
-
-files.forEach(d => {
-  let arr = d.substring(2).split("_");
-  arr[2] = arr[2].split(".")[0];
-  if(!countries.includes(arr[0])) countries.push(arr[0]);
-  if(!methods.includes(arr[1])) methods.push(arr[1]);
-  if(!years.includes(arr[2])) years.push(arr[2]);
-})
-
-
-
-
-  const [country, setCountry] = useState(countries[0]);
-  const [method, setMethod] = useState(methods[0]);
-  const [year, setYear] = useState(years[0]);
-
-  function handleChange() {
-    let fileName = country+"_"+method+"_"+year+".csv";
-
-    props.setSelected(fileName);
-  }
-
-
-
   return (
 
 
@@ -68,11 +25,11 @@ files.forEach(d => {
       <Select
         labelId="mcountry-select-label"
         id="country-select"
-        value={country}
+        value={props.country}
         label="Country"
-        onChange={(e) => { handleChange(); setCountry(e.target.value) }}
+        onChange={(e) => { props.setCountry(e.target.value) }}
       >
-      {countries.map(d => (
+      {props.countries.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
@@ -85,11 +42,11 @@ files.forEach(d => {
       <Select
         labelId="method-select-label"
         id="method-select"
-        value={method}
+        value={props.method}
         label="Method"
-        onChange={(e) => { handleChange(); setMethod(e.target.value) }}
+        onChange={(e) => { props.setMethod(e.target.value) }}
       >
-      {methods.map(d => (
+      {props.methods.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
@@ -101,11 +58,11 @@ files.forEach(d => {
       <Select
         labelId="year-select-label"
         id="year-select"
-        value={year}
+        value={props.year}
         label="Year"
-        onChange={(e) => { handleChange(); setYear(e.target.value) }}
+        onChange={(e) => { props.setYear(e.target.value) }}
       >
-      {years.map(d => (
+      {props.years.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>

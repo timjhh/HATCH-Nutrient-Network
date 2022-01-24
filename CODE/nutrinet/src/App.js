@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import GraphController from './GraphController.jsx'
 import MapController from './map/MapController.jsx'
+import DataController from './DataController.jsx'
 
 import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
 
@@ -37,10 +38,11 @@ function App() {
       </Grid>
       <Grid item xs={8}>
 
-    <Routes>
+    <DataController />
+{/*    <Routes>
         <Route path='/maps' element={<MapController/>}/>
         <Route path='/graph' element={<GraphController/>}/>
-    </Routes>
+    </Routes>*/}
 
 
       </Grid>

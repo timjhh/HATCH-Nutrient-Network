@@ -8,21 +8,22 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import AntSwitch from '@mui/material/AntSwitch';
 
 
-
-
-function GraphController() {
+function GraphController(props) {
 
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
+
+
+
 
   return (
 
     <>
 
-     <FileSelect selected={selected} setSelected={setSelected} />
+    <FileSelect {...props} />
+
 
       <Stack direction="row" spacing={1} alignItems="center">
         <Typography>Bipartite</Typography>
