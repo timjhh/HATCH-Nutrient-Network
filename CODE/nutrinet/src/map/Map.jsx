@@ -66,6 +66,10 @@ console.log(props.current);
 
 useEffect(() => {
 
+
+
+if(props.current != {}) {  
+
 var worldData = {};
 
 var max = Number.MAX_VALUE;
@@ -161,14 +165,19 @@ fetch('./world.geo.json').then(response => {
 //       .attr("d", path(outline));
 
 
-
+}
 
 }, [props.current]);
 
-useEffect(() => {
 
 
-}, [props.selected])
+
+
+// useEffect(() => {
+
+
+// }, [props.selected])
+
 
 //   // Construct a path generator.
 //   const path = d3.geoPath(projection);
