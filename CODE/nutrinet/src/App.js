@@ -8,6 +8,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 import GraphController from './GraphController.jsx'
 import MapController from './map/MapController.jsx'
@@ -26,10 +28,12 @@ function App() {
 
 
 
+    <Box sx={{p: 2}}>
 
-    <a href="/graph">Graphs</a>    
-    <a href="/maps">Maps</a>
-
+      <Button sx={{mx: 2}} href="/graph" variant="outlined">Graphs</Button>    
+      <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
+    
+    </Box>
 
 
     <Grid container spacing={2}>

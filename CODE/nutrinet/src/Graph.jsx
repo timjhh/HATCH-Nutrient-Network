@@ -16,7 +16,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 // Update margin once size ref is created
 const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
-height = 500 - (margin.top+margin.bottom);
+height = 400 - (margin.top+margin.bottom);
 
 
 
@@ -27,93 +27,99 @@ const [parsedData, setParsedData] = useState([]);
 
 
 
-
-
   useEffect(() => {
 
+    
+    genGraph(props.current);
 
 
-    (async () => {
+    // (async () => {
 
 
-      try {
+    //   try {
 
 
-        const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+    //     const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
 
 
-        const w = await wrangle(d);
+    //     const w = await wrangle(d);
 
-        const g = await genGraph(w);
-
-
-      } catch(err) {
-        console.log(err);
-      }
+    //     const g = await genGraph(w);
 
 
-    }) ();
+    //   } catch(err) {
+    //     console.log(err);
+    //   }
 
 
-      // yee haw!!
-      async function wrangle(d) {
+    // }) ();
 
 
-      let nds = [];
-      let lnks = [];
+    //   // yee haw!!
+    //   async function wrangle(d) {
 
-      nutrients.forEach(e => {
-        nds.push({id: e, group: 2 });
-      })
 
-      d.forEach(e => {
+    //   let nds = [];
+    //   let lnks = [];
 
-        nds.push({id: e.FAO_CropName, group: 1 })
+    //   nutrients.forEach(e => {
+    //     nds.push({id: e, group: 2 });
+    //   })
+
+    //   d.forEach(e => {
+
+    //     nds.push({id: e.FAO_CropName, group: 1 })
         
-        Object.entries(e).forEach(f => {
-  
-            if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
-
-        })
-        
-
-      })
-
-
-
-
-      return [nds,lnks];
-
-      }
-
-
-
-
-      async function getData(link) {
-
-        var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-          return new Promise(function(resolve, error) {
+    //     Object.entries(e).forEach(f => {
+    
+    //         if(!Number.isNaN(f[1]) && f[1] > 0) {
+    //           if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
+    //         }
             
-            Papa.parse(csvFilePath, {
-              header: true,
-              download: true,
-              skipEmptyLines: true,
-              dynamicTyping: true,
-              complete: (res) => { resolve(res.data) }
-            }); 
 
-          });
+    //     })
+        
+
+    //   })
 
 
 
-      }
+
+    //   return [nds,lnks];
+
+    //   }
+
+
+
+
+    //   async function getData(link) {
+
+    //     var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+    //       return new Promise(function(resolve, error) {
+            
+    //         Papa.parse(csvFilePath, {
+    //           header: true,
+    //           download: true,
+    //           skipEmptyLines: true,
+    //           dynamicTyping: true,
+    //           complete: (res) => { resolve(res.data) }
+    //         }); 
+
+    //       });
+
+
+
+    //   }
 
 
 
 
     async function genGraph(data) {
+
+
+    d3.select("#graph").selectAll("*").remove();
 
     const nodes = data[0];
     const links = data[1];
@@ -128,11 +134,28 @@ const [parsedData, setParsedData] = useState([]);
     .style("border", "1px solid black")
     //.style("position", "absolute")
     .attr("viewBox", "0 0 " + (width) + " " + (height))
-    .append("g");
+    .on("click", (event, item) => {
+        console.log(event.srcElement.tagName === "svg");
+
+        if(event.srcElement.tagName === "svg") {
+          node.attr("opacity", 1);
+          link.attr("opacity", 1);
+        }
+
+    });
+
+    const g = svg.append("g")
+    .attr("class", "content");
 
 
-    // var forceX = d3.forceX(null).strength(0.5);
-    // var forceY = d3.forceY(null).strength(0.5);
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .extent([[0, 0], [width, height]])
+        .on("zoom", (d) => {
+          g.attr("transform", d.transform)
+        });
+    
+    svg.call(zoom);
 
   var forceX = d3.forceX(function(d) {
 
@@ -143,47 +166,10 @@ const [parsedData, setParsedData] = useState([]);
 
       return d.group === 2 ? width/3 : (2*width)/3;
 
-
     }
-
-
-    // var order_by = $("#order-select > option:selected").prop("label");
-
-    // if(order_by == "Level") {
-
-    //   $("#legtext").text("Course Level");
-    //   return levelScale(d.name.match(/\d/));
-
-    // } else if(order_by == "Subject") {
-
-    //   $("#legtext").text("Course Subject");
-    //   return subjectScale(d.name.match(/[A-Z]+/));
-
-    // } else if(order_by == "Prereq Count") {
-
-    //   $("#legtext").text("Prereq Count");
-    //   return linkScale(prCount.get(d.name) ? prCount.get(d.name) : 0);
-
-    // }
-
-    //   // Default legend text
-    //   $("#legtext").text("Course Level");
-    //   // Default, no directed force added
-    //   return null;
-
-    // }).strength(function() {
-
-    //   order_by = $("#order-select > option:selected").prop("label");
-
-    //   // If the 'default' ordering of nodes is selected, no strength should be applied
-    //   if(!options.includes(order_by)) {
-    //     return 0;
-    //   }
-
-      // Otherwise, bind the graph together to show special ordering
       return 0.01;
     }).strength(() => {
-      return d3.select("#bipSwitch").attr("checked") ? 0.01 : 1;
+      return d3.select("#bipSwitch").attr("checked") ? 0.01 : 0.5;
     });
 
 
@@ -199,22 +185,7 @@ const [parsedData, setParsedData] = useState([]);
     .force("y", forceY);
 
 
-    // Draw arrows to link courses
-    // svg.append("svg:defs").selectAll("marker")
-    // .data(["end"])
-    // .enter().append("svg:marker")
-    // .attr("id", String)
-    // .attr("viewBox", "0 -5 10 10")
-    // .attr("refX", 15)
-    // .attr("refY", -1.5)
-    // .attr("markerWidth", 6)
-    // .attr("markerHeight", 6)
-    // .attr("orient", "auto")
-    // .append("svg:path")
-    // .attr("d", "M0,-5L10,0L0,5");
-
-
-  var link = svg.append("g")
+  var link = g.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(links)
@@ -223,7 +194,7 @@ const [parsedData, setParsedData] = useState([]);
       .attr("stroke-width", function(d) { return 0.2; });
 
 
-    var node = svg.append("g")
+    var node = g.append("g")
     .attr("class", "nodes")
     .selectAll("g")
     .data(nodes)
@@ -237,30 +208,32 @@ const [parsedData, setParsedData] = useState([]);
         .style("cursor", "pointer")
         .style("font-weight", "bold")
         .style("font-size", "0.2em")
-        .on("click", function(d) {
-
-          // var connected = link.filter(e => e.source.id === d.id || e.target.id === d.id);
-
-
-          // node.attr("opacity", 0.1);
-          // link.attr("opacity", e => (e.source.id === d.id || e.target.id === d.id) ? 1 : 0.1);
-
-          // node.filter(h => h.id === d.id).attr("opacity", 1);
-
-          // connected.each(function(g) {
-          //   node.filter(h => h.id === g.source.id || h.id === g.target.id).attr("opacity", 1);
-          // });
-
-
-        })
         .attr('y', 0);
+
 
 
 
 
     var circles = node.append("circle")
     .attr("r", radius)
-    .attr("fill", d =>  (d.group === 2 ? "steelblue" : "red"))
+    .on("click", (e, d) => {
+
+          var connected = link.filter(g => g.source.id === d.id || g.target.id === d.id);
+
+
+          node.attr("opacity", 0.1);
+          link.attr("opacity", g => (g.source.id === d.id || g.target.id === d.id) ? 1 : 0.1);
+
+          node.filter(h => h.id === d.id).attr("opacity", 1);
+
+          connected.each(function(g) {
+            node.filter(h => h.id === g.source.id || h.id === g.target.id).attr("opacity", 1);
+          });
+
+
+
+    })
+    .attr("fill", d => (d.group === 2 ? "steelblue" : "red"))
     .call(d3.drag()
       .on("start", dragstarted)
       .on("drag", dragged)
@@ -274,42 +247,6 @@ const [parsedData, setParsedData] = useState([]);
     simulation.force("link")
     .links(links);
 
-    const zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .extent([[0, 0], [width, height]])
-        .on("zoom", (d) => svg.attr("transform", d.transform));
-    
-    svg.call(zoom);
-
-    // function zoomaction(d) { //zoom functionality
-    //   svg.attr("transform", d.transform);
-    // }
-
-
-    //   var zoom_handler = d3.zoom()
-    //       .on("zoom", zoomaction);
-
-    // zoom_handler(svg);
-
-
-
-    // .on("click", function(d) {
-
-    //     // First, select the title and description to append to the page
-    //     d3.select("#ttl")
-    //     .text((d.alias ? d.alias+"/" : "") + " " + d.ttl);
-    //     d3.select("#desc")
-    //     .text(d.desc);
-
-    //     var connected = link.filter(e => e.source.name == d.name || e.target.name == d.name);
-
-    //     node.attr("opacity", 0.1);
-    //     link.attr("opacity", e => (e.source.name == d.name || e.target.name == d.name) ? 1 : 0.1);
-
-    //     connected.each(function(g) {
-    //       node.filter(h => h.name == g.source.name || h.name == g.target.name).attr("opacity", 1);
-    //     });
-    //   })
 
 
 
@@ -351,37 +288,6 @@ const [parsedData, setParsedData] = useState([]);
   }
 
 
-    // var labels = node.append("text")
-    // .text((d) => d.name.toUpperCase())
-    //     //.attr('x', -radius) // Optional styling for large circles
-    //     //.style("font-size", "10px")
-    //     .attr('x', 6)
-    //     .style("cursor", "pointer")
-    //     .style("font-weight", "bold")
-    //     .on("click", function(d) {
-    //       d3.select("#ttl")
-    //       .text((d.alias ? d.alias+"/" : "") + " " + d.ttl)
-    //       d3.select("#desc")
-    //       .text(d.desc)
-
-    //       var connected = link.filter(e => e.source.name == d.name || e.target.name == d.name);
-
-
-    //       node.attr("opacity", 0.1);
-    //       link.attr("opacity", e => (e.source.name == d.name || e.target.name == d.name) ? 1 : 0.1);
-
-    //       node.filter(h => h.name == d.name).attr("opacity", 1);
-
-    //       connected.each(function(g) {
-    //         node.filter(h => h.name == g.source.name || h.name == g.target.name).attr("opacity", 1);
-    //       });
-
-
-    //     })
-    //     .attr('y', 3);
-
-        // d3.select("#order-select")
-        // .on("change", function() {
 
 
 
@@ -394,13 +300,11 @@ const [parsedData, setParsedData] = useState([]);
       .alpha(0.3)
       .alphaTarget(0)
       .restart();
-
-
      }
 
 
 
-  }, [])
+  }, [props.current])
 
   useEffect(() => {
 
@@ -409,7 +313,7 @@ const [parsedData, setParsedData] = useState([]);
     let svg = d3.select("graph").select("svg");
 
 
-  }, [props.switch]);
+  }, [props.current]);
 
 
 

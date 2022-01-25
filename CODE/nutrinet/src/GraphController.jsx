@@ -9,11 +9,109 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import Papa from 'papaparse';
 
 function GraphController(props) {
 
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
+  const [current, setCurrent] = useState([]);
+
+  //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
+
+const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
+
+
+
+
+    (async () => {
+
+
+      try {
+
+
+        const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+        const w = await wrangle(d);
+
+        //const g = await genGraph(w);
+
+
+      } catch(err) {
+        console.log(err);
+      }
+
+
+    }) ();
+
+
+      // yee haw!!
+      async function wrangle(d) {
+
+
+      let nds = [];
+      let lnks = [];
+
+      nutrients.forEach(e => {
+        nds.push({id: e, group: 2 });
+      })
+
+      d.forEach(e => {
+
+        nds.push({id: e.FAO_CropName, group: 1 })
+        
+        Object.entries(e).forEach(f => {
+    
+            if(!Number.isNaN(f[1]) && f[1] > 0) {
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
+            }
+            
+
+        })
+        
+
+      })
+
+
+
+
+      //return [nds,lnks];
+      setCurrent([nds,lnks])
+
+      }
+
+
+
+
+      async function getData(link) {
+
+        var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+          return new Promise(function(resolve, error) {
+            
+            Papa.parse(csvFilePath, {
+              header: true,
+              download: true,
+              skipEmptyLines: true,
+              dynamicTyping: true,
+              complete: (res) => { resolve(res.data) }
+            }); 
+
+          });
+
+
+
+      }
+
+
+
+
+
+
 
 
 
@@ -32,7 +130,7 @@ function GraphController(props) {
       </Stack>
 
 
-      <Graph switch={bipartite} />
+      <Graph current={current} switch={bipartite} />
 
     </>
 

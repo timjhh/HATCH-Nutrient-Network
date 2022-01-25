@@ -65,8 +65,8 @@ useEffect(() => {
 if(props.current.length != 0) {  
 
 
-var max = Number.MAX_VALUE;
-var min = Number.MIN_VALUE;
+// var max = Number.MAX_VALUE;
+// var min = Number.MIN_VALUE;
 var quantile = 0;
 
 
@@ -84,17 +84,17 @@ fetch('./world.geo.json').then(response => {
           let path = d3.geoPath()
             .projection(projection);
 
-          props.current.forEach(d => {
+          // props.current.forEach(d => {
 
-            min = Math.min(min, d[1][1]);
-            max = Math.max(max, d[1][1]);
+          //   min = Math.min(min, d[1][1]);
+          //   max = Math.max(max, d[1][1]);
 
-          });
+          // });
 
        
           
           // 75th quantile of data, to remove extraneous value
-          quantile = d3.quantile(props.current, .75, d => d[2])
+          quantile = d3.quantile(props.current, .80, d => d[2])
 
           let magmaClr = (d) => d3.interpolateMagma( d/quantile );
 
@@ -118,7 +118,7 @@ fetch('./world.geo.json').then(response => {
           .enter()
           .append("path")
           .style("stroke-width", 0.5)
-          .style("stroke", "black")
+          .style("stroke", "white")
           .attr("d", d => path(d))
           .attr("fill", (d,idx) => {
             var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
