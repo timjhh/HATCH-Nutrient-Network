@@ -52,15 +52,9 @@ function Map(props) {
 
 
 
-
-
-
-// let magmaClr = (d) => d3.interpolateMagma( d/233 );
-
 const width = 1000,
 height = 800;
 
-console.log(props.current);
 
 
 
@@ -68,18 +62,18 @@ useEffect(() => {
 
 
 
-if(props.current != {}) {  
+if(props.current.length != 0) {  
 
-var worldData = {};
 
 var max = Number.MAX_VALUE;
 var min = Number.MIN_VALUE;
-
-
+var quantile = 0;
 
 
 
 fetch('./world.geo.json').then(response => {
+
+
 
           return response.json();
         }).then(data => {
@@ -90,18 +84,21 @@ fetch('./world.geo.json').then(response => {
           let path = d3.geoPath()
             .projection(projection);
 
-        if(props.current != []) {
-
-          Object.entries(props.current).forEach(d => {
+          props.current.forEach(d => {
 
             min = Math.min(min, d[1][1]);
             max = Math.max(max, d[1][1]);
 
           });
 
+       
+          
+          // 75th quantile of data, to remove extraneous value
+          quantile = d3.quantile(props.current, .75, d => d[2])
 
-        }
-        let magmaClr = (d) => d3.interpolateMagma( d/max );
+          let magmaClr = (d) => d3.interpolateMagma( d/quantile );
+
+          d3.select("#map").select("svg").remove("*");
 
 
         const svg = d3.select("#map")
@@ -120,16 +117,54 @@ fetch('./world.geo.json').then(response => {
           // .join("path")
           .enter()
           .append("path")
+          .style("stroke-width", 0.5)
+          .style("stroke", "black")
           .attr("d", d => path(d))
           .attr("fill", (d,idx) => {
-            console.log(props.current[d.properties.name_long][1])
-            console.log(max)
-            return props.current[d.properties.name_long] ? props.current[d.properties.name_long][1] : 500;
-            //return props.current[d.properties.name_long][1];
+            var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+            // || e.includes(d.properties.name)
+            return val ? magmaClr(val[2]) : "#808080";
           })
           .on("click", (e, d) => {
-              console.log(d.properties.name)
+            var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
+              console.log(val);
+              console.log(d.properties)
+              props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
           });
+
+
+        //   // Band scale for x-axis
+        //   const xScale = d3
+        //     .scaleBand()
+        //     .domain([0, 1])
+        //     .range([0, width]);
+          
+        //   // Linear scale for y-axis
+        //   const yScale = d3
+        //     .scaleLinear()
+        //     .domain(domain)
+        //     .range([height, 0]);
+
+
+        //   var gradient = legend.append('defs')
+        //       .append('linearGradient')
+        //       .attr('id', 'gradient')
+        //       .attr('x1', '0%') // bottom
+        //       .attr('y1', '100%')
+        //       .attr('x2', '0%') // to top
+        //       .attr('y2', '0%')
+        //       .attr('spreadMethod', 'pad');
+
+
+        // // Drawing the legend bar
+        //   const legend = svg.append("g")
+        //   .attr("class", "legend")
+        //   .attr("width", 50)
+        //   .attr("height", 100)
+        //   .attr("transform", "translate(150,150)");
+
+
+
 
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
@@ -167,7 +202,7 @@ fetch('./world.geo.json').then(response => {
 
 }
 
-}, [props.current]);
+}, [props]);
 
 
 
@@ -233,9 +268,3 @@ fetch('./world.geo.json').then(response => {
 }
 
 export default Map;
-
-
-
-
-
-

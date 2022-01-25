@@ -1,0 +1,11 @@
+name: nutrinet
+title:
+username:
+account: nutrinet
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5503779
+bundleId: 5504534
+url: https://nutrinet.shinyapps.io/nutrinet/
+when: 1643080353.3954
+lastSyncTime: 1643080353.3954

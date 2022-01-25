@@ -51,7 +51,7 @@ function(input, output) {
         # i - The nutrient
         # j - The crop
         str <- nutr[i,j]
-        
+
         # Check for validity / existence of this node
         if(!(is.na(str)) && as.numeric(str) > 0) {
           
@@ -67,6 +67,7 @@ function(input, output) {
           # This is the cell connecting [crop,nutrient], how much one contains
           nr$strength <- (str / maximum)
           
+
           #Alternatively, normalize the data point by its nutritional value
           #nr$strength <- (str-minimum)/(maximum-minimum)
           
@@ -241,8 +242,11 @@ function(input, output) {
           # The link will lead to a crop
           nr$to <- j
           
+
+
           # This is the cell connecting [crop,nutrient], how much one contains
           nr$strength <- (str / maximum)
+          
           
           #Alternatively, normalize the data point by its nutritional value
           #nr$strength <- (str-minimum)/(maximum-minimum)
@@ -261,6 +265,7 @@ function(input, output) {
           ### NOTE - A better weighting system will have to be applied, as most links are not strong
           nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
           
+          if(rownames(nutr)[i] == "Zinc") print(nr$length)          
           
           # Finally, bind this row to the edge collection
           edges <- dplyr::bind_rows(edges, nr)
@@ -268,7 +273,6 @@ function(input, output) {
         }
       }
     }
-    
     
     
     
@@ -363,11 +367,12 @@ function(input, output) {
   #reactive(country, ctypes, cyears, 
   getNodes <- function(country, ctypes, cyears) {
 
+    if(is.null(country) || is.null(ctypes) || is.null(cyears)) return(NULL)
     
     # Load data
     file_ext <- paste(country, ctypes, cyears, sep="_")
     
-    agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
+    agData <- read.csv(paste("/DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
     
     # List of nutrient names
     nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
@@ -559,6 +564,8 @@ function(input, output) {
   # Dynamic UI rendering for country types
   output$countryTypes <- renderUI({
     
+    if(!is.null(input$country)) {
+    
     # Get selected country
     selected <- input$country
     
@@ -572,9 +579,14 @@ function(input, output) {
     if(length(ctypes) > 0) {
       selectInput('ctypes','Select Source',ctypes)
     }
+    
+    }
+    
   })
   
   output$countryTypes2 <- renderUI({
+    
+    if(!is.null(input$country)) {
     
     # Get selected country
     selected <- input$country
@@ -589,11 +601,16 @@ function(input, output) {
     if(length(ctypes) > 0) {
       selectInput('ctypes2','Select Type',ctypes)
     }
+    
+    }
+    
   })
   
   
   # Dynamic UI rendering for years
   output$countryYears <- renderUI({
+    
+    if(!is.null(input$country) && !is.null(input$ctypes)) {
     
     # Get selected country
     selectedC <- input$country
@@ -613,10 +630,13 @@ function(input, output) {
       selectInput('cyears','Select Year',cyears)
     }
     
+    }
     
   })
   
   output$countryYears2 <- renderUI({
+    
+    if(!is.null(input$country) && !is.null(input$ctypes)) {
     
     # Get selected country
     selectedC <- input$country
@@ -636,6 +656,7 @@ function(input, output) {
       selectInput('cyears2','Select Year',cyears)
     }
     
+    }
     
   })
   
@@ -669,6 +690,7 @@ function(input, output) {
   
   output$mainBox <- renderUI({
     
+
     column(width=ifelse(input$showTwo, 6, 12),
                 
                   fluidRow(
@@ -688,7 +710,7 @@ function(input, output) {
                     )
                   )
            )
-    
+
     
   })
   

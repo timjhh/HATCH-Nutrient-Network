@@ -27,8 +27,9 @@ import Typography from '@mui/material/Typography';
 function MapController(props) {
 
   const [nutrient, setNutrient] = useState("Calories");
-  const [current, setCurrent] = useState({});
+  const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
+  const [label, setLabel] = useState("Click a Country To See Nutrient Data");
 
   useEffect(() => {
 
@@ -36,43 +37,66 @@ function MapController(props) {
     let regex = new RegExp(`_${props.method}_`);
 
     var filtered = props.files.filter(d => d.match(regex));
-    var curr = {};
+    var curr = [];
     var max = Number.MAX_VALUE;
     var min = Number.MIN_VALUE;
+
+    setCurrent([]);
 
     filtered.forEach(d => {
 
 
 
-      d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then(res => {
-        
+      d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then((res, idz) => {
+      
+        if(Object.entries(res).length != 1) {
 
         let idx = res.columns.indexOf(nutrient); // Index of selected nutrient
-        //let avg = res.reduce()
+
         
-        let len = Object.entries(res).length;
-        
-        let sum = 0;
-        // max = res[0][nutrient];
-        // min = res[0][nutrient];
+        // Subtract one for the entry of column names
+        let len = Object.entries(res).length-1;
+       
+        var count = 0; // How many nutrients did we accurately count
+        var sum = 0; // What is their summation
 
 
+        res.forEach((row,idy) => {
 
-        res.forEach(val => {
-          let num = val[nutrient]
-          if(num != null && num != "NA") {
-            
-            sum += parseFloat(num);
+          
+          let num = parseFloat(row[nutrient]);
+          
+          if(!Number.isNaN(num)) {
+
+            sum += num;
+            count++;
 
           }
+
+
+
         })
 
-        if(res[0]) {
-          curr[res[0]["Country"]] = [sum, sum/len];
-        }
-        
-        //console.log(res[0]["Country"] + " " + nutrient + " " + avg);
+      //Debugging code - may be useful later
+      //   try {
+      //   if(res[0]["Country"] === "United States of America") {
+      //     console.log("-------- Results --------");
+      //     console.log(sum);
+      //     console.log(sum / count);
+      //     console.log(nutrient);
+      //     console.log("-------- End --------");
+      //   }
+      // } catch(e) {
+      //   console.log(res)
+      //   console.log(e)
+      // }
 
+
+        if(res[0]) {
+          curr.push([res[0]["Country"], sum, sum/count]);
+        }
+
+      }
 
       });
 
@@ -123,8 +147,10 @@ function MapController(props) {
         {...props} />
 
 
+      <p>{label}</p>
 
-      <Map nutrient={nutrient} current={current} range={range} />
+      <Map setLabel={setLabel} className="viz" nutrient={nutrient} current={current} range={range} />
+
 
 
     </>
