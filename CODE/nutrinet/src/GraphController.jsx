@@ -37,6 +37,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
         const w = await wrangle(d);
 
+        await setCurrent({nodes: w[0], links: w[1]});
         //const g = await genGraph(w);
 
 
@@ -78,8 +79,8 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
 
-      //return [nds,lnks];
-      setCurrent([nds,lnks])
+      return [nds,lnks];
+      //setCurrent([nds,lnks])
 
       }
 

@@ -29,8 +29,9 @@ const [parsedData, setParsedData] = useState([]);
 
   useEffect(() => {
 
-    
-    genGraph(props.current);
+    //console.log(props.current);
+    console.log("rerender");
+    //genGraph(props.current);
 
 
     // (async () => {
@@ -116,7 +117,24 @@ const [parsedData, setParsedData] = useState([]);
 
 
 
-    async function genGraph(data) {
+
+
+
+
+  }, [props.current])
+
+  // useEffect(() => {
+
+
+  //   //console.log(props.switch);
+  //   let svg = d3.select("graph").select("svg");
+
+
+  // }, [props.current]);
+
+
+    // Consider adding async back
+    function genGraph(data) {
 
 
     d3.select("#graph").selectAll("*").remove();
@@ -300,24 +318,7 @@ const [parsedData, setParsedData] = useState([]);
       .alpha(0.3)
       .alphaTarget(0)
       .restart();
-     }
-
-
-
-  }, [props.current])
-
-  useEffect(() => {
-
-
-    console.log(props.switch);
-    let svg = d3.select("graph").select("svg");
-
-
-  }, [props.current]);
-
-
-
-
+  }
 
 
 
