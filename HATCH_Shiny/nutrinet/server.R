@@ -242,8 +242,6 @@ function(input, output) {
           # The link will lead to a crop
           nr$to <- j
           
-
-
           # This is the cell connecting [crop,nutrient], how much one contains
           nr$strength <- (str / maximum)
           
@@ -265,7 +263,11 @@ function(input, output) {
           ### NOTE - A better weighting system will have to be applied, as most links are not strong
           nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
           
-          #if(rownames(nutr)[i] == "Zinc") print(nr$length)          
+          #if(rownames(nutr)[i] == "Zinc") {
+           # print(i)
+            #  print(nr$length)  
+          #  print(rownames(nr))
+          #}        
           
           # Finally, bind this row to the edge collection
           edges <- dplyr::bind_rows(edges, nr)

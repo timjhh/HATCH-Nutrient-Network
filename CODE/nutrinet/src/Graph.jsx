@@ -30,98 +30,98 @@ const [parsedData, setParsedData] = useState([]);
   useEffect(() => {
 
     //console.log(props.current);
-    console.log("rerender");
+    //console.log("rerender");
     //genGraph(props.current);
 
 
-    // (async () => {
+    (async () => {
 
 
-    //   try {
+      try {
 
 
-    //     const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+        const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
 
 
-    //     const w = await wrangle(d);
+        const w = await wrangle(d);
 
-    //     const g = await genGraph(w);
-
-
-    //   } catch(err) {
-    //     console.log(err);
-    //   }
+        const g = await genGraph(w);
 
 
-    // }) ();
+      } catch(err) {
+        console.log(err);
+      }
 
 
-    //   // yee haw!!
-    //   async function wrangle(d) {
+    }) ();
 
 
-    //   let nds = [];
-    //   let lnks = [];
+      // yee haw!!
+      async function wrangle(d) {
 
-    //   nutrients.forEach(e => {
-    //     nds.push({id: e, group: 2 });
-    //   })
 
-    //   d.forEach(e => {
+      let nds = [];
+      let lnks = [];
 
-    //     nds.push({id: e.FAO_CropName, group: 1 })
+      nutrients.forEach(e => {
+        nds.push({id: e, group: 2 });
+      })
+
+      d.forEach(e => {
+
+        nds.push({id: e.FAO_CropName, group: 1 })
         
-    //     Object.entries(e).forEach(f => {
+        Object.entries(e).forEach(f => {
     
-    //         if(!Number.isNaN(f[1]) && f[1] > 0) {
-    //           if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
-    //         }
+            if(!Number.isNaN(f[1]) && f[1] > 0) {
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
+            }
             
 
-    //     })
+        })
         
 
-    //   })
+      })
 
 
 
 
-    //   return [nds,lnks];
+      return [nds,lnks];
 
-    //   }
-
-
+      }
 
 
-    //   async function getData(link) {
-
-    //     var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
 
 
-    //       return new Promise(function(resolve, error) {
+      async function getData(link) {
+
+        var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+          return new Promise(function(resolve, error) {
             
-    //         Papa.parse(csvFilePath, {
-    //           header: true,
-    //           download: true,
-    //           skipEmptyLines: true,
-    //           dynamicTyping: true,
-    //           complete: (res) => { resolve(res.data) }
-    //         }); 
+            Papa.parse(csvFilePath, {
+              header: true,
+              download: true,
+              skipEmptyLines: true,
+              dynamicTyping: true,
+              complete: (res) => { resolve(res.data) }
+            }); 
 
-    //       });
-
-
-
-    //   }
+          });
 
 
+
+      }
 
 
 
 
 
 
-  }, [props.current])
+
+
+  }, [])
 
   // useEffect(() => {
 
@@ -134,7 +134,7 @@ const [parsedData, setParsedData] = useState([]);
 
 
     // Consider adding async back
-    function genGraph(data) {
+    async function genGraph(data) {
 
 
     d3.select("#graph").selectAll("*").remove();

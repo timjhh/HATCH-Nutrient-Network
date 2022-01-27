@@ -26,27 +26,27 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
 
-    (async () => {
+    // (async () => {
 
 
-      try {
+    //   try {
 
 
-        const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+    //     const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
 
 
-        const w = await wrangle(d);
+    //     const w = await wrangle(d);
 
-        await setCurrent({nodes: w[0], links: w[1]});
-        //const g = await genGraph(w);
-
-
-      } catch(err) {
-        console.log(err);
-      }
+    //     //await setCurrent({nodes: w[0], links: w[1]});
+    //     const g = await genGraph(w);
 
 
-    }) ();
+    //   } catch(err) {
+    //     console.log(err);
+    //   }
+
+
+    // }) ();
 
 
       // yee haw!!
