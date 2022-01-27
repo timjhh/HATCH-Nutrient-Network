@@ -25,8 +25,8 @@ function(input, output) {
     #nutr <- cbind(nnames, nutr)
     
     # Create shell for edges data with column names
-    edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
-    
+    #edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
+    edges <- data.frame(matrix(ncol=7,nrow=0, dimnames=list(NULL, c("from", "to", "strength", "width", "color", "length", "value"))))
     
     
     for(i in 1:nrow(nutr)) {
@@ -55,40 +55,35 @@ function(input, output) {
         # Check for validity / existence of this node
         if(!(is.na(str)) && as.numeric(str) > 0) {
           
-          # Create a new row with the nutrient information
-          nr <- nutr[i,]
-          
-          # The link will come from a nutrient
-          nr$from <- i+numNR
-          
-          # The link will lead to a crop
-          nr$to <- j
-          
-          # This is the cell connecting [crop,nutrient], how much one contains
-          nr$strength <- (str / maximum)
-          
+
 
           #Alternatively, normalize the data point by its nutritional value
           #nr$strength <- (str-minimum)/(maximum-minimum)
+
           
-          # Constant for maximum link width
-          # This will scale strength[0,1] by a scalar factor so
-          # stronger connections appear thicker
-          nr$width <- nr$strength*7
+
           
-          # Constant edge color
-          #nr$color <- "rgba(75, 59, 115,0.6)"
-          #nr$color <- "rgba(160,160,160,0.8)"
-          nr$color <- "rgba(62,125,196,0.8)"
-          
-          # Assign a strength based on the maximum
-          ### NOTE - A better weighting system will have to be applied, as most links are not strong
-          nr$length <- ((MAX_LEN) - (nr$strength * MAX_LEN)) + MIN_LEN
-          
+          # Add the following attributes
+          # from - The link will come from a nutrient
+          # to - The link will lead to a crop
+          # strength - This is the cell connecting [crop,nutrient], how much one contains
+          # width - Constant for maximum link width
+          ### This will scale strength[0,1] by a scalar factor so
+          ### stronger connections appear thicker
+          # color - Constant edge color
+          # length - Assign a strength based on the maximum
+          ### NOTE - A better weighting system may have to be applied, as most links are not strong
+          newrow <- c(i+numNR, # from
+                      j, # to
+                      (str/maximum), # strength 
+                      (str/maximum)*7, # width
+                      "rgba(62,125,196,0.8)", # color
+                      ((MAX_LEN) - ((str / maximum) * MAX_LEN)) + MIN_LEN, str) # length
           
           # Finally, bind this row to the edge collection
-          edges <- dplyr::bind_rows(edges, nr)
+          edges[nrow(edges)+1,] = newrow
           
+
         }
       }
     }
@@ -203,8 +198,8 @@ function(input, output) {
     #nutr <- cbind(nnames, nutr)
     
     # Create shell for edges data with column names
-    edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
-    
+    #edges <- data.frame(matrix(ncol=3,nrow=0, dimnames=list(NULL, c("from", "to", "strength"))))
+    edges <- data.frame(matrix(ncol=7,nrow=0, dimnames=list(NULL, c("from", "to", "strength", "width", "color", "length", "value"))))
 
     
     for(i in 1:nrow(nutr)) {
@@ -233,6 +228,7 @@ function(input, output) {
         # Check for validity / existence of this node
         if(!(is.na(str)) && as.numeric(str) > 0) {
           
+<<<<<<< Updated upstream
           # Create a new row with the nutrient information
           nr <- nutr[i,]
           
@@ -268,9 +264,28 @@ function(input, output) {
             #  print(nr$length)  
           #  print(rownames(nr))
           #}        
+=======
+          # Add the following attributes
+          # from - The link will come from a nutrient
+          # to - The link will lead to a crop
+          # strength - This is the cell connecting [crop,nutrient], how much one contains
+          # width - Constant for maximum link width
+          ### This will scale strength[0,1] by a scalar factor so
+          ### stronger connections appear thicker
+          # color - Constant edge color
+          # length - Assign a strength based on the maximum
+          ### NOTE - A better weighting system may have to be applied, as most links are not strong
+          newrow <- c(i+numNR, # from
+                      j, # to
+                      (str/maximum), # strength 
+                      (str/maximum)*7, # width
+                      "rgba(62,125,196,0.8)", # color
+                      ((MAX_LEN) - ((str / maximum) * MAX_LEN)) + MIN_LEN, str) # length
+>>>>>>> Stashed changes
           
           # Finally, bind this row to the edge collection
-          edges <- dplyr::bind_rows(edges, nr)
+          edges[nrow(edges)+1,] = newrow
+          
           
         }
       }
@@ -377,18 +392,17 @@ function(input, output) {
     agData <- read.csv(paste("./DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
     
     # List of nutrient names
-    nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-                "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-                "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
+    nnames <- sort(c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+                     "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+                     "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."))
     
+    agData[,order(colnames(agData))]
     
     nutrients <- as.data.frame(nnames)
     nutrients$group = "N"
     
     nutrients <- rename(nutrients, Nutrient = nnames)
-    
-    nutrients <- nutrients[order(nutrients$Nutrient),]
-    
+
     
     # Optional hard-coded nutrient selection
     #nutrients <- data.frame(names(agData[12:37]), group="N")
@@ -420,7 +434,7 @@ function(input, output) {
     agList <- as.list(agData$id)
     
 
-    nutrients <- nutrients[order(nutrients$Nutrient),]
+    #nutrients <- nutrients[order(nutrients$Nutrient),]
     
     nn <- dplyr::bind_rows(nutrients, agData)
     
@@ -445,83 +459,6 @@ function(input, output) {
     
     
   }
-  
-  # getNodes <- reactive({
-  #   
-  #   
-  #   # Load data
-  #   file_ext <- paste(input$country, input$ctypes, input$cyears, sep="_")
-  #   
-  #   agData <- read.csv(paste("../DATA_INPUTS/Tabular_data_inputs/",file_ext,".csv",sep=""))
-  #   
-  #   # List of nutrient names
-  #   nnames <- c("Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-  #               "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-  #               "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only.")
-  #   
-  #   
-  #   nutrients <- as.data.frame(nnames)
-  #   nutrients$group = "N"
-  #   
-  #   nutrients <- rename(nutrients, Nutrient = nnames)
-  #   
-  #   
-  #   # Optional hard-coded nutrient selection
-  #   #nutrients <- data.frame(names(agData[12:37]), group="N")
-  #   
-  #   #colnames(nutrients) <- c("Nutrient", "group")
-  #   agData$group = "C"
-  #   agData$level = 2
-  #   
-  #   
-  #   
-  #   
-  #   # Maximum length of edges
-  #   MAX_LEN <- 100
-  #   MIN_LEN <- 10
-  #   
-  #   
-  #   # num of unique crops in data set
-  #   numNR <- nrow(agData)
-  #   #numNR <- nrow(nodes)-nrow(nutr)
-  #   
-  #   # Assign unique id # to each, for binding to edges
-  #   agData$Nutrient = agData$FAO_CropName
-  #   agData <- agData %>% rename(id = X)
-  #   
-  #   # Do the same for each nutrient
-  #   nutrients$id = 0
-  #   nutrients$level = 1
-  #   nutrients <- nutrients %>% mutate(id = (numNR+1):(n()+numNR))
-  #   
-  #   
-  #   # Unique id #s for crop data
-  #   agList <- as.list(agData$id)
-  #   
-  #   nn <- dplyr::bind_rows(nutrients, agData)
-  #   
-  #   
-  #   
-  #   nodes <- data.frame(
-  #     id = nn$id,
-  #     level = nn$level,
-  #     label = nn$Nutrient,
-  #     group = nn$group,
-  #     font.strokeWidth = 4
-  #     
-  #   )
-  #   
-  #   nutr <- as.data.frame(t(agData %>% select(all_of(nnames))))
-  #   colnames(nutr) <- as.list(agData$FAO_CropName)
-  #   
-  #   # Return nodes and nutrient data frame as list
-  #   list(nodes=nodes,nutr=nutr)
-  #   
-  # 
-  #   
-  #   
-  # })
-  
   
   
   
