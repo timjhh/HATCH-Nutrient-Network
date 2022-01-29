@@ -41,12 +41,11 @@ useEffect(() => {
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
         const d = await getData(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
 
-        console.log(d);
+    
         const w = await wrangle(d);
-
-        await setCurrent({nodes: w[0], links: w[1]});
+          
+        // await setCurrent({nodes: w[0], links: w[1]});
         //const g = await genGraph(w);
-        console.log(current);
 
       } catch(err) {
         console.log(err);
@@ -72,6 +71,7 @@ useEffect(() => {
         nds.push({id: e.FAO_CropName, group: 1 })
         
         Object.entries(e).forEach(f => {
+        //e.forEach(f => { 
     
             if(!Number.isNaN(f[1]) && f[1] > 0) {
               if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
@@ -86,8 +86,8 @@ useEffect(() => {
 
 
 
-      return [nds,lnks];
-      //setCurrent([nds,lnks])
+      //return [nds,lnks];
+      setCurrent([nds,lnks])
 
       }
 
@@ -97,11 +97,10 @@ useEffect(() => {
       async function getData(link) {
 
         //var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-        var csvFilePath = require(link);
+        //var csvFilePath = require(link);
 
 
-          d3.csv(link).then((res, idz) => {
-
+          return d3.csv(link).then((res, idz) => {
 
             return res;
 

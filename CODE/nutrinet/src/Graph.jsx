@@ -27,101 +27,109 @@ const [parsedData, setParsedData] = useState([]);
 
 
 
+  // useEffect(() => {
+
+  //   //console.log(props.current);
+  //   //console.log("rerender");
+  //   //genGraph(props.current);
+
+
+  //   (async () => {
+
+
+  //     try {
+
+
+  //       const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+  //       const w = await wrangle(d);
+
+  //       const g = await genGraph(w);
+
+
+  //     } catch(err) {
+  //       console.log(err);
+  //     }
+
+
+  //   }) ();
+
+
+  //     // yee haw!!
+  //     async function wrangle(d) {
+
+
+  //     let nds = [];
+  //     let lnks = [];
+
+  //     nutrients.forEach(e => {
+  //       nds.push({id: e, group: 2 });
+  //     })
+
+  //     d.forEach(e => {
+
+  //       nds.push({id: e.FAO_CropName, group: 1 })
+        
+  //       Object.entries(e).forEach(f => {
+    
+  //           if(!Number.isNaN(f[1]) && f[1] > 0) {
+  //             if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
+  //           }
+            
+
+  //       })
+        
+
+  //     })
+
+
+
+
+  //     return [nds,lnks];
+
+  //     }
+
+
+
+
+  //     async function getData(link) {
+
+  //       var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+
+
+  //         return new Promise(function(resolve, error) {
+            
+  //           Papa.parse(csvFilePath, {
+  //             header: true,
+  //             download: true,
+  //             skipEmptyLines: true,
+  //             dynamicTyping: true,
+  //             complete: (res) => { resolve(res.data) }
+  //           }); 
+
+  //         });
+
+
+
+  //     }
+
+
+
+
+
+
+
+
+  // }, [])
+
+
   useEffect(() => {
 
-    //console.log(props.current);
-    //console.log("rerender");
-    //genGraph(props.current);
 
+    genGraph(props.current);
 
-    (async () => {
-
-
-      try {
-
-
-        const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-        const w = await wrangle(d);
-
-        const g = await genGraph(w);
-
-
-      } catch(err) {
-        console.log(err);
-      }
-
-
-    }) ();
-
-
-      // yee haw!!
-      async function wrangle(d) {
-
-
-      let nds = [];
-      let lnks = [];
-
-      nutrients.forEach(e => {
-        nds.push({id: e, group: 2 });
-      })
-
-      d.forEach(e => {
-
-        nds.push({id: e.FAO_CropName, group: 1 })
-        
-        Object.entries(e).forEach(f => {
-    
-            if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
-            }
-            
-
-        })
-        
-
-      })
-
-
-
-
-      return [nds,lnks];
-
-      }
-
-
-
-
-      async function getData(link) {
-
-        var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-          return new Promise(function(resolve, error) {
-            
-            Papa.parse(csvFilePath, {
-              header: true,
-              download: true,
-              skipEmptyLines: true,
-              dynamicTyping: true,
-              complete: (res) => { resolve(res.data) }
-            }); 
-
-          });
-
-
-
-      }
-
-
-
-
-
-
-
-
-  }, [])
+  }, [props.current])
 
   // useEffect(() => {
 
@@ -137,7 +145,7 @@ const [parsedData, setParsedData] = useState([]);
     async function genGraph(data) {
 
 
-    d3.select("#graph").selectAll("*").remove();
+    d3.select("#graph").select("svg").remove();
 
     const nodes = data[0];
     const links = data[1];
