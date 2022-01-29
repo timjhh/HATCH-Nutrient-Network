@@ -6,6 +6,8 @@ import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+import * as d3 from "d3";
+
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
@@ -36,7 +38,8 @@ useEffect(() => {
         var filtered = props.files.filter(f => f.match(regex));
  
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-        const d = await getData(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
+        // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
+        const d = await getData(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
 
         console.log(d);
         const w = await wrangle(d);
@@ -96,17 +99,25 @@ useEffect(() => {
         //var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         var csvFilePath = require(link);
 
-          return new Promise(function(resolve, error) {
-            
-            Papa.parse(csvFilePath, {
-              header: true,
-              download: true,
-              skipEmptyLines: true,
-              dynamicTyping: true,
-              complete: (res) => { resolve(res.data) }
-            }); 
+
+          d3.csv(link).then((res, idz) => {
+
+
+            return res;
 
           });
+
+          // return new Promise(function(resolve, error) {
+            
+          //   Papa.parse(csvFilePath, {
+          //     header: true,
+          //     download: true,
+          //     skipEmptyLines: true,
+          //     dynamicTyping: true,
+          //     complete: (res) => { resolve(res.data) }
+          //   }); 
+
+          // });
 
 
 
