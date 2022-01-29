@@ -69,8 +69,8 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
           countries={countries} methods={methods} years={years}/>}/>
 
         <Route path='/graph'
-          files={files}
-         element={<GraphController selected={selected} setSelected={setSelected}
+         element={<GraphController
+         files={files} selected={selected} setSelected={setSelected}
          country={country} setCountry={setCountry}
          method={method} setMethod={setMethod}
          year={year} setYear={setYear}

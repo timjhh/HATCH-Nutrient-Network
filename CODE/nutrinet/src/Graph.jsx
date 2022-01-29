@@ -142,8 +142,8 @@ const [parsedData, setParsedData] = useState([]);
     const nodes = data[0];
     const links = data[1];
 
-    console.log(nodes);
-    console.log(links);
+    //console.log(nodes);
+    //console.log(links);
 
     const svg = d3.select("#graph")
     .append("svg")

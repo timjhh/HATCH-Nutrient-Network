@@ -24,29 +24,33 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
 
+useEffect(() => {
+
+    (async () => {
 
 
-    // (async () => {
+      try {
+
+        let regex = new RegExp(`${props.country}_${props.method}_${props.year}`);
+
+        var filtered = props.files.filter(f => f.match(regex));
+ 
+        //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+        const d = await getData(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
+
+        console.log(d);
+        const w = await wrangle(d);
+
+        await setCurrent({nodes: w[0], links: w[1]});
+        //const g = await genGraph(w);
+        console.log(current);
+
+      } catch(err) {
+        console.log(err);
+      }
 
 
-    //   try {
-
-
-    //     const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-    //     const w = await wrangle(d);
-
-    //     //await setCurrent({nodes: w[0], links: w[1]});
-    //     const g = await genGraph(w);
-
-
-    //   } catch(err) {
-    //     console.log(err);
-    //   }
-
-
-    // }) ();
+    }) ();
 
 
       // yee haw!!
@@ -89,8 +93,8 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
       async function getData(link) {
 
-        var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
+        //var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
+        var csvFilePath = require(link);
 
           return new Promise(function(resolve, error) {
             
@@ -111,7 +115,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
 
-
+}, [props.country])
 
 
 
