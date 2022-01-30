@@ -62,7 +62,7 @@ useEffect(() => {
 
 
 
-if(props.current.length != 0) {  
+// if(props.current.length != 0) {  
 
 
 // var max = Number.MAX_VALUE;
@@ -77,39 +77,26 @@ fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
   
         }).then(data => {
 
-          console.log(data);
+
           setGeoData(data);
           let projection = d3.geoMercator();
 
           let path = d3.geoPath()
             .projection(projection);
-
-          // props.current.forEach(d => {
-
-          //   min = Math.min(min, d[1][1]);
-          //   max = Math.max(max, d[1][1]);
-
-          // });
-
        
-          
+            
+          const svg = d3.select("#map")
+          .append("svg")
+          .style("border", "1px solid black")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("viewBox", [0, 0, width, height])
+          .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+
           // 75th quantile of data, to remove extraneous value
           quantile = d3.quantile(props.current, .80, d => d[2])
 
           let magmaClr = (d) => d3.interpolateMagma( d/quantile );
-
-          //d3.select("#map").select("svg").remove("*");
-
-
-        const svg = d3.select("#map")
-            .append("svg")
-            .style("border", "1px solid black")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", [0, 0, width, height])
-            .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-
-
 
           const g = svg.append("g")
           .selectAll("path")
@@ -120,18 +107,29 @@ fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
-          .attr("fill", (d,idx) => {
-            var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
-            // || e.includes(d.properties.name)
-            return val ? magmaClr(val[2]) : "#808080";
-          })
-          .on("click", (e, d) => {
-            var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
-              console.log(val);
-              console.log(d.properties)
-              props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
-          });
+          .attr("fill", "steelblue");
+       
+       
+          //d3.select("#map").select("svg").remove("*");
 
+
+          // if(props.current.length != 0) { 
+
+
+
+          //   g.selectAll("path").attr("fill", (d,idx) => {
+          //     var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+          //     // || e.includes(d.properties.name)
+          //     return val ? magmaClr(val[2]) : "#808080";
+          //   })
+          //   .on("click", (e, d) => {
+          //     var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
+          //       console.log(val);
+          //       console.log(d.properties)
+          //       props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
+          //   });
+
+          // }
 
         //   // Band scale for x-axis
         //   const xScale = d3
@@ -200,7 +198,7 @@ fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 //       .attr("d", path(outline));
 
 
-}
+//}
 
 }, []);
 // }, [props.current, props.nutrient, props.range]);
@@ -216,6 +214,27 @@ useEffect(() => {
   let magmaClr = (d) => d3.interpolateMagma( d/quantile );
 
   var g = d3.select("#map").select("svg").select("g");
+
+
+
+  if(props.current.length != 0) { 
+
+
+
+    g.selectAll("path").attr("fill", (d,idx) => {
+      var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+      // || e.includes(d.properties.name)
+      return val ? magmaClr(val[2]) : "#808080";
+    })
+    .on("click", (e, d) => {
+      var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
+        console.log(val);
+        console.log(d.properties)
+        props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
+    });
+
+  }
+
 
   // g.selectAll("path")
   // // .data(data.features)
@@ -240,7 +259,7 @@ useEffect(() => {
   // })
 
 
-}, [props.current])
+}, [props.current, props.nutrient, props.range]);
 
 
 //   // Construct a path generator.
