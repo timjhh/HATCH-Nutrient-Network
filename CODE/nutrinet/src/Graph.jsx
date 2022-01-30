@@ -195,17 +195,21 @@ const [parsedData, setParsedData] = useState([]);
     }
       return 0.01;
     }).strength(() => {
-      return d3.select("#bipSwitch").attr("checked") ? 0.01 : 0.5;
+      return 0.9;
+      //return d3.select("#bipSwitch").attr("checked") ? 0.01 : 0.5;
     });
 
+  var forceY = d3.forceY().strength(0);
+  // var forceY = d3.forceY(d => {
 
-  var forceY = d3.forceY(d => {
+  //     return d
+  //     // if(nutrients.includes(d)) {
+
+  //     // }
+  //     // return nodes.indexOf(node.sort(e => e.id)) * radius; 
 
 
-      return nodes.indexOf(node.sort(e => e.id)) * 20; 
-
-
-  }).strength(0);
+  // }).strength(0);
 
     const simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(d => d.id))
