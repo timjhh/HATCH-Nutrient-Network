@@ -70,8 +70,8 @@ useEffect(() => {
 var quantile = 0;
 
 
-
-fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
+//fetch('./DATA_INPUTS/Spatial_data_inputs/countries.geojson').then(response => {
+  fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 
           return response.json();
   
@@ -174,31 +174,11 @@ fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 
 
 
-
-
         }).catch(err => {
-          // Do something for an error here
+
           console.log("Error Reading data " + err);
 
 });
-
-
-
-
-
-  // const svg = d3.create("svg")
-  //     .attr("width", width)
-  //     .attr("height", height)
-  //     .attr("viewBox", [0, 0, width, height])
-  //     .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-
-//   if (outline != null) svg.append("path")
-//       .attr("fill", fill)
-//       .attr("stroke", "currentColor")
-//       .attr("d", path(outline));
-
-
-//}
 
 }, []);
 // }, [props.current, props.nutrient, props.range]);
@@ -206,7 +186,7 @@ fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 
 
 
-
+// Update map each time new data is retrieved
 useEffect(() => {
 
   let quantile = d3.quantile(props.current, .80, d => d[2])
@@ -215,19 +195,24 @@ useEffect(() => {
 
   var g = d3.select("#map").select("svg").select("g");
 
-
+  let nf = [];
 
   if(props.current.length != 0) { 
 
 
-
+    console.log(geoData);
     g.selectAll("path").attr("fill", (d,idx) => {
-      var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+       var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.admin))
+      //var val = props.current.find(e => (e[0] === d.properties.ADMIN || e[0] === d.properties.ADMIN))
       // || e.includes(d.properties.name)
+      if(!val) {
+        nf.push(d.properties);
+      }
       return val ? magmaClr(val[2]) : "#808080";
     })
     .on("click", (e, d) => {
-      var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
+       var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
+      // var val = props.current.find(f => (f[0] === d.properties.ADMIN || f[0] === d.properties.ADMIN))
         console.log(val);
         console.log(d.properties)
         props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
@@ -235,7 +220,8 @@ useEffect(() => {
 
   }
 
-
+  console.log(nf.length + " COUNTRIES NOT FOUND\n");
+  console.log(nf);
   // g.selectAll("path")
   // // .data(data.features)
   // .attr("fill", (d,idx) => {

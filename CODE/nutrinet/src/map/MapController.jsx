@@ -137,7 +137,7 @@ function MapController(props) {
         setMethod={setMethod}
         {...props} />
 
-
+      <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>
       <p>{label}</p>
 
       <Map setLabel={setLabel} className="viz" nutrient={nutrient} current={current} range={range} />
