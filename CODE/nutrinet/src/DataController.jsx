@@ -49,9 +49,9 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
 
-  const [country, setCountry] = useState(countries[0]);
-  const [method, setMethod] = useState(methods[0]);
-  const [year, setYear] = useState(years[0]);
+  // const [country, setCountry] = useState(countries[0]);
+  // const [method, setMethod] = useState(methods[0]);
+  // const [year, setYear] = useState(years[0]);
 
   return (
 
@@ -63,17 +63,17 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
           files={files}
           nutrients={nutrients}
           selected={selected} setSelected={setSelected}
-          country={country} setCountry={setCountry}
-          method={method} setMethod={setMethod}
-          year={year} setYear={setYear}
+          // country={country} setCountry={setCountry}
+          // method={method} setMethod={setMethod}
+          // year={year} setYear={setYear}
           countries={countries} methods={methods} years={years}/>}/>
 
         <Route path='/graph'
          element={<GraphController
          files={files} selected={selected} setSelected={setSelected}
-         country={country} setCountry={setCountry}
-         method={method} setMethod={setMethod}
-         year={year} setYear={setYear}
+         // country={country} setCountry={setCountry}
+         // method={method} setMethod={setMethod}
+         // year={year} setYear={setYear}
          countries={countries} methods={methods} years={years}/>}/>
     </Routes>
 

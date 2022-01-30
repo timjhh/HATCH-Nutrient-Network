@@ -190,7 +190,7 @@ const [parsedData, setParsedData] = useState([]);
 
     if(!bip) {
 
-      return d.group === 2 ? width/3 : (2*width)/3;
+      return d.group === 2 ? width/5 : (4*width)/5;
 
     }
       return 0.01;
@@ -199,7 +199,13 @@ const [parsedData, setParsedData] = useState([]);
     });
 
 
-  var forceY = d3.forceY(null).strength(0);
+  var forceY = d3.forceY(d => {
+
+
+      return nodes.indexOf(node.sort(e => e.id)) * 20; 
+
+
+  }).strength(0);
 
     const simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(d => d.id))
@@ -216,8 +222,9 @@ const [parsedData, setParsedData] = useState([]);
     .selectAll("line")
     .data(links)
     .enter().append("line")
-      .attr("stroke", "lightgray")
-      .attr("stroke-width", function(d) { return 0.2; });
+      //.attr("stroke", "lightgray")
+      .attr("stroke", "rgba(211,211,211, 0.4)")
+      .attr("stroke-width", function(d) { return d.width+(0.2); });
 
 
     var node = g.append("g")

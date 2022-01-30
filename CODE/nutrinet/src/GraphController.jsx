@@ -25,15 +25,20 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
+const [country, setCountry] = useState(props.countries[0]);
+const [method, setMethod] = useState(props.methods[0]);
+const [year, setYear] = useState(props.years[0]);
 
 useEffect(() => {
+
+  console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
 
     (async () => {
 
 
       try {
 
-        let regex = new RegExp(`${props.country}_${props.method}_${props.year}`);
+        let regex = new RegExp(`${country}_${method}_${year}`);
 
         var filtered = props.files.filter(f => f.match(regex));
  
@@ -57,24 +62,29 @@ useEffect(() => {
 
       // yee haw!!
       async function wrangle(d) {
-
+      console.log(d);
+      let maxes = {};
 
       let nds = [];
       let lnks = [];
 
       nutrients.forEach(e => {
+        //console.log(d.e)
         nds.push({id: e, group: 2 });
+        // maxes.e = d3.max(d => Object.entries(d).e);
+        maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
+
       })
+
 
       d.forEach(e => {
 
         nds.push({id: e.FAO_CropName, group: 1 })
         
         Object.entries(e).forEach(f => {
-        //e.forEach(f => { 
     
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[0]/maxes[f[0]])*5 })
             }
             
 
@@ -125,7 +135,7 @@ useEffect(() => {
 
 
 
-}, [props.country])
+}, [country, method, year])
 
 
 
@@ -135,7 +145,11 @@ useEffect(() => {
 
     <>
 
-    <FileSelect {...props} />
+    <FileSelect 
+      country={country} setCountry={setCountry}
+      method={method} setMethod={setMethod}
+      year={year} setYear={setYear}
+     {...props} />
 
 
       <Stack direction="row" spacing={1} alignItems="center">
