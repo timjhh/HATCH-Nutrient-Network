@@ -12,17 +12,6 @@ import Papa from 'papaparse';
 import * as d3 from "d3";
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import AntSwitch from '@mui/material/AntSwitch';
-
-
-// const prom = new Promise((resolutionFunc, rejectionFunc) => {
-//   // call your async return values after succesfull response
-//   setTimeout(function () {
-//     resolutionFunc(<h1> Hello World </h1>);
-//   }, 5000);
-// });
-
-
 
 function MapController(props) {
 
@@ -31,10 +20,12 @@ function MapController(props) {
   const [range, setRange] = useState([0,0]);
   const [label, setLabel] = useState("Click a Country To See Nutrient Data");
 
+  const [method, setMethod] = useState(props.methods[0]);
+
   useEffect(() => {
 
 
-    let regex = new RegExp(`_${props.method}_`);
+    let regex = new RegExp(`_${method}_`);
 
     var filtered = props.files.filter(d => d.match(regex));
     var curr = [];
@@ -42,6 +33,7 @@ function MapController(props) {
     var min = Number.MIN_VALUE;
 
     setCurrent([]);
+
 
     filtered.forEach(d => {
 
@@ -106,7 +98,7 @@ function MapController(props) {
     setCurrent(curr);
 
 
-  }, [nutrient, props.method])
+  }, [nutrient, method])
 
 
 
@@ -132,18 +124,17 @@ function MapController(props) {
 
 
 
-
-
-
   return (
 
     <>
 
       <NutriSelect
         methods={props.methods} 
+        nutrients={props.nutrients}
         nutrient={nutrient}
         setNutrient={setNutrient} 
-        nutrients={props.nutrients}
+        method={method}
+        setMethod={setMethod}
         {...props} />
 
 

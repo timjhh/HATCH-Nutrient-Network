@@ -55,7 +55,7 @@ function Map(props) {
 const width = 1000,
 height = 800;
 
-
+const [geoData, setGeoData] = useState({});
 
 
 useEffect(() => {
@@ -71,14 +71,14 @@ var quantile = 0;
 
 
 
-fetch('./world.geo.json').then(response => {
-
-
+fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 
           return response.json();
+  
         }).then(data => {
 
-
+          console.log(data);
+          setGeoData(data);
           let projection = d3.geoMercator();
 
           let path = d3.geoPath()
@@ -98,7 +98,7 @@ fetch('./world.geo.json').then(response => {
 
           let magmaClr = (d) => d3.interpolateMagma( d/quantile );
 
-          d3.select("#map").select("svg").remove("*");
+          //d3.select("#map").select("svg").remove("*");
 
 
         const svg = d3.select("#map")
@@ -202,16 +202,45 @@ fetch('./world.geo.json').then(response => {
 
 }
 
-}, [props]);
+}, []);
+// }, [props.current, props.nutrient, props.range]);
 
 
 
 
 
-// useEffect(() => {
+useEffect(() => {
+
+  let quantile = d3.quantile(props.current, .80, d => d[2])
+
+  let magmaClr = (d) => d3.interpolateMagma( d/quantile );
+
+  var g = d3.select("#map").select("svg").select("g");
+
+  // g.selectAll("path")
+  // // .data(data.features)
+  // .attr("fill", (d,idx) => {
+  //   var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+  //   return val ? magmaClr(val[2]) : "#808080";
+  // })
+
+  // const g = svg.append("g")
+  // .selectAll("path")
+  // .data(data.features)
+  // // .join("path")
+  // .enter()
+  // .append("path")
+  // .style("stroke-width", 0.5)
+  // .style("stroke", "white")
+  // .attr("d", d => path(d))
+  // .attr("fill", (d,idx) => {
+  //   var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
+  //   // || e.includes(d.properties.name)
+  //   return val ? magmaClr(val[2]) : "#808080";
+  // })
 
 
-// }, [props.selected])
+}, [props.current])
 
 
 //   // Construct a path generator.

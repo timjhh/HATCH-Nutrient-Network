@@ -20,7 +20,6 @@ function DataController() {
   const [bipartite, setBipartite] = useState(false);
 
 
-
   var countries = [];
   var years = [];
   var methods = [];
@@ -37,6 +36,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
 
+  //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
   const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /\.(csv)$/));
 
   files.forEach(d => {
@@ -47,17 +47,19 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
     if(!years.includes(arr[2])) years.push(arr[2]);
   })
 
-
-
-  // const [country, setCountry] = useState(countries[0]);
-  // const [method, setMethod] = useState(methods[0]);
-  // const [year, setYear] = useState(years[0]);
-
   return (
 
     <>
 
     <Routes>
+        <Route path='/'
+         element={<GraphController
+         files={files} selected={selected} setSelected={setSelected}
+         // country={country} setCountry={setCountry}
+         // method={method} setMethod={setMethod}
+         // year={year} setYear={setYear}
+         countries={countries} methods={methods} years={years}/>}/>
+
         <Route path='/maps'
           element={<MapController
           files={files}
@@ -68,13 +70,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
           // year={year} setYear={setYear}
           countries={countries} methods={methods} years={years}/>}/>
 
-        <Route path='/graph'
-         element={<GraphController
-         files={files} selected={selected} setSelected={setSelected}
-         // country={country} setCountry={setCountry}
-         // method={method} setMethod={setMethod}
-         // year={year} setYear={setYear}
-         countries={countries} methods={methods} years={years}/>}/>
     </Routes>
 
 

@@ -33,6 +33,7 @@ useEffect(() => {
 
   console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
 
+
     (async () => {
 
 
@@ -41,12 +42,11 @@ useEffect(() => {
         let regex = new RegExp(`${country}_${method}_${year}`);
 
         var filtered = props.files.filter(f => f.match(regex));
- 
+
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
-        const d = await getData(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
+        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
 
-    
         const w = await wrangle(d);
           
         // await setCurrent({nodes: w[0], links: w[1]});
@@ -62,7 +62,7 @@ useEffect(() => {
 
       // yee haw!!
       async function wrangle(d) {
-      console.log(d);
+
       let maxes = {};
 
       let nds = [];

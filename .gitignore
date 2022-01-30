@@ -3,3 +3,6 @@ CODE/rshiny/DATA_INPUTS/*
 CODE/HATCH_Shiny/.RData
 CODE/HATCH_Shiny/.Rhistory
 .Rproj.user
+
+# Local Netlify folder
+.netlify

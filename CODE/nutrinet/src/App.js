@@ -30,7 +30,7 @@ function App() {
 
     <Box sx={{p: 2}}>
 
-      <Button sx={{mx: 2}} href="/graph" variant="outlined">Graphs</Button>    
+      <Button sx={{mx: 2}} href="/" variant="outlined">Graphs</Button>    
       <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
     
     </Box>
