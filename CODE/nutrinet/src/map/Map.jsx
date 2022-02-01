@@ -67,7 +67,7 @@ useEffect(() => {
 
 // var max = Number.MAX_VALUE;
 // var min = Number.MIN_VALUE;
-var quantile = 0;
+var q1 = 0;
 
 
 //fetch('./DATA_INPUTS/Spatial_data_inputs/countries.geojson').then(response => {
@@ -93,10 +93,10 @@ var quantile = 0;
           .attr("viewBox", [0, 0, width, height])
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-          // 75th quantile of data, to remove extraneous value
-          quantile = d3.quantile(props.current, .80, d => d[2])
+          // 75th q1 of data, to remove extraneous value
+          q1 = d3.quantile(props.current, .80, d => d[2])
 
-          let magmaClr = (d) => d3.interpolateMagma( d/quantile );
+          let magmaClr = (d) => d3.interpolateMagma( d/q1 );
 
           const g = svg.append("g")
           .selectAll("path")
@@ -126,7 +126,7 @@ var quantile = 0;
           //     var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
           //       console.log(val);
           //       console.log(d.properties)
-          //       props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
+          //       props.setLabel("Country " + val[0] + " Avg. " + val[2] + " q1 " + q1);
           //   });
 
           // }
@@ -155,14 +155,18 @@ var quantile = 0;
 
 
         // // Drawing the legend bar
-        //   const legend = svg.append("g")
-        //   .attr("class", "legend")
-        //   .attr("width", 50)
-        //   .attr("height", 100)
-        //   .attr("transform", "translate(150,150)");
+          const legend = svg.append("g")
+          .attr("class", "legend")
+          .attr("width", 50)
+          .attr("height", 100)
+          .style('position', 'absolute')
+          .style('top', '85%')
+          .style('right', '0')
+          .attr("transform", "translate(120,350)");
 
 
-
+          legend.append("text")
+          .text("Legend");
 
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
@@ -189,9 +193,11 @@ var quantile = 0;
 // Update map each time new data is retrieved
 useEffect(() => {
 
-  let quantile = d3.quantile(props.current, .80, d => d[2])
+  let q1 = d3.quantile(props.current, .80, d => d.avg1);
+  let q2 = d3.quantile(props.current, .80, d => d.avg2);
 
-  let magmaClr = (d) => d3.interpolateMagma( d/quantile );
+  let magmaClr = (d) => d3.interpolateMagma( d/q1 );
+  let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
   var g = d3.select("#map").select("svg").select("g");
 
@@ -202,20 +208,23 @@ useEffect(() => {
 
     console.log(geoData);
     g.selectAll("path").attr("fill", (d,idx) => {
-       var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.admin))
-      //var val = props.current.find(e => (e[0] === d.properties.ADMIN || e[0] === d.properties.ADMIN))
-      // || e.includes(d.properties.name)
+      //var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.admin))
+      var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
+
+
       if(!val) {
         nf.push(d.properties);
       }
-      return val ? magmaClr(val[2]) : "#808080";
+      return val ? secondClr(val.avg1) : "#808080";
     })
     .on("click", (e, d) => {
-       var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
-      // var val = props.current.find(f => (f[0] === d.properties.ADMIN || f[0] === d.properties.ADMIN))
+        //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
+        var val = props.current.find(f => (f.country === d.properties.formal_en || f.country === d.properties.admin))
+
         console.log(val);
         console.log(d.properties)
-        props.setLabel("Country " + val[0] + " Avg. " + val[2] + " Quantile " + quantile);
+        props.setLabel("Country: " + val.country + " Nutrient: " + props.nutrient + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
+          " Nutrient: " + props.nutrientTwo + " Avg. " + val.avg2 + " q1 " + q1);
     });
 
   }

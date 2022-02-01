@@ -16,6 +16,9 @@ import Typography from '@mui/material/Typography';
 function MapController(props) {
 
   const [nutrient, setNutrient] = useState("Calories");
+
+  const [nutrientTwo, setNutrientTwo] = useState("Zinc");
+
   const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
   const [label, setLabel] = useState("Click a Country To See Nutrient Data");
@@ -49,23 +52,33 @@ function MapController(props) {
         // Subtract one for the entry of column names
         let len = Object.entries(res).length-1;
        
-        var count = 0; // How many nutrients did we accurately count
-        var sum = 0; // What is their summation
+        var count1 = 0; // How many nutrients did we accurately count
+        var sum1 = 0; // What is their summation
+
+        var count2 = 0; // How many nutrients did we accurately count
+        var sum2 = 0; // What is their summation
 
 
         res.forEach((row,idy) => {
 
           
-          let num = parseFloat(row[nutrient]);
+          let num1 = parseFloat(row[nutrient]);
           
-          if(!Number.isNaN(num)) {
+          if(!Number.isNaN(num1)) {
 
-            sum += num;
-            count++;
+            sum1 += num1;
+            count1++;
 
           }
 
+          let num2 = parseFloat(row[nutrientTwo]);
+          
+          if(!Number.isNaN(num2)) {
 
+            sum2 += num2;
+            count2++;
+
+          }
 
         })
 
@@ -85,7 +98,14 @@ function MapController(props) {
 
 
         if(res[0]) {
-          curr.push([res[0]["Country"], sum, sum/count]);
+          //curr.push([res[0]["Country"], sum, sum/count]);
+          curr.push({
+
+            country: res[0]["Country"],
+            avg1: (sum1/count1),
+            avg2: (sum2/count2)
+
+          });
         }
 
       }
@@ -137,10 +157,20 @@ function MapController(props) {
         setMethod={setMethod}
         {...props} />
 
+      <NutriSelect
+        methods={props.methods} 
+        nutrients={props.nutrients}
+        nutrient={nutrientTwo}
+        setNutrient={setNutrientTwo} 
+        method={method}
+        setMethod={setMethod}
+        {...props} />
+
+
       <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>
       <p>{label}</p>
 
-      <Map setLabel={setLabel} className="viz" nutrient={nutrient} current={current} range={range} />
+      <Map setLabel={setLabel} className="viz" nutrient={nutrient} nutrientTwo={nutrientTwo} current={current} range={range} />
 
 
 
