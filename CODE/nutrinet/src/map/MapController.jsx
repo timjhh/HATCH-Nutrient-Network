@@ -118,7 +118,7 @@ function MapController(props) {
     setCurrent(curr);
 
 
-  }, [nutrient, method])
+  }, [nutrient, nutrientTwo, method])
 
 
 

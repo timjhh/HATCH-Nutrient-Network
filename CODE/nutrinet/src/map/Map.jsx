@@ -224,7 +224,7 @@ useEffect(() => {
         console.log(val);
         console.log(d.properties)
         props.setLabel("Country: " + val.country + " Nutrient: " + props.nutrient + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
-          " Nutrient: " + props.nutrientTwo + " Avg. " + val.avg2 + " q1 " + q1);
+          " Nutrient: " + props.nutrientTwo + " Avg. " + val.avg2 + " q2 " + q2);
     });
 
   }
@@ -254,7 +254,7 @@ useEffect(() => {
   // })
 
 
-}, [props.current, props.nutrient, props.range]);
+}, [props.current, props.nutrient, props.nutrientTwo, props.range]);
 
 
 //   // Construct a path generator.
