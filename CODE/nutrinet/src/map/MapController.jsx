@@ -152,19 +152,21 @@ function MapController(props) {
         methods={props.methods} 
         nutrients={props.nutrients}
         nutrient={nutrient}
-        setNutrient={setNutrient} 
+        setNutrient={setNutrient}
+        nutrientTwo={nutrientTwo}
+        setNutrientTwo={setNutrientTwo}  
         method={method}
         setMethod={setMethod}
         {...props} />
 
-      <NutriSelect
+{/*      <NutriSelect
         methods={props.methods} 
         nutrients={props.nutrients}
         nutrient={nutrientTwo}
         setNutrient={setNutrientTwo} 
         method={method}
         setMethod={setMethod}
-        {...props} />
+        {...props} />*/}
 
 
       <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>

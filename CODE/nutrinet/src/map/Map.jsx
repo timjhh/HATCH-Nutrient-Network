@@ -57,6 +57,26 @@ height = 800;
 
 const [geoData, setGeoData] = useState({});
 
+function multiplyColors(c1, c2) {
+  
+  let rgb1 = d3.color(c1);
+  let rgb2 = d3.color(c2);
+
+  let r = Math.floor((rgb1['r'] * rgb2['r']) / 255);
+  let g = Math.floor((rgb1['g'] * rgb2['g']) / 255);
+  let b = Math.floor((rgb1['b'] * rgb2['b']) / 255);
+
+
+  return rgbToHex(r,g,b);
+
+}
+function rgbToHex(r, g, b) {
+  const componentToHex = c => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+}
 
 useEffect(() => {
 
@@ -77,7 +97,8 @@ var q1 = 0;
   
         }).then(data => {
 
-
+          let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
+          console.log(clr);
           setGeoData(data);
           let projection = d3.geoMercator();
 
@@ -97,6 +118,27 @@ var q1 = 0;
           q1 = d3.quantile(props.current, .80, d => d[2])
 
           let magmaClr = (d) => d3.interpolateMagma( d/q1 );
+
+
+
+          // bivariateColorScale = values => {
+          //   const [xValue, yValue] = values;
+          //   // feel like it is more readable to destructure config object rather than writing legendConfig.blah a number of times
+          //   const { width, height, colorX, colorY, color0, interpolator } = legendConfig;
+            
+          //   const xBotScale = interpolator(color0, colorX);
+          //   const xTopScale = interpolator(
+          //     colorY,
+          //     multiplyColors(colorX, colorY)
+          //   );
+
+          //   const yColorScale = interpolator(
+          //     xBotScale(xScale(xValue)),
+          //     xTopScale(xScale(xValue))
+          //   );
+          //   return yColorScale(yScale(yValue));
+          // }
+
 
           const g = svg.append("g")
           .selectAll("path")
@@ -152,6 +194,9 @@ var q1 = 0;
         //       .attr('x2', '0%') // to top
         //       .attr('y2', '0%')
         //       .attr('spreadMethod', 'pad');
+
+
+
 
 
         // // Drawing the legend bar
@@ -231,6 +276,8 @@ useEffect(() => {
 
   console.log(nf.length + " COUNTRIES NOT FOUND\n");
   console.log(nf);
+
+
   // g.selectAll("path")
   // // .data(data.features)
   // .attr("fill", (d,idx) => {

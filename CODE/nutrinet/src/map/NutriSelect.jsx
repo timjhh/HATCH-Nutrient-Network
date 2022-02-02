@@ -62,6 +62,22 @@ useEffect(() => {
 
     </FormControl>
     <FormControl sx={{ m:2 }}>
+      <InputLabel id="country-select-label">Second Nutrient</InputLabel>
+      <Select
+        labelId="mcountry-select-label"
+        id="country-select"
+        value={props.nutrientTwo}
+        label="Second Nutrient"
+        onChange={(e) => { props.setNutrientTwo(e.target.value) }}
+      >
+      {props.nutrients.map(d => (
+        <MenuItem key={d} value={d}>{d}</MenuItem>
+        ))}
+      </Select>
+
+
+    </FormControl>
+    <FormControl sx={{ m:2 }}>
 
       <InputLabel id="method-select-label">Method</InputLabel>
       <Select
