@@ -6,7 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import * as fs from 'fs';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 
 function FileSelect(props) {
 
@@ -68,7 +70,16 @@ function FileSelect(props) {
       </Select>
 
     </FormControl>
+    <FormControl sx={{ m:2 }}>
 
+    <Autocomplete
+      disablePortal
+      id="highlight_nodes"
+      options={props.nutrients}
+      sx={{ m:2 }}
+      renderInput={(params) => <TextField {...params} label="Highlight" />}
+    />
+    </FormControl>
 
 </Box>
 </Paper>

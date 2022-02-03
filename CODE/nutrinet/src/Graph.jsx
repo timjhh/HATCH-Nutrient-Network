@@ -8,121 +8,20 @@ function Graph(props) {
 
 const radius = 2;
 
-const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
+//const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+//            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+//            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
+const nutrients = ["B12..USDA.only.","B6","Calcium","Calories","Carbohydrates","Choline","Copper","Dietary.Fiber","Fat","Folate","Iron","Magnesium","Manganese","Monounsaturated.FA","Niacin","Omega.3..USDA.only.","Phosphorus","Polyunsaturated.FA","Potassium","Protein","Riboflavin","Saturated.FA","Sodium","Thiamin","Vitamin.A","Vitamin.C","Zinc"];
 
 // Update margin once size ref is created
 const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
-height = 400 - (margin.top+margin.bottom);
-
+height = 500 - (margin.top+margin.bottom);
 
 
 
 const [parsedData, setParsedData] = useState([]);
-//const [nodes, setNodes] = useState([]);
-//const [links, setLinks] = useState([]);
-
-
-
-  // useEffect(() => {
-
-  //   //console.log(props.current);
-  //   //console.log("rerender");
-  //   //genGraph(props.current);
-
-
-  //   (async () => {
-
-
-  //     try {
-
-
-  //       const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-  //       const w = await wrangle(d);
-
-  //       const g = await genGraph(w);
-
-
-  //     } catch(err) {
-  //       console.log(err);
-  //     }
-
-
-  //   }) ();
-
-
-  //     // yee haw!!
-  //     async function wrangle(d) {
-
-
-  //     let nds = [];
-  //     let lnks = [];
-
-  //     nutrients.forEach(e => {
-  //       nds.push({id: e, group: 2 });
-  //     })
-
-  //     d.forEach(e => {
-
-  //       nds.push({id: e.FAO_CropName, group: 1 })
-        
-  //       Object.entries(e).forEach(f => {
-    
-  //           if(!Number.isNaN(f[1]) && f[1] > 0) {
-  //             if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1] })
-  //           }
-            
-
-  //       })
-        
-
-  //     })
-
-
-
-
-  //     return [nds,lnks];
-
-  //     }
-
-
-
-
-  //     async function getData(link) {
-
-  //       var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-
-
-  //         return new Promise(function(resolve, error) {
-            
-  //           Papa.parse(csvFilePath, {
-  //             header: true,
-  //             download: true,
-  //             skipEmptyLines: true,
-  //             dynamicTyping: true,
-  //             complete: (res) => { resolve(res.data) }
-  //           }); 
-
-  //         });
-
-
-
-  //     }
-
-
-
-
-
-
-
-
-  // }, [])
-
 
   useEffect(() => {
 
@@ -131,14 +30,12 @@ const [parsedData, setParsedData] = useState([]);
 
   }, [props.current])
 
-  // useEffect(() => {
+  useEffect(() => {
 
+      console.log("bipartite switch")
 
-  //   //console.log(props.switch);
-  //   let svg = d3.select("graph").select("svg");
+  }, [props.bipartite])
 
-
-  // }, [props.current]);
 
 
     // Consider adding async back
@@ -150,8 +47,8 @@ const [parsedData, setParsedData] = useState([]);
     const nodes = data[0];
     const links = data[1];
 
-    //console.log(nodes);
-    //console.log(links);
+
+
 
     const svg = d3.select("#graph")
     .append("svg")
@@ -159,7 +56,7 @@ const [parsedData, setParsedData] = useState([]);
     .attr("preserveAspectRatio", "xMinYMin meet")
     .style("border", "1px solid black")
     //.style("position", "absolute")
-    .attr("viewBox", "0 0 " + (width) + " " + (height))
+    .attr("viewBox", "0 0 " + (width) + " " + (height-100))
     .on("click", (event, item) => {
         console.log(event.srcElement.tagName === "svg");
 
@@ -194,29 +91,36 @@ const [parsedData, setParsedData] = useState([]);
 
     }
       return 0.01;
-    }).strength(() => {
-      return 0.9;
+    }).strength((d) => {
+      return 2;
       //return d3.select("#bipSwitch").attr("checked") ? 0.01 : 0.5;
     });
 
-  var forceY = d3.forceY().strength(0);
-  // var forceY = d3.forceY(d => {
+  //var forceY = d3.forceY().strength(0);
+  var forceY = d3.forceY(d => {
 
-  //     return d
-  //     // if(nutrients.includes(d)) {
+      if(nutrients.includes(d.id)) {
 
-  //     // }
-  //     // return nodes.indexOf(node.sort(e => e.id)) * radius; 
+        let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
+
+        let mean = d3.mean(subset, e => (e.width/3));
+
+        return nutrients.indexOf(d.id)*15;
+
+      }
+
+      return null; // Crops do not need a force value
+      // return nodes.indexOf(node.sort(e => e.id)) * radius; 
 
 
-  // }).strength(0);
+  }).strength(d => d.group === 2 ? 1 : 0);
 
     const simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(d => d.id))
     .force("charge", d3.forceManyBody())
-    .force("repel", d3.forceManyBody().strength(-50))
+    .force("repel", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide(4))
+    .force("collision", d3.forceCollide(10))
     .force("x", forceX)
     .force("y", forceY);
 
@@ -227,8 +131,12 @@ const [parsedData, setParsedData] = useState([]);
     .data(links)
     .enter().append("line")
       //.attr("stroke", "lightgray")
-      .attr("stroke", "rgba(211,211,211, 0.4)")
+      .attr("stroke", "rgba(211,211,211, 1)")
+      //.attr("stroke", d => d3.interpolateYlGn(d.width/3) )
+      //.attr("stroke", d => d3.interpolateYlGnBu(d.width/3))
+      //.attr("opacity", 0.6)
       .attr("stroke-width", function(d) { return d.width+(0.2); });
+
 
 
     var node = g.append("g")
@@ -257,14 +165,10 @@ const [parsedData, setParsedData] = useState([]);
 
           var connected = link.filter(g => g.source.id === d.id || g.target.id === d.id);
 
-
-          node.attr("opacity", 0.1);
           link.attr("opacity", g => (g.source.id === d.id || g.target.id === d.id) ? 1 : 0.1);
 
-          node.filter(h => h.id === d.id).attr("opacity", 1);
-
           connected.each(function(g) {
-            node.filter(h => h.id === g.source.id || h.id === g.target.id).attr("opacity", 1);
+            node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
           });
 
 

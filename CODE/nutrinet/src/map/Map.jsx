@@ -57,6 +57,13 @@ height = 800;
 
 const [geoData, setGeoData] = useState({});
 
+const forceUpdate = useForceUpdate();
+
+function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => value + 1); // update the state to force render
+}
+
 function multiplyColors(c1, c2) {
   
   let rgb1 = d3.color(c1);
@@ -112,6 +119,7 @@ var q1 = 0;
           .attr("width", width)
           .attr("height", height)
           .attr("viewBox", [0, 0, width, height])
+          .on("change", {forceUpdate})
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
           // 75th q1 of data, to remove extraneous value
@@ -303,8 +311,8 @@ useEffect(() => {
   // })
 
 
-}, [props.nutrient, props.nutrientTwo, props.range]);
-
+}, [props.nutrient, props.nutrientTwo]);
+// props.current, props.nutrient, props.nutrientTwo, props.range
 
 //   // Construct a path generator.
 //   const path = d3.geoPath(projection);

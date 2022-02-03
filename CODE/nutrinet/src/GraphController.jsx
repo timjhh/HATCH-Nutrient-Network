@@ -82,9 +82,9 @@ useEffect(() => {
         nds.push({id: e.FAO_CropName, group: 1 })
         
         Object.entries(e).forEach(f => {
-    
+
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[0]/maxes[f[0]])*5 })
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*3 })
             }
             
 

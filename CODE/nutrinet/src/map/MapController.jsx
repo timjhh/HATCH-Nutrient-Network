@@ -23,7 +23,7 @@ function MapController(props) {
   const [range, setRange] = useState([0,0]);
   const [label, setLabel] = useState("Click a Country To See Nutrient Data");
 
-  const [title, setTitle] = useState("Mapaaa");
+  const [title, setTitle] = useState("Calories");
 
   const [method, setMethod] = useState(props.methods[0]);
 
