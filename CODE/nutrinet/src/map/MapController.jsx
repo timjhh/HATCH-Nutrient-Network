@@ -23,6 +23,8 @@ function MapController(props) {
   const [range, setRange] = useState([0,0]);
   const [label, setLabel] = useState("Click a Country To See Nutrient Data");
 
+  const [title, setTitle] = useState("Mapaaa");
+
   const [method, setMethod] = useState(props.methods[0]);
 
   useEffect(() => {
@@ -169,10 +171,11 @@ function MapController(props) {
         {...props} />*/}
 
 
+      <p className="display-4" style={{"font-size": "2em"}}>{title}</p>
       <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>
       <p>{label}</p>
 
-      <Map setLabel={setLabel} className="viz" nutrient={nutrient} nutrientTwo={nutrientTwo} current={current} range={range} />
+      <Map setTitle={setTitle} setLabel={setLabel} className="viz" nutrient={nutrient} nutrientTwo={nutrientTwo} current={current} range={range} />
 
 
 

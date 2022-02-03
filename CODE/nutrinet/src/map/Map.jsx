@@ -238,6 +238,8 @@ var q1 = 0;
 // Update map each time new data is retrieved
 useEffect(() => {
 
+  console.log(props.nutrient);
+
   let q1 = d3.quantile(props.current, .80, d => d.avg1);
   let q2 = d3.quantile(props.current, .80, d => d.avg2);
 
@@ -251,7 +253,6 @@ useEffect(() => {
   if(props.current.length != 0) { 
 
 
-    console.log(geoData);
     g.selectAll("path").attr("fill", (d,idx) => {
       //var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.admin))
       var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
@@ -272,8 +273,9 @@ useEffect(() => {
           " Nutrient: " + props.nutrientTwo + " Avg. " + val.avg2 + " q2 " + q2);
     });
 
-  }
+  } else console.log("CURRENT 0")
 
+  props.setTitle(props.nutrient + " + " + props.nutrientTwo);
   console.log(nf.length + " COUNTRIES NOT FOUND\n");
   console.log(nf);
 
@@ -301,7 +303,7 @@ useEffect(() => {
   // })
 
 
-}, [props.current, props.nutrient, props.nutrientTwo, props.range]);
+}, [props.nutrient, props.nutrientTwo, props.range]);
 
 
 //   // Construct a path generator.
