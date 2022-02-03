@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Graph from './Graph.jsx'
+
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,6 +9,11 @@ import Paper from '@mui/material/Paper';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid'
 
 function FileSelect(props) {
 
@@ -16,13 +21,13 @@ function FileSelect(props) {
   return (
 
 
-<Paper sx={{ m: 2, p: 2, background: 'primary.main', elevation: 24 }}>
+<Paper sx={{ p: 2, background: 'primary.main', elevation: 24 }}>
 
-<Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+<Box>
 
 
-
-    <FormControl sx={{ m:2 }}>
+    <Grid item>
+    <FormControl sx={{ my:2, width: 1 }}>
       <InputLabel id="country-select-label">Country</InputLabel>
       <Select
         labelId="mcountry-select-label"
@@ -38,7 +43,9 @@ function FileSelect(props) {
 
 
     </FormControl>
-    <FormControl sx={{ m:2 }}>
+    </Grid>
+    <Grid item>
+    <FormControl sx={{ my: 2, width: 1 }}>
 
       <InputLabel id="method-select-label">Method</InputLabel>
       <Select
@@ -54,7 +61,9 @@ function FileSelect(props) {
       </Select>
 
     </FormControl>
-    <FormControl sx={{ m:2 }}>
+    </Grid>
+    <Grid item>
+    <FormControl sx={{ my: 2, width: 1 }}>
 
       <InputLabel id="year-select-label">Year</InputLabel>
       <Select
@@ -70,7 +79,9 @@ function FileSelect(props) {
       </Select>
 
     </FormControl>
-    <FormControl sx={{ m:2 }}>
+    </Grid>
+    <Grid item>
+    <FormControl sx={{ width: 1 }}>
 
     <Autocomplete
       disablePortal
@@ -80,6 +91,14 @@ function FileSelect(props) {
       renderInput={(params) => <TextField {...params} label="Highlight" />}
     />
     </FormControl>
+    </Grid>
+    <Grid item >
+    <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+        <Typography>Bipartite</Typography>
+          <Switch id="bipSwitch" checked={props.bipartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
+        <Typography>Force-Directed</Typography>
+      </Stack>
+    </Grid>
 
 </Box>
 </Paper>

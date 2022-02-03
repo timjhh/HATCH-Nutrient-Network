@@ -17,7 +17,7 @@ const nutrients = ["B12..USDA.only.","B6","Calcium","Calories","Carbohydrates","
 // Update margin once size ref is created
 const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
-height = 500 - (margin.top+margin.bottom);
+height = 700 - (margin.top+margin.bottom);
 
 
 
@@ -40,7 +40,11 @@ const [parsedData, setParsedData] = useState([]);
 
 
     if(sim) {
-      sim.force("x", null).force("y", null);
+
+      sim.force("x", null)
+      .force("y", null)
+      .force("repel", d3.forceManyBody().strength(-50))
+      //.force("collision", d3.forceCollide(5));
       sim.alpha(1).restart();
     }
 
@@ -83,7 +87,9 @@ const [parsedData, setParsedData] = useState([]);
     }).strength(d => d.group === 2 ? 1 : 0);
 
     if(sim) {
-      sim.force("x", forceX).force("y", forceY);
+      sim.force("x", forceX).force("y", forceY)
+      .force("repel", d3.forceManyBody().strength(-100))
+      .force("collision", d3.forceCollide(10));
       sim.alpha(1).restart();
     }
 

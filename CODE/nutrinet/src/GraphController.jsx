@@ -3,13 +3,11 @@ import './App.css';
 import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
 import Grid from '@mui/material/Grid';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
+
 
 import * as d3 from "d3";
 
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+
 
 import Papa from 'papaparse';
 
@@ -145,21 +143,29 @@ useEffect(() => {
 
     <>
 
-    <FileSelect 
-      country={country} setCountry={setCountry}
-      method={method} setMethod={setMethod}
-      year={year} setYear={setYear}
-     {...props} />
+    <Grid container spacing={2}>
+
+      <Grid item xs={12} md={9}>
+        <Graph current={current} switch={bipartite} />
+      </Grid>
+      <Grid item xs={12} md={3}>
+        <FileSelect 
+        country={country} setCountry={setCountry}
+        method={method} setMethod={setMethod}
+        year={year} setYear={setYear}
+        bipartite={bipartite} setBipartite={setBipartite}
+      {...props} />
+      </Grid>
 
 
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Typography>Bipartite</Typography>
-          <Switch id="bipSwitch" checked={bipartite} onChange={() => { setBipartite(!bipartite) }} name="bipartite" />
-        <Typography>Force-Directed</Typography>
-      </Stack>
 
 
-      <Graph current={current} switch={bipartite} />
+
+
+
+
+
+      </Grid>
 
     </>
 

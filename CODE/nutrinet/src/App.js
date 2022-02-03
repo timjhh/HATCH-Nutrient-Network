@@ -7,10 +7,11 @@ import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
+import Navigation from './Navigation.jsx';
 import GraphController from './GraphController.jsx'
 import MapController from './map/MapController.jsx'
 import DataController from './DataController.jsx'
@@ -27,13 +28,9 @@ function App() {
     <div className="App">
 
 
+    <Navigation />
 
-    <Box sx={{p: 2}}>
 
-      <Button sx={{mx: 2}} href="/" variant="outlined">Graphs</Button>    
-      <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
-    
-    </Box>
 
 
     <Grid container spacing={2}>
@@ -43,10 +40,7 @@ function App() {
       <Grid item xs={8}>
 
     <DataController />
-{/*    <Routes>
-        <Route path='/maps' element={<MapController/>}/>
-        <Route path='/graph' element={<GraphController/>}/>
-    </Routes>*/}
+
 
 
       </Grid>
