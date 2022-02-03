@@ -21,7 +21,9 @@ height = 500 - (margin.top+margin.bottom);
 
 
 
+const [sim, setSim] = useState(null);
 const [parsedData, setParsedData] = useState([]);
+
 
   useEffect(() => {
 
@@ -32,9 +34,68 @@ const [parsedData, setParsedData] = useState([]);
 
   useEffect(() => {
 
-      console.log("bipartite switch")
 
-  }, [props.bipartite])
+  // Checked if the graph is force directed
+  if(props.switch) {
+
+
+    if(sim) {
+      sim.force("x", null).force("y", null);
+      sim.alpha(1).restart();
+    }
+
+  } else { // Checked if graph is bipartite
+
+    var links = props.current[1];
+
+    var forceX = d3.forceX(function(d) {
+
+
+      var bip = d3.select("#bipSwitch").attr("checked");
+  
+      if(!bip) {
+  
+        return d.group === 2 ? width/5 : (4*width)/5;
+  
+      }
+        return 0.01;
+      }).strength((d) => {
+        return 2;
+      });
+  
+  
+    var forceY = d3.forceY(d => {
+  
+        if(nutrients.includes(d.id)) {
+  
+          let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
+  
+          let mean = d3.mean(subset, e => (e.width/3));
+  
+          return nutrients.indexOf(d.id)*15;
+  
+        }
+  
+        return null; // Crops do not need a force value
+        // return nodes.indexOf(node.sort(e => e.id)) * radius; 
+  
+  
+    }).strength(d => d.group === 2 ? 1 : 0);
+
+    if(sim) {
+      sim.force("x", forceX).force("y", forceY);
+      sim.alpha(1).restart();
+    }
+
+  }
+
+
+
+
+
+
+
+  }, [props.switch])
 
 
 
@@ -124,6 +185,7 @@ const [parsedData, setParsedData] = useState([]);
     .force("x", forceX)
     .force("y", forceY);
 
+    setSim(simulation);
 
   var link = g.append("g")
       .attr("class", "links")
