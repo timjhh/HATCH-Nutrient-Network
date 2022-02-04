@@ -55,6 +55,14 @@ function Map(props) {
 const width = 1000,
 height = 800;
 
+const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
+const colors2d = [
+["#e8e8e8", "#ace4e4", "#5ac8c8"], 
+["#dfb0d6", "#a5add3", "#5698b9"], 
+["#be64ac", "#8c62aa", "#3b4994"]
+];
+const legendSize = 20;
+
 const [geoData, setGeoData] = useState({});
 
 const forceUpdate = useForceUpdate();
@@ -84,6 +92,8 @@ function rgbToHex(r, g, b) {
   };
   return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
 }
+
+
 
 useEffect(() => {
 
@@ -171,16 +181,47 @@ var q1 = 0;
         // // Drawing the legend bar
           const legend = svg.append("g")
           .attr("class", "legend")
+          .attr("font-weight", "bold")
           .attr("width", 50)
           .attr("height", 100)
           .style('position', 'absolute')
           .style('top', '85%')
           .style('right', '0')
-          .attr("transform", "translate(120,350)");
+          .attr("transform", "translate(120,350)")
+          //.attr("transform", "rotate(135)");
+
+          legend.selectAll("rect")
+          .data(colors1d)
+          .enter()
+          .append("rect")
+          .attr("width", legendSize)
+          .attr("height", legendSize)
+          .attr("x", (d,idx) => legendSize*(idx%3)-85)
+          .attr("y", (d,idx) => legendSize*(parseInt(idx/3))-50)
+          .attr("fill", d => d)
+          .attr("transform", "rotate(-135)");
+          
+
 
 
           legend.append("text")
-          .text("Legend");
+          .text("Legend")
+          .attr("x", -5);
+
+          legend.append("text")
+          .attr("x", 15)
+          .attr("y", 80)
+          .attr("class", "v1label")
+          .attr("transform", "rotate(45)")
+          .text(props.variable1);
+
+          legend.append("text")
+          .attr("x", -55)
+          .attr("y", 110)
+          .attr("class", "v2label")
+          .attr("transform", "rotate(-45)")
+          .text("Variable 2");
+
 
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
@@ -199,7 +240,7 @@ var q1 = 0;
 });
 
 }, []);
-// }, [props.current, props.nutrient, props.range]);
+// }, [props.current, props.variable1, props.range]);
 
 
 
@@ -209,8 +250,27 @@ useEffect(() => {
 
 
 
+
+
+
+
+  // Update legend labels
+  let regex = /[^(a-z)(A-Z)(0-9)]/g;
+  d3.select(".v1label").text(props.variable1.replace(regex, " "));
+  d3.select(".v2label").text(props.variable2.replace(regex, " "));
+
   let q1 = d3.quantile(props.current, .80, d => d.avg1);
   let q2 = d3.quantile(props.current, .80, d => d.avg2);
+
+  
+  let scalevar1 = d3.scaleQuantile()
+  .domain([0,q1])
+  .range([0,1,2]);
+
+  let scalevar2 = d3.scaleQuantile()
+  .domain([0,q2])
+  .range([0,1,2]);
+
 
   let magmaClr = (d) => d3.interpolateMagma( d/q1 );
   let secondClr = (d) => d3.interpolateCividis( d/q1 );
@@ -230,7 +290,9 @@ useEffect(() => {
       if(!val) {
         nf.push(d.properties);
       }
-      return val ? secondClr(val.avg1) : "#808080";
+
+      //return val ? secondClr(val.avg1) : "#808080";
+      return val ? colors2d[scalevar2(val.avg2)][scalevar1(val.avg1)] : "#808080";
     })
     .on("click", (e, d) => {
         //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
@@ -238,42 +300,20 @@ useEffect(() => {
 
         console.log(val);
         console.log(d.properties)
-        props.setLabel("Country: " + val.country + " Nutrient: " + props.nutrient + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
-          " Nutrient: " + props.nutrientTwo + " Avg. " + val.avg2 + " q2 " + q2);
+        props.setLabel("Country: " + val.country + " Nutrient: " + props.variable1 + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
+          " Nutrient: " + props.variable2 + " Avg. " + val.avg2 + " q2 " + q2);
     });
 
   } else console.log("CURRENT 0")
 
-  props.setTitle(props.nutrient + " + " + props.nutrientTwo);
+  props.setTitle(props.variable1 + " + " + props.variable2);
   console.log(nf.length + " COUNTRIES NOT FOUND\n");
   console.log(nf);
 
 
-  // g.selectAll("path")
-  // // .data(data.features)
-  // .attr("fill", (d,idx) => {
-  //   var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
-  //   return val ? magmaClr(val[2]) : "#808080";
-  // })
 
-  // const g = svg.append("g")
-  // .selectAll("path")
-  // .data(data.features)
-  // // .join("path")
-  // .enter()
-  // .append("path")
-  // .style("stroke-width", 0.5)
-  // .style("stroke", "white")
-  // .attr("d", d => path(d))
-  // .attr("fill", (d,idx) => {
-  //   var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
-  //   // || e.includes(d.properties.name)
-  //   return val ? magmaClr(val[2]) : "#808080";
-  // })
-
-
-}, [props.nutrient, props.nutrientTwo]);
-// props.current, props.nutrient, props.nutrientTwo, props.range
+}, [props.variable1, props.variable2]);
+// props.current, props.variable1, props.variable2, props.range
 
 //   // Construct a path generator.
 //   const path = d3.geoPath(projection);

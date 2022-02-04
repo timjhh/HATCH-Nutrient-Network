@@ -50,9 +50,9 @@ useEffect(() => {
       <Select
         labelId="mcountry-select-label"
         id="country-select"
-        value={props.nutrient}
+        value={props.variable1}
         label="Nutrient"
-        onChange={(e) => { props.setNutrient(e.target.value) }}
+        onChange={(e) => { props.setVariable1(e.target.value) }}
       >
       {props.nutrients.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
@@ -66,9 +66,9 @@ useEffect(() => {
       <Select
         labelId="mcountry-select-label"
         id="country-select"
-        value={props.nutrientTwo}
+        value={props.variable2}
         label="Second Nutrient"
-        onChange={(e) => { props.setNutrientTwo(e.target.value) }}
+        onChange={(e) => { props.setVariable2(e.target.value) }}
       >
       {props.nutrients.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
