@@ -104,6 +104,9 @@ var q1 = 0;
   
         }).then(data => {
 
+          let q1 = d3.quantile(props.current, .80, d => d.avg1);
+          let secondClr = (d) => d3.interpolateCividis( d/q1 );
+
           let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
           console.log(clr);
           setGeoData(data);
@@ -160,48 +163,6 @@ var q1 = 0;
           .attr("fill", "steelblue");
        
        
-          //d3.select("#map").select("svg").remove("*");
-
-
-          // if(props.current.length != 0) { 
-
-
-
-          //   g.selectAll("path").attr("fill", (d,idx) => {
-          //     var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.name))
-          //     // || e.includes(d.properties.name)
-          //     return val ? magmaClr(val[2]) : "#808080";
-          //   })
-          //   .on("click", (e, d) => {
-          //     var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.name))
-          //       console.log(val);
-          //       console.log(d.properties)
-          //       props.setLabel("Country " + val[0] + " Avg. " + val[2] + " q1 " + q1);
-          //   });
-
-          // }
-
-        //   // Band scale for x-axis
-        //   const xScale = d3
-        //     .scaleBand()
-        //     .domain([0, 1])
-        //     .range([0, width]);
-          
-        //   // Linear scale for y-axis
-        //   const yScale = d3
-        //     .scaleLinear()
-        //     .domain(domain)
-        //     .range([height, 0]);
-
-
-        //   var gradient = legend.append('defs')
-        //       .append('linearGradient')
-        //       .attr('id', 'gradient')
-        //       .attr('x1', '0%') // bottom
-        //       .attr('y1', '100%')
-        //       .attr('x2', '0%') // to top
-        //       .attr('y2', '0%')
-        //       .attr('spreadMethod', 'pad');
 
 
 
@@ -246,7 +207,7 @@ var q1 = 0;
 // Update map each time new data is retrieved
 useEffect(() => {
 
-  console.log(props.nutrient);
+
 
   let q1 = d3.quantile(props.current, .80, d => d.avg1);
   let q2 = d3.quantile(props.current, .80, d => d.avg2);
