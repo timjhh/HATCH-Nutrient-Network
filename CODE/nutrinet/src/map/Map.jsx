@@ -199,6 +199,9 @@ var q1 = 0;
           .attr("x", (d,idx) => legendSize*(idx%3)-85)
           .attr("y", (d,idx) => legendSize*(parseInt(idx/3))-50)
           .attr("fill", d => d)
+          .on("mouseover", (event,d) => {
+            console.log(d)
+          })
           .attr("transform", "rotate(-135)");
           
 

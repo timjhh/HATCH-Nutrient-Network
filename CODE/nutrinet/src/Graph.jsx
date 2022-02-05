@@ -32,6 +32,11 @@ const [parsedData, setParsedData] = useState([]);
 
   }, [props.current])
 
+  // Update node(s) on highlight
+  useEffect(() => {
+
+  }, [props.highlighted])
+
   useEffect(() => {
 
 
@@ -234,6 +239,14 @@ const [parsedData, setParsedData] = useState([]);
           var connected = link.filter(g => g.source.id === d.id || g.target.id === d.id);
 
           link.attr("opacity", g => (g.source.id === d.id || g.target.id === d.id) ? 1 : 0.1);
+
+          // connected.forEach(function(g) {
+          //   node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
+          // });
+
+          node.each(g => {
+              g.attr("opacity", e )
+          });
 
           connected.each(function(g) {
             node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);

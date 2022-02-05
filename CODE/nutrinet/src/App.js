@@ -39,9 +39,7 @@ function App() {
       </Grid>
       <Grid item xs={8}>
 
-    <DataController />
-
-
+        <DataController />
 
       </Grid>
 

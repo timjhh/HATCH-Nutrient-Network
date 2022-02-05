@@ -86,7 +86,9 @@ function FileSelect(props) {
     <Autocomplete
       disablePortal
       id="highlight_nodes"
-      options={props.nutrients}
+      options={props.highlightOptions}
+      value={props.highlighted}
+      onChange={(d,e) => props.setHighlighted(e)}
       sx={{ m:2 }}
       renderInput={(params) => <TextField {...params} label="Highlight" />}
     />

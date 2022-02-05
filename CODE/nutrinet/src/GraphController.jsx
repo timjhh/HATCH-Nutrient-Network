@@ -16,6 +16,7 @@ function GraphController(props) {
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
   const [current, setCurrent] = useState([]);
+  const [nodes, setNodes] = useState([]);
 
   //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
 
@@ -26,6 +27,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 const [country, setCountry] = useState(props.countries[0]);
 const [method, setMethod] = useState(props.methods[0]);
 const [year, setYear] = useState(props.years[0]);
+const [highlighted, setHighlighted] = useState(null);
 
 useEffect(() => {
 
@@ -65,10 +67,12 @@ useEffect(() => {
 
       let nds = [];
       let lnks = [];
+      let nodes = [];
 
       nutrients.forEach(e => {
         //console.log(d.e)
         nds.push({id: e, group: 2 });
+        nodes.push(e);
         // maxes.e = d3.max(d => Object.entries(d).e);
         maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
 
@@ -78,6 +82,7 @@ useEffect(() => {
       d.forEach(e => {
 
         nds.push({id: e.FAO_CropName, group: 1 })
+        nodes.push(e.FAO_CropName);
         
         Object.entries(e).forEach(f => {
 
@@ -96,6 +101,8 @@ useEffect(() => {
 
       //return [nds,lnks];
       setCurrent([nds,lnks])
+
+      setNodes(nodes);
 
       }
 
@@ -145,15 +152,17 @@ useEffect(() => {
 
     <Grid container spacing={2}>
 
-      <Grid item xs={12} md={9}>
-        <Graph current={current} switch={bipartite} />
+      <Grid item xs={12} lg={9}>
+        <Graph current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
       </Grid>
-      <Grid item xs={12} md={3}>
+      <Grid item xs={12} lg={3}>
         <FileSelect 
         country={country} setCountry={setCountry}
         method={method} setMethod={setMethod}
         year={year} setYear={setYear}
         bipartite={bipartite} setBipartite={setBipartite}
+        highlightOptions={nodes}
+        highlighted={highlighted} setHighlighted={setHighlighted}
       {...props} />
       </Grid>
 
