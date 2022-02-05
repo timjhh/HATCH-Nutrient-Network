@@ -35,6 +35,24 @@ const [parsedData, setParsedData] = useState([]);
   // Update node(s) on highlight
   useEffect(() => {
 
+    let node = d3.select(".content").selectAll(".nodes").selectAll("circle");
+    let link = d3.select(".content").selectAll(".links").selectAll("line");
+
+    let sel = props.highlighted;
+
+    var connected = link.filter(g => g.source.id === sel || g.target.id === sel);
+    var cnodes = [];
+    
+    connected.each(d => {
+      if(!cnodes.includes(d.source.id)) cnodes.push(d.source.id);
+      if(!cnodes.includes(d.target.id)) cnodes.push(d.target.id); 
+    });
+
+    link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
+
+    node.attr("opacity", d => cnodes.includes(d) ? 1 : 0.1);
+
+
   }, [props.highlighted])
 
   useEffect(() => {
