@@ -144,7 +144,7 @@ function MapController(props) {
     setCurrent(curr);
 
 
-  }, [variable1, variable2, method])
+  }, [variable1, variable2, source])
 
 
 

@@ -280,7 +280,7 @@ useEffect(() => {
 
 
 
-}, [props.variable1, props.variable2]);
+}, [props.current]);
 
 
   return (
