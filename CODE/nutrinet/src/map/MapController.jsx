@@ -15,17 +15,20 @@ import Typography from '@mui/material/Typography';
 
 function MapController(props) {
 
-  const [variable1, setVariable1] = useState("Calories");
+  const [variable1, setVariable1] = useState("Population");
 
-  const [variable2, setVariable2] = useState("Zinc");
+  const [variable2, setVariable2] = useState("GDP");
 
   const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
   const [label, setLabel] = useState("Click a Country To See variable1 Data");
 
-  const [title, setTitle] = useState("Calories");
+  const [title, setTitle] = useState("Title");
 
   const [method, setMethod] = useState(props.methods[0]);
+
+  const [variables, setVariables] = useState([]);
+
 
   useEffect(() => {
 
@@ -40,82 +43,89 @@ function MapController(props) {
     setCurrent([]);
 
 
-    filtered.forEach(d => {
 
+    // Code to dynamically load in data
+    // filtered.forEach(d => {
 
+    d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
-      d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then((res, idz) => {
+      console.log(res);
+      setVariables(res.columns);
+      setCurrent(res);
+
+    });
+
+    //   d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then((res, idz) => {
       
-        if(Object.entries(res).length != 1) {
+    //     if(Object.entries(res).length != 1) {
 
-        let idx = res.columns.indexOf(variable1); // Index of selected variable1
+    //     let idx = res.columns.indexOf(variable1); // Index of selected variable1
 
         
-        // Subtract one for the entry of column names
-        let len = Object.entries(res).length-1;
+    //     // Subtract one for the entry of column names
+    //     let len = Object.entries(res).length-1;
        
-        var count1 = 0; // How many nutrients did we accurately count
-        var sum1 = 0; // What is their summation
+    //     var count1 = 0; // How many nutrients did we accurately count
+    //     var sum1 = 0; // What is their summation
 
-        var count2 = 0; // How many nutrients did we accurately count
-        var sum2 = 0; // What is their summation
+    //     var count2 = 0; // How many nutrients did we accurately count
+    //     var sum2 = 0; // What is their summation
 
 
-        res.forEach((row,idy) => {
+    //     res.forEach((row,idy) => {
 
           
-          let num1 = parseFloat(row[variable1]);
+    //       let num1 = parseFloat(row[variable1]);
           
-          if(!Number.isNaN(num1)) {
+    //       if(!Number.isNaN(num1)) {
 
-            sum1 += num1;
-            count1++;
+    //         sum1 += num1;
+    //         count1++;
 
-          }
+    //       }
 
-          let num2 = parseFloat(row[variable2]);
+    //       let num2 = parseFloat(row[variable2]);
           
-          if(!Number.isNaN(num2)) {
+    //       if(!Number.isNaN(num2)) {
 
-            sum2 += num2;
-            count2++;
+    //         sum2 += num2;
+    //         count2++;
 
-          }
+    //       }
 
-        })
+    //     })
 
-      //Debugging code - may be useful later
-      //   try {
-      //   if(res[0]["Country"] === "United States of America") {
-      //     console.log("-------- Results --------");
-      //     console.log(sum);
-      //     console.log(sum / count);
-      //     console.log(variable1);
-      //     console.log("-------- End --------");
-      //   }
-      // } catch(e) {
-      //   console.log(res)
-      //   console.log(e)
-      // }
-
-
-        if(res[0]) {
-          //curr.push([res[0]["Country"], sum, sum/count]);
-          curr.push({
-
-            country: res[0]["Country"],
-            avg1: (sum1/count1),
-            avg2: (sum2/count2)
-
-          });
-        }
-
-      }
-
-      });
+    //   //Debugging code - may be useful later
+    //   //   try {
+    //   //   if(res[0]["Country"] === "United States of America") {
+    //   //     console.log("-------- Results --------");
+    //   //     console.log(sum);
+    //   //     console.log(sum / count);
+    //   //     console.log(variable1);
+    //   //     console.log("-------- End --------");
+    //   //   }
+    //   // } catch(e) {
+    //   //   console.log(res)
+    //   //   console.log(e)
+    //   // }
 
 
-    })
+    //     if(res[0]) {
+    //       curr.push({
+
+    //         country: res[0]["Country"],
+    //         avg1: (sum1/count1),
+    //         avg2: (sum2/count2)
+
+    //       });
+    //     }
+
+    //   }
+
+    //   });
+
+
+    // })
 
     setCurrent(curr);
 
@@ -152,7 +162,8 @@ function MapController(props) {
 
       <NutriSelect
         methods={props.methods} 
-        nutrients={props.nutrients}
+        //variables={props.nutrients} // Many .csv files
+        variables={variables} // Single .csv file
         variable1={variable1}
         setVariable1={setVariable1}
         variable2={variable2}
@@ -161,17 +172,10 @@ function MapController(props) {
         setMethod={setMethod}
         {...props} />
 
-{/*      <NutriSelect
-        methods={props.methods} 
-        nutrients={props.nutrients}
-        variable1={variable2}
-        setVariable1={setvariable2} 
-        method={method}
-        setMethod={setMethod}
-        {...props} />*/}
 
 
-      <p className="display-4" style={{"font-size": "2em"}}>{title}</p>
+
+      <p className="display-4" style={{"fontSize": "2em"}}>{title}</p>
       <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>
       <p>{label}</p>
 

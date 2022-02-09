@@ -14,42 +14,6 @@ import Typography from '@mui/material/Typography';
 
 
 function Map(props) {
-// function Map(data, {
-//   id = d => d.id, // given d in data, returns the feature id
-//   value = () => undefined, // given d in data, returns the quantitative value
-//   title, // given a feature f and possibly a datum d, returns the hover text
-//   format, // optional format specifier for the title
-//   scale = d3.scaleSequential, // type of color scale
-//   domain, // [min, max] values; input of color scale
-//   range = d3.interpolateBlues, // output of color scale
-//   width = 640, // outer width, in pixels
-//   height, // outer height, in pixels
-//   projection, // a D3 projection; null for pre-projected geometry
-//   features, // a GeoJSON feature collection
-//   featureId = d => d.id, // given a feature, returns its id
-//   borders, // a GeoJSON object for stroking borders
-//   outline = projection && projection.rotate ? {type: "Sphere"} : null, // a GeoJSON object for the background
-//   unknown = "#ccc", // fill color for missing data
-//   fill = "white", // fill color for outline
-//   stroke = "white", // stroke color for borders
-//   strokeLinecap = "round", // stroke line cap for borders
-//   strokeLinejoin = "round", // stroke line join for borders
-//   strokeWidth, // stroke width for borders
-//   strokeOpacity, // stroke opacity for borders
-// } = {}) {
-//   // Compute values.
-//   const N = d3.map(data, id);
-//   const V = d3.map(data, value).map(d => d == null ? NaN : +d);
-//   const Im = new d3.InternMap(N.map((id, i) => [id, i]));
-//   const If = d3.map(features.features, featureId);
-
-//   // Compute default domains.
-//   if (domain === undefined) domain = d3.extent(V);
-
-//   // Construct scales.
-//   const color = scale(domain, range);
-//   if (unknown !== undefined) color.unknown(unknown);
-
 
 
 const width = 1000,
@@ -114,7 +78,10 @@ var q1 = 0;
   
         }).then(data => {
 
-          let q1 = d3.quantile(props.current, .80, d => d.avg1);
+          // let q1 = d3.quantile(props.current, .80, d => d.avg1);
+         
+          let variable = props.variable1;
+          let q1 = d3.quantile(props.current, .80, d => d.variable);
           let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
           let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
@@ -164,7 +131,6 @@ var q1 = 0;
           const g = svg.append("g")
           .selectAll("path")
           .data(data.features)
-          // .join("path")
           .enter()
           .append("path")
           .style("stroke-width", 0.5)
@@ -173,11 +139,6 @@ var q1 = 0;
           .attr("fill", "steelblue");
        
        
-
-
-
-
-
         // // Drawing the legend bar
           const legend = svg.append("g")
           .attr("class", "legend")
@@ -262,8 +223,10 @@ useEffect(() => {
   d3.select(".v1label").text(props.variable1.replace(regex, " "));
   d3.select(".v2label").text(props.variable2.replace(regex, " "));
 
-  let q1 = d3.quantile(props.current, .80, d => d.avg1);
-  let q2 = d3.quantile(props.current, .80, d => d.avg2);
+  let variable = props.variable1;
+  let variable2 = props.variable2;
+  let q1 = d3.quantile(props.current, .80, d => d.variable);
+  let q2 = d3.quantile(props.current, .80, d => d.variable2);
 
   
   let scalevar1 = d3.scaleQuantile()
@@ -286,8 +249,9 @@ useEffect(() => {
 
 
     g.selectAll("path").attr("fill", (d,idx) => {
-      //var val = props.current.find(e => (e[0] === d.properties.formal_en || e[0] === d.properties.admin))
+      
       var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
+      //var val = props.current.find(e => (e.ISO3.Code === d.properties.formal_en || e.ISO3.Code === d.properties.admin))
 
 
       if(!val) {
@@ -316,47 +280,9 @@ useEffect(() => {
 
 
 }, [props.variable1, props.variable2]);
-// props.current, props.variable1, props.variable2, props.range
 
-//   // Construct a path generator.
-//   const path = d3.geoPath(projection);
-
-
-
-
-// d3.json(props.data, function(err, geojson) {
-//       svg.append("path").attr("d", path(geojson.features));})
-
-
-  // svg.append("g")
-  //   .selectAll("path")
-  //   .data(props.data.features)
-  //   .join("path")
-  //       .attr("fill", (d, i) => colors(d))
-  //     // .attr("fill", (d, i) => color(V[Im.get(If[i])]))
-  //     .attr("d", path(props.data))
-  //   .append("title")
-  //     .text((d, i) => "Title");
-
-
-      //.text((d, i) => title(d, Im.get(If[i])));
-
-//   if (borders != null) svg.append("path")
-//       .attr("pointer-events", "none")
-//       .attr("fill", "none")
-//       .attr("stroke", stroke)
-//       .attr("stroke-linecap", strokeLinecap)
-//       .attr("stroke-linejoin", strokeLinejoin)
-//       .attr("stroke-width", strokeWidth)
-//       .attr("stroke-opacity", strokeOpacity)
-//       .attr("d", path(borders));
-
-  // return Object.assign(svg.node(), {scales: {color}});
 
   return (
-
-
-
 
 
     <>

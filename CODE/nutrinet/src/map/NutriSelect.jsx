@@ -46,15 +46,15 @@ useEffect(() => {
 
 
     <FormControl sx={{ m:2 }}>
-      <InputLabel id="country-select-label">Nutrient</InputLabel>
+      <InputLabel id="country-select-label">First Variable</InputLabel>
       <Select
         labelId="mcountry-select-label"
         id="country-select"
         value={props.variable1}
-        label="Nutrient"
+        label="Variable One"
         onChange={(e) => { props.setVariable1(e.target.value) }}
       >
-      {props.nutrients.map(d => (
+      {props.variables.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
@@ -62,15 +62,15 @@ useEffect(() => {
 
     </FormControl>
     <FormControl sx={{ m:2 }}>
-      <InputLabel id="country-select-label">Second Nutrient</InputLabel>
+      <InputLabel id="country-select-label">Second Variable</InputLabel>
       <Select
         labelId="mcountry-select-label"
         id="country-select"
         value={props.variable2}
-        label="Second Nutrient"
+        label="Variable Two"
         onChange={(e) => { props.setVariable2(e.target.value) }}
       >
-      {props.nutrients.map(d => (
+      {props.variables.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
