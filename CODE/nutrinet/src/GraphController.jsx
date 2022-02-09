@@ -157,6 +157,7 @@ useEffect(() => {
       </Grid>
       <Grid item xs={12} lg={3}>
         <FileSelect 
+        nutrients={nutrients}
         country={country} setCountry={setCountry}
         method={method} setMethod={setMethod}
         year={year} setYear={setYear}

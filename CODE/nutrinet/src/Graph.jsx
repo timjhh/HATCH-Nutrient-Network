@@ -40,18 +40,27 @@ const [parsedData, setParsedData] = useState([]);
 
     let sel = props.highlighted;
 
-    var connected = link.filter(g => g.source.id === sel || g.target.id === sel);
-    var cnodes = [];
-    
-    connected.each(d => {
-      if(!cnodes.includes(d.source.id)) cnodes.push(d.source.id);
-      if(!cnodes.includes(d.target.id)) cnodes.push(d.target.id); 
-    });
+    if(sel) {
 
-    link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
+      var connected = link.filter(g => g.source.id === sel || g.target.id === sel);
+      var cnodes = [];
+      
+      connected.each(d => {
+        if(!cnodes.includes(d.source.id)) cnodes.push(d.source.id);
+        if(!cnodes.includes(d.target.id)) cnodes.push(d.target.id); 
+      });
 
-    node.attr("opacity", d => cnodes.includes(d) ? 1 : 0.1);
+      link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
 
+      node.attr("opacity", d => cnodes.includes(d.id) ? 1 : 0.1);
+
+    } else {
+
+
+      node.attr("opacity", 1);
+      link.attr("opacity", 1);
+
+    }
 
   }, [props.highlighted])
 
@@ -148,7 +157,6 @@ const [parsedData, setParsedData] = useState([]);
     //.style("position", "absolute")
     .attr("viewBox", "0 0 " + (width) + " " + (height-100))
     .on("click", (event, item) => {
-        console.log(event.srcElement.tagName === "svg");
 
         if(event.srcElement.tagName === "svg") {
           node.attr("opacity", 1);
@@ -262,14 +270,18 @@ const [parsedData, setParsedData] = useState([]);
           //   node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
           // });
 
-          node.each(g => {
-              g.attr("opacity", e )
-          });
 
-          connected.each(function(g) {
-            node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
-          });
+          // connected.each(function(g) {
+          //   node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
+          // });
 
+          var cnd = [];
+          connected.each(g => {
+            if(!cnd.includes(g.source.id)) cnd.push(g.source.id);
+            if(!cnd.includes(g.target.id)) cnd.push(g.target.id);
+          })
+
+          node.attr("opacity", g => cnd.includes(g.id) ? 1 : 0.1);
 
 
     })

@@ -88,6 +88,7 @@ function FileSelect(props) {
       id="highlight_nodes"
       options={props.highlightOptions}
       value={props.highlighted}
+      groupBy={(option) => props.nutrients.includes(option)}
       onChange={(d,e) => props.setHighlighted(e)}
       sx={{ m:2 }}
       renderInput={(params) => <TextField {...params} label="Highlight" />}
