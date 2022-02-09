@@ -206,8 +206,8 @@ useEffect(() => {
   // let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
   // let q2 = d3.quantile(props.current, .80, d => d[props.variable2]);
 
-  var m1 = d3.max(props.current, d => d[props.variable1]);
-  var m2 = d3.max(props.current, d => d[props.variable2]);
+  var m1 = d3.max(props.current, d => parseFloat(d[props.variable1]));
+  var m2 = d3.max(props.current, d => parseFloat(d[props.variable2]));
   
   let scalevar1 = d3.scaleQuantile()
   .domain([0, m1])
@@ -232,22 +232,28 @@ useEffect(() => {
       
       //var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
       var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))
-      console.log(val[props.variable1])
+      
+      
+
 
       if(!val) {
         nf.push(d.properties);
       }
 
-      let nullclr = "#808080";
+      //let nullclr = "#808080";
+      let nullclr = "black"
 
       //return val ? secondClr(val.avg1) : "#808080";
-      //if(!val) return nullclr;
-      console.log(val[props.variable1])
-      // let v1 = val[props.variable1] != "NA" && !isNaN(val[props.variable1]) ? scalevar1(parseFloat(val[props.variable1])) : nullclr;
-      // let v2 = val[props.variable2] != "NA" && !isNaN(val[props.variable2]) ? scalevar2(parseFloat(val[props.variable2])) : nullclr;
-      
-      return val ? colors2d[2][1] : "#808080";
-      // return val ? colors2d[v2][v1] : "#808080";
+      if(!val) return nullclr;
+      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return nullclr;
+  
+      // let v1 = !isNaN(val[props.variable1]) ? scalevar1(parseFloat(val[props.variable1])) : 0;
+      // let v2 = !isNaN(val[props.variable2]) ? scalevar2(parseFloat(val[props.variable2])) : 0;
+      let v1 = scalevar1(parseFloat(val[props.variable1]));
+      let v2 = scalevar2(parseFloat(val[props.variable2]));
+
+      //return val ? colors2d[2][1] : "#808080";
+      return val ? colors2d[v2][v1] : "#808080";
     })
     .on("click", (e, d) => {
         //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
