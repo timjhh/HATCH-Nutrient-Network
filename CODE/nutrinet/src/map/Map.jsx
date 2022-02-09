@@ -262,10 +262,14 @@ useEffect(() => {
         var val = props.current.find(f => f.ISO3_Code === d.properties.iso_a3)
 
 
-        props.setLabel("Country: " + val.Country + " Nutrient: " + props.variable1 + " Avg. " + val[props.variable1] + " q1 " + m1 + "\n" +
-          " Nutrient: " + props.variable2 + " Avg. " + val[props.variable2] + " q2 " + m2);
-        // props.setLabel("Country: " + val.country + " Nutrient: " + props.variable1 + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
-        //   " Nutrient: " + props.variable2 + " Avg. " + val.avg2 + " q2 " + q2);
+        // props.setLabel("Country: " + val.Country + " Variable: " + props.variable1 + " Avg. " + val[props.variable1] + " max " + m1 + "\n" +
+        //   "||| Variable: " + props.variable2 + " Avg. " + val[props.variable2] + " max " + m2);
+
+        props.setCountry(val.Country);
+        props.setLabel(" Variable: " + props.variable1 + " Avg. " + val[props.variable1] + " max " + m1);
+        
+        props.setLabel2("Variable: " + props.variable2 + " Avg. " + val[props.variable2] + " max " + m2);
+
     });
 
   } else console.log("CURRENT 0")

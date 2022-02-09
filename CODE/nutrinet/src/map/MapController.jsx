@@ -21,7 +21,10 @@ function MapController(props) {
 
   const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
+
+  const [country, setCountry] = useState("");
   const [label, setLabel] = useState("Click a Country To See variable1 Data");
+  const [label2, setLabel2] = useState("");
 
   const [title, setTitle] = useState("Title");
 
@@ -31,6 +34,9 @@ function MapController(props) {
   const [variables, setVariables] = useState([]);
 
   const [sources, setSources] = useState(["Import_kg"]);
+
+  const unused = ["Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
+
 
   useEffect(() => {
 
@@ -50,7 +56,7 @@ function MapController(props) {
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
 
-      setVariables(res.columns);
+      setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(res.filter(d => d.Source === source));
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
       console.log(current);
@@ -187,10 +193,19 @@ function MapController(props) {
 
 
       <p className="display-4" style={{"fontSize": "2em"}}>{title}</p>
-      <p>Note: Consider Including Country Codes in Filename. This will allow all countries to be found</p>
+      <p className="display-4" style={{"fontSize": "2em"}}>{country}</p>
       <p>{label}</p>
+      <p>{label2}</p>
 
-      <Map setTitle={setTitle} setLabel={setLabel} className="viz" variable1={variable1} variable2={variable2} current={current} range={range} />
+      <Map setTitle={setTitle} 
+      setLabel={setLabel} 
+      setLabel2={setLabel2}
+      setCountry={setCountry}
+      className="viz" 
+      variable1={variable1} 
+      variable2={variable2} 
+      current={current} 
+      range={range} />
 
 
 
