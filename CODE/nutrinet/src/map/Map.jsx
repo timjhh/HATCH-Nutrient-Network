@@ -66,10 +66,6 @@ useEffect(() => {
 // if(props.current.length != 0) {  
 
 
-// var max = Number.MAX_VALUE;
-// var min = Number.MIN_VALUE;
-var q1 = 0;
-
 
 //fetch('./DATA_INPUTS/Spatial_data_inputs/countries.geojson').then(response => {
   fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
@@ -80,12 +76,12 @@ var q1 = 0;
 
           // let q1 = d3.quantile(props.current, .80, d => d.avg1);
          
-          let variable = props.variable1;
-          let q1 = d3.quantile(props.current, .80, d => d.variable);
+
+          let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
           let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
           let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
-          console.log(clr);
+
           setGeoData(data);
           let projection = d3.geoMercator();
 
@@ -103,29 +99,11 @@ var q1 = 0;
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
           // 75th q1 of data, to remove extraneous value
-          q1 = d3.quantile(props.current, .80, d => d[2])
+          //q1 = d3.quantile(props.current, .80, d => d[2])
+          q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
 
           let magmaClr = (d) => d3.interpolateMagma( d/q1 );
 
-
-
-          // bivariateColorScale = values => {
-          //   const [xValue, yValue] = values;
-          //   // feel like it is more readable to destructure config object rather than writing legendConfig.blah a number of times
-          //   const { width, height, colorX, colorY, color0, interpolator } = legendConfig;
-            
-          //   const xBotScale = interpolator(color0, colorX);
-          //   const xTopScale = interpolator(
-          //     colorY,
-          //     multiplyColors(colorX, colorY)
-          //   );
-
-          //   const yColorScale = interpolator(
-          //     xBotScale(xScale(xValue)),
-          //     xTopScale(xScale(xValue))
-          //   );
-          //   return yColorScale(yScale(yValue));
-          // }
 
 
           const g = svg.append("g")
@@ -223,23 +201,25 @@ useEffect(() => {
   d3.select(".v1label").text(props.variable1.replace(regex, " "));
   d3.select(".v2label").text(props.variable2.replace(regex, " "));
 
-  let variable = props.variable1;
-  let variable2 = props.variable2;
-  let q1 = d3.quantile(props.current, .80, d => d.variable);
-  let q2 = d3.quantile(props.current, .80, d => d.variable2);
 
+  // Setting Max to 80th quantile
+  // let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
+  // let q2 = d3.quantile(props.current, .80, d => d[props.variable2]);
+
+  var m1 = d3.max(props.current, d => d[props.variable1]);
+  var m2 = d3.max(props.current, d => d[props.variable2]);
   
   let scalevar1 = d3.scaleQuantile()
-  .domain([0,q1])
+  .domain([0, m1])
   .range([0,1,2]);
 
   let scalevar2 = d3.scaleQuantile()
-  .domain([0,q2])
+  .domain([0,m2])
   .range([0,1,2]);
 
 
-  let magmaClr = (d) => d3.interpolateMagma( d/q1 );
-  let secondClr = (d) => d3.interpolateCividis( d/q1 );
+  // let magmaClr = (d) => d3.interpolateMagma( d/q1 );
+  // let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
   var g = d3.select("#map").select("svg").select("g");
 
@@ -250,25 +230,36 @@ useEffect(() => {
 
     g.selectAll("path").attr("fill", (d,idx) => {
       
-      var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
-      //var val = props.current.find(e => (e.ISO3.Code === d.properties.formal_en || e.ISO3.Code === d.properties.admin))
-
+      //var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
+      var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))
+      console.log(val[props.variable1])
 
       if(!val) {
         nf.push(d.properties);
       }
 
+      let nullclr = "#808080";
+
       //return val ? secondClr(val.avg1) : "#808080";
-      return val ? colors2d[scalevar2(val.avg2)][scalevar1(val.avg1)] : "#808080";
+      //if(!val) return nullclr;
+      console.log(val[props.variable1])
+      // let v1 = val[props.variable1] != "NA" && !isNaN(val[props.variable1]) ? scalevar1(parseFloat(val[props.variable1])) : nullclr;
+      // let v2 = val[props.variable2] != "NA" && !isNaN(val[props.variable2]) ? scalevar2(parseFloat(val[props.variable2])) : nullclr;
+      
+      return val ? colors2d[2][1] : "#808080";
+      // return val ? colors2d[v2][v1] : "#808080";
     })
     .on("click", (e, d) => {
         //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
-        var val = props.current.find(f => (f.country === d.properties.formal_en || f.country === d.properties.admin))
+        
+        //var val = props.current.find(f => (f.country === d.properties.formal_en || f.country === d.properties.admin))
+        var val = props.current.find(f => f.ISO3_Code === d.properties.iso_a3)
 
-        console.log(val);
-        console.log(d.properties)
-        props.setLabel("Country: " + val.country + " Nutrient: " + props.variable1 + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
-          " Nutrient: " + props.variable2 + " Avg. " + val.avg2 + " q2 " + q2);
+
+        props.setLabel("Country: " + val.Country + " Nutrient: " + props.variable1 + " Avg. " + val[props.variable1] + " q1 " + m1 + "\n" +
+          " Nutrient: " + props.variable2 + " Avg. " + val[props.variable2] + " q2 " + m2);
+        // props.setLabel("Country: " + val.country + " Nutrient: " + props.variable1 + " Avg. " + val.avg1 + " q1 " + q1 + "\n" +
+        //   " Nutrient: " + props.variable2 + " Avg. " + val.avg2 + " q2 " + q2);
     });
 
   } else console.log("CURRENT 0")

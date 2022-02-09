@@ -83,11 +83,11 @@ useEffect(() => {
       <Select
         labelId="method-select-label"
         id="method-select"
-        value={props.method}
+        value={props.source}
         label="Method"
-        onChange={(e) => { props.setMethod(e.target.value) }}
+        onChange={(e) => { props.setSource(e.target.value) }}
       >
-      {props.methods.map(d => (
+      {props.sources.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>

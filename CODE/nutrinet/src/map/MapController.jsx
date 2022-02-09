@@ -26,9 +26,11 @@ function MapController(props) {
   const [title, setTitle] = useState("Title");
 
   const [method, setMethod] = useState(props.methods[0]);
+  const [source, setSource] = useState("Import_kg");
 
   const [variables, setVariables] = useState([]);
 
+  const [sources, setSources] = useState(["Import_kg"]);
 
   useEffect(() => {
 
@@ -44,16 +46,22 @@ function MapController(props) {
 
 
 
-    // Code to dynamically load in data
-    // filtered.forEach(d => {
 
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
-      console.log(res);
+
       setVariables(res.columns);
-      setCurrent(res);
+      setCurrent(res.filter(d => d.Source === source));
+      setSources(Array.from(d3.group(res, d => d.Source).keys()));
+      console.log(current);
 
     });
+
+
+    // Code to dynamically load in data
+    // filtered.forEach(d => {
+
+
 
     //   d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then((res, idz) => {
       
@@ -161,15 +169,18 @@ function MapController(props) {
     <>
 
       <NutriSelect
-        methods={props.methods} 
+        //methods={props.methods} // Many .csv files
+        sources={sources}
         //variables={props.nutrients} // Many .csv files
         variables={variables} // Single .csv file
         variable1={variable1}
         setVariable1={setVariable1}
         variable2={variable2}
         setVariable2={setVariable2}  
-        method={method}
-        setMethod={setMethod}
+        // method={method}
+        // setMethod={setMethod}
+        source={source}
+        setSource={setSource}
         {...props} />
 
 
