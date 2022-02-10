@@ -18,6 +18,12 @@ const Navigation = () => {
 
         </Grid>
         <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
+            <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
+                <img src={gh} />
+            </a>
+        </Grid>
+
+        <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
 
   
         <Button sx={{mx: 2}} href="/" variant="outlined">Graphs</Button>  
@@ -32,9 +38,7 @@ const Navigation = () => {
           
 
           
-        <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-        <img src={gh} />
-        </Grid>
+
       </Grid>
 
 
