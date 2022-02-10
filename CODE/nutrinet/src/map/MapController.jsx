@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Papa from 'papaparse';
@@ -22,9 +23,9 @@ function MapController(props) {
   const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
 
-  const [country, setCountry] = useState("");
-  const [label, setLabel] = useState("Click a Country To See variable1 Data");
-  const [label2, setLabel2] = useState("");
+  const [country, setCountry] = useState("Select a Country");
+  const [label, setLabel] = useState([]);
+  const [label2, setLabel2] = useState([]);
 
   const [title, setTitle] = useState("Title");
 
@@ -192,20 +193,84 @@ function MapController(props) {
 
 
 
-      <p className="display-4" style={{"fontSize": "2em"}}>{title}</p>
-      <p className="display-4" style={{"fontSize": "2em"}}>{country}</p>
-      <p>{label}</p>
-      <p>{label2}</p>
 
-      <Map setTitle={setTitle} 
-      setLabel={setLabel} 
-      setLabel2={setLabel2}
-      setCountry={setCountry}
-      className="viz" 
-      variable1={variable1} 
-      variable2={variable2} 
-      current={current} 
-      range={range} />
+
+      <Grid container spacing={2}>
+
+        <Grid item xs={12} lg={9}>
+          
+          <Map
+          setTitle={setTitle} 
+          setLabel={setLabel} 
+          setLabel2={setLabel2}
+          setCountry={setCountry}
+          className="viz" 
+          variable1={variable1} 
+          variable2={variable2} 
+          current={current} 
+          range={range} />
+
+        </Grid>
+        <Grid item xs={12} lg={3}>
+          <Box       
+          sx={{ backgroundColor: 'primary.dark',
+          p: 2,
+          m: 0
+      }}>
+
+            <Typography mb={-2} ml={1}>Country</Typography>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{country}</Typography>
+
+            <Typography mt={3} mb={-2} ml={1}>Source</Typography>
+            <Typography mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{source}</Typography>
+
+            <Typography mt={3} mb={-2} ml={1}>Variables</Typography>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{title}</Typography>
+
+            <hr/>
+          <Grid container spacing={2}>
+            <Grid item xs={12} lg={6}>
+
+              
+              {/* {label.map(d => (
+                <p>{d}</p>
+              ))} */}
+              
+              {label.length > 0 &&
+              <>
+                <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable1}</Typography>
+                <p>{label[0]} / {label[1]}</p>
+                <p>= {(label[0] / label[1]).toFixed(5)}%</p>
+              </>
+              }
+
+            </Grid>
+            <Grid item xs={12} md={6}>
+
+              {/* {label2.map((d,idx) => (
+                <p>{d}</p>
+              ))} */}
+              {label2.length > 0 &&
+              <>
+                <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable2}</Typography>
+                <p>{label2[0]} / {label2[1]}</p>
+                <p>= {(label2[0] / label2[1]).toFixed(5)}%</p>
+              </>
+              }
+
+            </Grid>
+          </Grid>
+            
+            
+          </Box>
+        </Grid>
+
+
+      </Grid>
+
+
+
+
 
 
 

@@ -91,7 +91,6 @@ useEffect(() => {
             
           const svg = d3.select("#map")
           .append("svg")
-          .style("border", "1px solid black")
           .attr("width", width)
           .attr("height", height)
           .attr("viewBox", [0, 0, width, height])
@@ -266,9 +265,12 @@ useEffect(() => {
         //   "||| Variable: " + props.variable2 + " Avg. " + val[props.variable2] + " max " + m2);
 
         props.setCountry(val.Country);
-        props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
         
-        props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
+        //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
+        props.setLabel([val[props.variable1], m1]);
+
+        //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
+        props.setLabel2([val[props.variable2], m2]);
 
     });
 
