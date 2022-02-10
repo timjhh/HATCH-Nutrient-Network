@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Graph from './Graph.jsx';
-import FileSelect from './FileSelect.jsx';
+import Graph from './graph/Graph.jsx';
+import FileSelect from './graph/FileSelect.jsx';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 // import AntSwitch from '@mui/material/AntSwitch';
 import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
 
-import GraphController from './GraphController.jsx'
+import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
 
 function DataController() {

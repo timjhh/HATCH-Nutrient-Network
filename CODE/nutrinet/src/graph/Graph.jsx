@@ -158,7 +158,9 @@ const [parsedData, setParsedData] = useState([]);
     .attr("viewBox", "0 0 " + (width) + " " + (height-100))
     .on("click", (event, item) => {
 
+        // On any extraneous click, de-select any highlighted node
         if(event.srcElement.tagName === "svg") {
+          props.setHighlighted(null);
           node.attr("opacity", 1);
           link.attr("opacity", 1);
         }
@@ -262,26 +264,8 @@ const [parsedData, setParsedData] = useState([]);
     .attr("r", radius)
     .on("click", (e, d) => {
 
-          var connected = link.filter(g => g.source.id === d.id || g.target.id === d.id);
 
-          link.attr("opacity", g => (g.source.id === d.id || g.target.id === d.id) ? 1 : 0.1);
-
-          // connected.forEach(function(g) {
-          //   node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
-          // });
-
-
-          // connected.each(function(g) {
-          //   node.attr("opacity", h => h.id === g.source.id || h.id === g.target.id ? 1 : 0.1);
-          // });
-
-          var cnd = [];
-          connected.each(g => {
-            if(!cnd.includes(g.source.id)) cnd.push(g.source.id);
-            if(!cnd.includes(g.target.id)) cnd.push(g.target.id);
-          })
-
-          node.attr("opacity", g => cnd.includes(g.id) ? 1 : 0.1);
+          props.setHighlighted(d.id);
 
 
     })

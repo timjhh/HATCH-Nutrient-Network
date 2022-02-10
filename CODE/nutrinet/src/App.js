@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Graph from './Graph.jsx';
-import FileSelect from './FileSelect.jsx';
+import Graph from './graph/Graph.jsx';
+import FileSelect from './graph/FileSelect.jsx';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
 import Navigation from './Navigation.jsx';
-import GraphController from './GraphController.jsx'
+import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
 import DataController from './DataController.jsx'
 

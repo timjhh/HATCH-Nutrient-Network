@@ -195,9 +195,11 @@ function MapController(props) {
 
 
 
-      <Grid container spacing={2}>
+      <Grid container spacing={0} direction="column"
+      alignItems="center"
+      justifyContent="center">
 
-        <Grid item xs={12} lg={9}>
+        <Grid item xs={12}>
           
           <Map
           setTitle={setTitle} 
@@ -211,12 +213,13 @@ function MapController(props) {
           range={range} />
 
         </Grid>
-        <Grid item xs={12} lg={3}>
+        <Grid item xs={12} sx={{ width: 1 }}>
           <Box       
           sx={{ backgroundColor: 'primary.dark',
           p: 2,
           m: 0
       }}>
+
 
             <Typography mb={-2} ml={1}>Country</Typography>
             <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{country}</Typography>
