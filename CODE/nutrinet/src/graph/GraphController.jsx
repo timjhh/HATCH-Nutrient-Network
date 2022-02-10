@@ -152,7 +152,7 @@ useEffect(() => {
     <Grid container spacing={2}>
 
       <Grid item xs={12} lg={9}>
-        <Graph current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
+        <Graph nutrients={nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
       </Grid>
       <Grid item xs={12} lg={3}>
         <FileSelect 

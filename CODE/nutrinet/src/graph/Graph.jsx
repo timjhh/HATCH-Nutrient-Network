@@ -19,6 +19,7 @@ const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
 height = 700 - (margin.top+margin.bottom);
 
+const linkClr = "rgba(211,211,211, 1)";
 
 
 const [sim, setSim] = useState(null);
@@ -38,6 +39,8 @@ const [parsedData, setParsedData] = useState([]);
     let node = d3.select(".content").selectAll(".nodes").selectAll("circle");
     let link = d3.select(".content").selectAll(".links").selectAll("line");
 
+    link.attr("stroke", linkClr)
+
     let sel = props.highlighted;
 
     if(sel) {
@@ -51,6 +54,11 @@ const [parsedData, setParsedData] = useState([]);
       });
 
       link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
+
+
+      //if()
+      // link.attr("stroke", d => d.source.id === sel || d.target.id === sel ? "steelblue" : "");
+      connected.attr("stroke", d => props.nutrients.includes(sel) ? "steelblue" : "red");
 
       node.attr("opacity", d => cnodes.includes(d.id) ? 1 : 0.1);
 
