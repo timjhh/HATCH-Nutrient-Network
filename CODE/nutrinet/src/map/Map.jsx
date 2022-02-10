@@ -17,15 +17,36 @@ function Map(props) {
 
 
 const width = 1000,
-height = 800;
+height = 700;
 
-const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
+// 3x3 Bivariate Colors
+// const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
+// const colors2d = [
+// ["#e8e8e8", "#ace4e4", "#5ac8c8"], 
+// ["#dfb0d6", "#a5add3", "#5698b9"], 
+// ["#be64ac", "#8c62aa", "#3b4994"]
+// ];
+
+// 4x4 Bivariate Colors
+const colors1d = ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8", "#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8", "#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1", "#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"];
 const colors2d = [
-["#e8e8e8", "#ace4e4", "#5ac8c8"], 
-["#dfb0d6", "#a5add3", "#5698b9"], 
-["#be64ac", "#8c62aa", "#3b4994"]
-];
-const legendSize = 20;
+  ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8"], 
+  ["#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8"],
+  ["#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1"],
+  ["#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"]
+]
+
+// const colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
+// const colors2d = [
+//   ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8"],
+//   ["#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8"], 
+//   ["#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8"],
+//   ["#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc"],
+//   ["#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"]
+// ];
+
+// Length of one side of the square legend
+const legendSize = 25;
 
 const [geoData, setGeoData] = useState({});
 
@@ -63,11 +84,6 @@ useEffect(() => {
 
 
 
-// if(props.current.length != 0) {  
-
-
-
-//fetch('./DATA_INPUTS/Spatial_data_inputs/countries.geojson').then(response => {
   fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
 
           return response.json();
@@ -116,16 +132,16 @@ useEffect(() => {
           .attr("fill", "steelblue");
        
        
-        // // Drawing the legend bar
+          // Drawing the legend bar
           const legend = svg.append("g")
           .attr("class", "legend")
           .attr("font-weight", "bold")
           .attr("width", 50)
           .attr("height", 100)
           .style('position', 'absolute')
-          .style('top', '85%')
+          //.style('top', '85%')
           .style('right', '0')
-          .attr("transform", "translate(120,350)")
+          .attr("transform", "translate(120," + (height-(height/4)) + ")")
           //.attr("transform", "rotate(135)");
 
           legend.selectAll("rect")
@@ -134,31 +150,53 @@ useEffect(() => {
           .append("rect")
           .attr("width", legendSize)
           .attr("height", legendSize)
-          .attr("x", (d,idx) => legendSize*(idx%3)-85)
-          .attr("y", (d,idx) => legendSize*(parseInt(idx/3))-50)
+          .attr("x", (d,idx) => legendSize*(idx%(colors2d.length))-85)
+          .attr("y", (d,idx) => legendSize*(parseInt(idx/(colors2d.length)))-50)
           .attr("fill", d => d)
           .on("mouseover", (event,d) => {
             console.log(d)
           })
           .attr("transform", "rotate(-135)");
           
-
-
+          // Low -> High label
+          legend.append("text")
+          .attr("x", 10)
+          .attr("y", colors2d.length*legendSize+10)
+          .attr("class", "label")
+          .attr("font-weight", "lighter")
+          //.attr("transform", "rotate(45)")
+          .text("Low");
 
           legend.append("text")
-          .text("Legend")
-          .attr("x", -5);
+          .attr("x", ((colors2d.length*legendSize)))
+          .attr("y", ((colors2d.length*legendSize)/2)-20)
+          .attr("class", "label")
+          .attr("font-weight", "lighter")
+          //.attr("transform", "rotate(45)")
+          .text("High");
 
           legend.append("text")
-          .attr("x", 15)
-          .attr("y", 80)
+          .attr("x", -((colors2d.length*legendSize))+15)
+          .attr("y", ((colors2d.length*legendSize)/2)-20)
+          .attr("class", "label")
+          .attr("font-weight", "lighter")
+          //.attr("transform", "rotate(45)")
+          .text("High");
+          
+
+          // Variable 1 label
+          legend.append("text")
+          .attr("x", -20)
+          .attr("y", 90)
           .attr("class", "v1label")
           .attr("transform", "rotate(45)")
           .text(props.variable1);
 
+
+          // Variable 2 label
           legend.append("text")
-          .attr("x", -55)
-          .attr("y", 110)
+          .attr("x", -45)
+          .attr("y", 120)
           .attr("class", "v2label")
           .attr("transform", "rotate(-45)")
           .text("Variable 2");
@@ -210,11 +248,11 @@ useEffect(() => {
   
   let scalevar1 = d3.scaleQuantile()
   .domain([0, m1])
-  .range([0,1,2]);
+  .range(d3.range(0,colors2d.length));
 
   let scalevar2 = d3.scaleQuantile()
   .domain([0,m2])
-  .range([0,1,2]);
+  .range(d3.range(0,colors2d.length-1));
 
 
   // let magmaClr = (d) => d3.interpolateMagma( d/q1 );
@@ -277,8 +315,10 @@ useEffect(() => {
   } else console.log("CURRENT 0")
 
   props.setTitle(props.variable1 + " + " + props.variable2);
-  console.log(nf.length + " COUNTRIES NOT FOUND\n");
-  console.log(nf);
+
+  // Diagnostic print statements for associating countries with data
+  // console.log(nf.length + " COUNTRIES NOT FOUND\n");
+  // console.log(nf);
 
 
 

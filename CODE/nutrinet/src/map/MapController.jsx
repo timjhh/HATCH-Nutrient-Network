@@ -219,13 +219,13 @@ function MapController(props) {
       }}>
 
             <Typography mb={-2} ml={1}>Country</Typography>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{country}</Typography>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{country}</Typography>
 
             <Typography mt={3} mb={-2} ml={1}>Source</Typography>
-            <Typography mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{source}</Typography>
+            <Typography mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{source}</Typography>
 
             <Typography mt={3} mb={-2} ml={1}>Variables</Typography>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2.5em", "fontWeight": "lighter"}}>{title}</Typography>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{title}</Typography>
 
             <hr/>
           <Grid container spacing={2}>
@@ -240,7 +240,7 @@ function MapController(props) {
               <>
                 <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable1}</Typography>
                 <p>{label[0]} / {label[1]}</p>
-                <p>= {(label[0] / label[1]).toFixed(5)}%</p>
+                <p>= {(100*(label[0] / label[1])).toFixed(5)}%</p>
               </>
               }
 
@@ -254,7 +254,7 @@ function MapController(props) {
               <>
                 <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable2}</Typography>
                 <p>{label2[0]} / {label2[1]}</p>
-                <p>= {(label2[0] / label2[1]).toFixed(5)}%</p>
+                <p>= {(100*(label2[0] / label2[1])).toFixed(5)}%</p>
               </>
               }
 
