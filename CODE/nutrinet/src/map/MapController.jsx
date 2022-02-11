@@ -60,7 +60,6 @@ function MapController(props) {
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(res.filter(d => d.Source === source));
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
-      console.log(current);
 
     });
 

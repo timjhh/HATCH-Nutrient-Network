@@ -5,12 +5,10 @@ import * as d3 from "d3";
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
+import Histogram from './Histogram.jsx';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// import AntSwitch from '@mui/material/AntSwitch';
-
 
 
 function Map(props) {
@@ -48,7 +46,7 @@ const colors2d = [
 // Length of one side of the square legend
 const legendSize = 25;
 
-const [geoData, setGeoData] = useState({});
+const [distribution, setDistribution] = useState({});
 
 const forceUpdate = useForceUpdate();
 
@@ -98,7 +96,7 @@ useEffect(() => {
 
           let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
 
-          setGeoData(data);
+
           let projection = d3.geoMercator();
 
           let path = d3.geoPath()
@@ -228,9 +226,20 @@ useEffect(() => {
 useEffect(() => {
 
 
+  //let colorDist = d3.rollup(colors1d, v => v.length-1, d => d);
+  //let colorDist = d3.map(colors1d, {})
+  // let colorDist = colors1d.map(d => {
+  //   let temp = {};
+  //   temp[d] = 0;
+  //   return temp;
+  // })
 
-
-
+  let colorDist = {};
+  colors1d.forEach(d => {
+    colorDist[d] = 0;
+  })
+  // let colorDist = d3.map();
+  // colors1d.forEach(d => colorDist.set(d, 0));
 
 
   // Update legend labels
@@ -264,8 +273,9 @@ useEffect(() => {
 
   if(props.current.length != 0) { 
 
+    let paths = g.selectAll("path");
 
-    g.selectAll("path").attr("fill", (d,idx) => {
+    paths.attr("fill", (d,idx) => {
       
       //var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
       var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))
@@ -290,7 +300,15 @@ useEffect(() => {
       let v2 = scalevar2(parseFloat(val[props.variable2]));
 
       //return val ? colors2d[2][1] : "#808080";
-      return val ? colors2d[v2][v1] : "#808080";
+      if(val) {
+
+        colorDist[colors2d[v2][v1]] += 1;
+        return colors2d[v2][v1];
+
+      }
+
+      return "#808080";
+
     })
     .on("click", (e, d) => {
         //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
@@ -312,9 +330,28 @@ useEffect(() => {
 
     });
 
+
+    //console.log(d3.rollup(paths, e => e ? d3.sum(e, f => f) : 1, e => e ? e.attr("fill") : null));
+    if(paths) {
+      // console.log(paths._groups)
+      // console.log("a")
+      
+      
+      // console.log(d3.rollup(paths, v => v.length, d => d.style("fill")));
+      setDistribution(colorDist);
+
+
+    }
+
+    //setDistribution();
+
   } else console.log("CURRENT 0")
 
   props.setTitle(props.variable1 + " + " + props.variable2);
+
+
+
+
 
   // Diagnostic print statements for associating countries with data
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
@@ -331,6 +368,7 @@ useEffect(() => {
     <>
 
       <div id="map">
+        <Histogram distribution={distribution} />
 
       </div>
 

@@ -500,6 +500,7 @@ const [parsedData, setParsedData] = useState([]);
 
   return (
     <div id={"graph"}>
+ 
       
     </div>
   );
