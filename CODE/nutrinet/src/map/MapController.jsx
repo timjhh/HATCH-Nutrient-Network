@@ -21,7 +21,9 @@ function MapController(props) {
   const [variable2, setVariable2] = useState("GDP");
 
   const [current, setCurrent] = useState([]);
-  const [range, setRange] = useState([0,0]);
+  
+  const [distribution, setDistribution] = useState({});
+ 
 
   const [country, setCountry] = useState(null);
   const [label, setLabel] = useState([]);
@@ -92,8 +94,9 @@ function MapController(props) {
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
 
-      let data = res.filter(d => d.Source === source);
 
+
+      let data = res.filter(d => d.Source === source);
 
       let m1 = d3.max(data, d => parseFloat(d[variable1]));
       let m2 = d3.max(data, d => parseFloat(d[variable2]));
@@ -110,18 +113,21 @@ function MapController(props) {
       // Iterate over data to assign colors to each country
       data.forEach(d => {
 
+        // Apply scale each variable for coloring
         let v1 = scaleVar1(parseFloat(d[variable1]));
         let v2 = scaleVar2(parseFloat(d[variable2]));
 
-
-
-        if(isNaN(v1) || isNaN(v2)) {
-          console.log("b")
-          d.color = nullclr;
-        } else d.color = colors2d[v2][v1];
+        // Apply a color if it's found, else apply our default null coloring(defined above)
+        d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
 
 
       })
+
+      let colorDist = d3.rollup(data, v => v.length-1, d => d.color);
+      // colors1d.forEach((d,idx) => {
+      //   if(!colorDist[idx]) colorDist[idx] = {d, 0} ;
+      // })
+      console.log(colorDist);
 
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(data);
@@ -239,7 +245,7 @@ function MapController(props) {
           variable1={variable1} 
           variable2={variable2} 
           current={current} 
-          range={range}
+
           scaleVar1={scaleVar1}
           scaleVar2={scaleVar2}
           colors1d={colors1d}

@@ -46,7 +46,6 @@ height = 700;
 // Length of one side of the square legend
 const legendSize = 25;
 
-const [distribution, setDistribution] = useState({});
 
 const forceUpdate = useForceUpdate();
 
@@ -217,7 +216,6 @@ useEffect(() => {
 });
 
 }, []);
-// }, [props.current, props.variable1, props.range]);
 
 
 
@@ -310,20 +308,6 @@ useEffect(() => {
     });
 
 
-    //console.log(d3.rollup(paths, e => e ? d3.sum(e, f => f) : 1, e => e ? e.attr("fill") : null));
-    if(paths) {
-      // console.log(paths._groups)
-      // console.log("a")
-      
-      
-      // console.log(d3.rollup(paths, v => v.length, d => d.style("fill")));
-      setDistribution(colorDist);
-
-
-    }
-
-    //setDistribution();
-
   } else console.log("CURRENT 0")
 
   props.setTitle(props.variable1 + " + " + props.variable2);
@@ -347,7 +331,7 @@ useEffect(() => {
     <>
 
       <div id="map">
-        <Histogram distribution={distribution} />
+        <Histogram distribution={props.distribution} />
 
       </div>
 
