@@ -40,10 +40,10 @@ function MapController(props) {
 
   const [sources, setSources] = useState(["Import_kg"]);
 
-  const unused = ["Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
+  const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
 
-  const [scaleVar1, setScaleVar1] = useState(null);
-  const [scaleVar2, setScaleVar2] = useState(null);
+  const [scaleType1, setScaleType1] = useState("Quantile");
+  const [scaleType2, setScaleType2] = useState("Quantile");
 
 
   // What color to show for unavailable data
@@ -102,13 +102,36 @@ function MapController(props) {
       let m1 = d3.max(data, d => parseFloat(d[variable1]));
       let m2 = d3.max(data, d => parseFloat(d[variable2]));
 
-      var scaleVar1 = d3.scaleQuantile()
-      .domain([0, m1])
-      .range(d3.range(0,colors2d.length));
+
+      var scaleVar1;
+
+      console.log(scaleType1);
+      if(scaleType1 === "Quantile") {
+
+        scaleVar1 = d3.scaleQuantile()
+        .domain([0, m1])
+        .range(d3.range(0,colors2d.length));
+
+      } else {
+        
+        scaleVar1 = d3.scaleSymlog()
+        .domain([0, m1])
+        .range([0,1]);
+        // .range(d3.range(0,colors2d.length));
+        //.nice();
+
+        //console.log(d3.range(0,colors2d.length))
+
+        // scaleVar1 = d3.scaleSqrt()
+        // .domain([0, m1])
+        // .range(d3.range(0,colors2d.length));
+
+      }
+
     
       var scaleVar2 = d3.scaleQuantile()
       .domain([0,m2])
-      .range(d3.range(0,colors2d.length-1));
+      .range(d3.range(0,colors2d.length));
 
 
       // Iterate over data to assign colors to each country
@@ -117,9 +140,16 @@ function MapController(props) {
         // Apply scale each variable for coloring
         let v1 = scaleVar1(parseFloat(d[variable1]));
         let v2 = scaleVar2(parseFloat(d[variable2]));
-
+        
+        //console.log(v1);
+        
         // Apply a color if it's found, else apply our default null coloring(defined above)
-        d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
+        if(scaleType1 === "Quantile") {
+          d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
+        } else {
+          d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][parseInt(v1*colors2d.length)-1];
+        }
+        
 
 
       })
@@ -146,7 +176,7 @@ function MapController(props) {
 
 
 
-  }, [variable1, variable2, source])
+  }, [variable1, variable2, source, scaleType1])
 
   useEffect(() => {
 
@@ -222,6 +252,10 @@ function MapController(props) {
         setVariable2={setVariable2}  
         // method={method}
         // setMethod={setMethod}
+        scaleType1={scaleType1}
+        scaleType2={scaleType2}
+        setScaleType1={setScaleType1}
+        setScaleType2={setScaleType2}
         source={source}
         setSource={setSource}
         {...props} />
@@ -247,8 +281,6 @@ function MapController(props) {
           variable2={variable2} 
           current={current} // Current data applied
           distribution={distribution}
-          scaleVar1={scaleVar1}
-          scaleVar2={scaleVar2}
           colors1d={colors1d}
           colors2d={colors2d}
           nullclr={nullclr}

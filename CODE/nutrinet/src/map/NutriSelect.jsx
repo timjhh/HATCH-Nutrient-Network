@@ -6,7 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-
+import Switch from '@mui/material/Switch';  
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 function NutriSelect(props) {
 
@@ -58,6 +60,12 @@ useEffect(() => {
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
+      {/* <Typography sx={{m:2, width:1}} style={{"font-size": "2em", "font-weight": "lighter"}}>Scaling</Typography> */}
+      <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+          <Typography>Quantile</Typography>
+            <Switch id="scaleVar1Switch" checked={props.scaleType1 != "Quantile"} onChange={() => { props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile") }} name="scaleType1" />
+          <Typography>Logarithm</Typography>
+      </Stack>
 
 
     </FormControl>

@@ -96,10 +96,10 @@ function FileSelect(props) {
     </FormControl>
     </Grid>
     <Grid item >
-    <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
-        <Typography>Bipartite</Typography>
-          <Switch id="bipSwitch" checked={props.bipartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
-        <Typography>Force-Directed</Typography>
+      <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+          <Typography>Bipartite</Typography>
+            <Switch id="bipSwitch" checked={props.bipartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
+          <Typography>Force-Directed</Typography>
       </Stack>
     </Grid>
 
