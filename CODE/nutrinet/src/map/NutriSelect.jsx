@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';  
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 function NutriSelect(props) {
 
@@ -47,6 +48,7 @@ useEffect(() => {
 
 
 
+
     <FormControl sx={{ m:2 }}>
       <InputLabel id="country-select-label">First Variable</InputLabel>
       <Select
@@ -64,11 +66,11 @@ useEffect(() => {
       <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Quantile</Typography>
             <Switch id="scaleVar1Switch" checked={props.scaleType1 != "Quantile"} onChange={() => { props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile") }} name="scaleType1" />
-          <Typography>Logarithm</Typography>
+          <Typography>Log</Typography>
       </Stack>
-
-
     </FormControl>
+
+
     <FormControl sx={{ m:2 }}>
       <InputLabel id="country-select-label">Second Variable</InputLabel>
       <Select
@@ -85,10 +87,12 @@ useEffect(() => {
       <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Quantile</Typography>
             <Switch id="scaleVar2Switch" checked={props.scaleType2 != "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
-          <Typography>Logarithm</Typography>
+          <Typography>Log</Typography>
       </Stack>
-
     </FormControl>
+
+ 
+
     <FormControl sx={{ m:2 }}>
 
       <InputLabel id="method-select-label">Method</InputLabel>
@@ -105,6 +109,8 @@ useEffect(() => {
       </Select>
 
     </FormControl>
+
+
 {/*    <FormControl sx={{ m:2 }}>
 
       <InputLabel id="year-select-label">Year</InputLabel>
@@ -121,7 +127,6 @@ useEffect(() => {
       </Select>
 
     </FormControl>*/}
-
 
 </Box>
 </Paper>
