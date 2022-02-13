@@ -13,6 +13,8 @@ import Papa from 'papaparse';
 import * as d3 from "d3";
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { color } from '@mui/system';
+import { InternMap } from 'd3';
 
 function MapController(props) {
 
@@ -22,7 +24,7 @@ function MapController(props) {
 
   const [current, setCurrent] = useState([]);
   
-  const [distribution, setDistribution] = useState({});
+  const [distribution, setDistribution] = useState(new InternMap);
  
 
   const [country, setCountry] = useState(null);
@@ -82,7 +84,6 @@ function MapController(props) {
     let regex = new RegExp(`_${method}_`);
 
     var filtered = props.files.filter(d => d.match(regex));
-    var curr = [];
     var max = Number.MAX_VALUE;
     var min = Number.MIN_VALUE;
 
@@ -123,17 +124,18 @@ function MapController(props) {
 
       })
 
+      // Create color distribution for later use in histogram
       let colorDist = d3.rollup(data, v => v.length-1, d => d.color);
-      // colors1d.forEach((d,idx) => {
-      //   if(!colorDist[idx]) colorDist[idx] = {d, 0} ;
-      // })
-      console.log(colorDist);
+
+      colors1d.forEach((d,idx) => {
+        if(colorDist.get(d) == undefined) colorDist.set(d, 0)
+      })
 
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(data);
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
-
-
+      setDistribution(colorDist);
+      
 
       
 
@@ -142,7 +144,6 @@ function MapController(props) {
 
 
 
-    setCurrent(curr);
 
 
   }, [variable1, variable2, source])
@@ -244,14 +245,14 @@ function MapController(props) {
           className="viz" 
           variable1={variable1} 
           variable2={variable2} 
-          current={current} 
-
+          current={current} // Current data applied
+          distribution={distribution}
           scaleVar1={scaleVar1}
           scaleVar2={scaleVar2}
           colors1d={colors1d}
           colors2d={colors2d}
           nullclr={nullclr}
-          
+  
           
           />
 

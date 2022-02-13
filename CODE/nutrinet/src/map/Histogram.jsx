@@ -6,14 +6,41 @@ import {event as currentEvent} from 'd3-selection';
 
 function Histogram(props) {
 
-const margin = {top: 50, right: 20, bottom: 30, left: 30},
-width = 200 - margin.right - margin.left,
-height = 200 - (margin.top+margin.bottom);
+  const margin = {top: 50, right: 20, bottom: 30, left: 30},
+  width = 200 - margin.right - margin.left,
+  height = 200 - (margin.top+margin.bottom);
 
-const linkClr = "rgba(211,211,211, 1)";
+  let itemWidth = 10; // Width of each individual rectangle
+
+  
+  let scaleX = d3.scaleLinear()
+  .domain(props.distribution.size)
+  .range([0,width]);
+
+  let scaleY = d3.scaleLinear()
+  .domain(d3.extent(props.distribution.entries(), d => d[1]))
+  .range([0, height])
 
 
+  useEffect(() => {
 
+    const svg = d3.select("#hist")
+    .append("svg")
+    .attr("height", height)
+    .attr("width", width)
+    .append("g")
+    .attr("transform", "translate(0,0)")
+
+
+  }, [])
+
+  useEffect(() => {
+
+    if(props.distribution) {
+
+    }
+
+  }, [props.distribution]);
 
     // useEffect(() => {
 
@@ -50,7 +77,6 @@ const linkClr = "rgba(211,211,211, 1)";
     //     }
 
     // }, [props.distribution])
-
 
 
 

@@ -224,45 +224,10 @@ useEffect(() => {
 useEffect(() => {
 
 
-  //let colorDist = d3.rollup(props.colors1d, v => v.length-1, d => d);
-  //let colorDist = d3.map(props.colors1d, {})
-  // let colorDist = props.colors1d.map(d => {
-  //   let temp = {};
-  //   temp[d] = 0;
-  //   return temp;
-  // })
-
-  let colorDist = {};
-  props.colors1d.forEach(d => {
-    colorDist[d] = 0;
-  })
-  // let colorDist = d3.map();
-  // props.colors1d.forEach(d => colorDist.set(d, 0));
-
-
   // Update legend labels
   let regex = /[^(a-z)(A-Z)(0-9)]/g;
   d3.select(".v1label").text(props.variable1.replace(regex, " "));
   d3.select(".v2label").text(props.variable2.replace(regex, " "));
-
-
-  // Setting Max to 80th quantile
-  // let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
-  // let q2 = d3.quantile(props.current, .80, d => d[props.variable2]);
-
-
-
-  // Maximum values for true value scale
-  var m1 = d3.max(props.current, d => parseFloat(d[props.variable1]));
-  var m2 = d3.max(props.current, d => parseFloat(d[props.variable2]));
-  
-  // let props.scaleVar1 = d3.scaleQuantile()
-  // .domain([0, m1])
-  // .range(d3.range(0,props.colors2d.length));
-
-  // let props.scaleVar2 = d3.scaleQuantile()
-  // .domain([0,m2])
-  // .range(d3.range(0,props.colors2d.length-1));
 
 
 
@@ -312,10 +277,6 @@ useEffect(() => {
 
   props.setTitle(props.variable1 + " + " + props.variable2);
 
-
-
-
-
   // Diagnostic print statements for associating countries with data
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
   // console.log(nf);
@@ -331,7 +292,7 @@ useEffect(() => {
     <>
 
       <div id="map">
-        <Histogram distribution={props.distribution} />
+        {/* <Histogram distribution={props.distribution} /> */}
 
       </div>
 
