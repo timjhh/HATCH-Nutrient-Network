@@ -23,7 +23,7 @@ function MapController(props) {
   const [current, setCurrent] = useState([]);
   const [range, setRange] = useState([0,0]);
 
-  const [country, setCountry] = useState("Select a Country");
+  const [country, setCountry] = useState(null);
   const [label, setLabel] = useState([]);
   const [label2, setLabel2] = useState([]);
 
@@ -37,6 +37,41 @@ function MapController(props) {
   const [sources, setSources] = useState(["Import_kg"]);
 
   const unused = ["Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
+
+  const [scaleVar1, setScaleVar1] = useState(null);
+  const [scaleVar2, setScaleVar2] = useState(null);
+
+
+  // What color to show for unavailable data
+  var nullclr = "black";
+
+  // 3x3 Bivariate Colors
+  // const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
+  // const colors2d = [
+  // ["#e8e8e8", "#ace4e4", "#5ac8c8"], 
+  // ["#dfb0d6", "#a5add3", "#5698b9"], 
+  // ["#be64ac", "#8c62aa", "#3b4994"]
+  // ];
+
+  // 4x4 Bivariate Colors
+  const colors1d = ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8", "#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8", "#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1", "#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"];
+  const colors2d = [
+    ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8"], 
+    ["#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8"],
+    ["#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1"],
+    ["#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"]
+  ]
+
+  // const colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
+  // const colors2d = [
+  //   ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8"],
+  //   ["#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8"], 
+  //   ["#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8"],
+  //   ["#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc"],
+  //   ["#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"]
+  // ];
+
+
 
 
   useEffect(() => {
@@ -57,96 +92,89 @@ function MapController(props) {
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
 
+      let data = res.filter(d => d.Source === source);
+
+
+      let m1 = d3.max(data, d => parseFloat(d[variable1]));
+      let m2 = d3.max(data, d => parseFloat(d[variable2]));
+
+      var scaleVar1 = d3.scaleQuantile()
+      .domain([0, m1])
+      .range(d3.range(0,colors2d.length));
+    
+      var scaleVar2 = d3.scaleQuantile()
+      .domain([0,m2])
+      .range(d3.range(0,colors2d.length-1));
+
+
+      // Iterate over data to assign colors to each country
+      data.forEach(d => {
+
+        let v1 = scaleVar1(parseFloat(d[variable1]));
+        let v2 = scaleVar2(parseFloat(d[variable2]));
+
+
+
+        if(isNaN(v1) || isNaN(v2)) {
+          console.log("b")
+          d.color = nullclr;
+        } else d.color = colors2d[v2][v1];
+
+
+      })
+
       setVariables(res.columns.filter(d => !unused.includes(d)));
-      setCurrent(res.filter(d => d.Source === source));
+      setCurrent(data);
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
+
+
+
+      
+
 
     });
 
 
-    // Code to dynamically load in data
-    // filtered.forEach(d => {
-
-
-
-    //   d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d).then((res, idz) => {
-      
-    //     if(Object.entries(res).length != 1) {
-
-    //     let idx = res.columns.indexOf(variable1); // Index of selected variable1
-
-        
-    //     // Subtract one for the entry of column names
-    //     let len = Object.entries(res).length-1;
-       
-    //     var count1 = 0; // How many nutrients did we accurately count
-    //     var sum1 = 0; // What is their summation
-
-    //     var count2 = 0; // How many nutrients did we accurately count
-    //     var sum2 = 0; // What is their summation
-
-
-    //     res.forEach((row,idy) => {
-
-          
-    //       let num1 = parseFloat(row[variable1]);
-          
-    //       if(!Number.isNaN(num1)) {
-
-    //         sum1 += num1;
-    //         count1++;
-
-    //       }
-
-    //       let num2 = parseFloat(row[variable2]);
-          
-    //       if(!Number.isNaN(num2)) {
-
-    //         sum2 += num2;
-    //         count2++;
-
-    //       }
-
-    //     })
-
-    //   //Debugging code - may be useful later
-    //   //   try {
-    //   //   if(res[0]["Country"] === "United States of America") {
-    //   //     console.log("-------- Results --------");
-    //   //     console.log(sum);
-    //   //     console.log(sum / count);
-    //   //     console.log(variable1);
-    //   //     console.log("-------- End --------");
-    //   //   }
-    //   // } catch(e) {
-    //   //   console.log(res)
-    //   //   console.log(e)
-    //   // }
-
-
-    //     if(res[0]) {
-    //       curr.push({
-
-    //         country: res[0]["Country"],
-    //         avg1: (sum1/count1),
-    //         avg2: (sum2/count2)
-
-    //       });
-    //     }
-
-    //   }
-
-    //   });
-
-
-    // })
 
     setCurrent(curr);
 
 
   }, [variable1, variable2, source])
 
+  useEffect(() => {
 
+
+    if(country) {
+
+
+    //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
+    setLabel([country[variable1], 2]);
+
+    //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
+    setLabel2([country[variable2], 2]);
+
+
+    }
+
+  }, [country])
+
+  // useEffect(() => {
+
+  //   if(current.length > 0) {
+      
+  //     let m1 = d3.max(current, d => parseFloat(d[variable1]));
+  //     let m2 = d3.max(current, d => parseFloat(d[variable2]));
+      
+  //     setScaleVar1(d3.scaleQuantile()
+  //     .domain([0, m1])
+  //     .range(d3.range(0,colors2d.length)));
+    
+  //     setScaleVar2(d3.scaleQuantile()
+  //     .domain([0,m2])
+  //     .range(d3.range(0,colors2d.length-1)));
+  //   }
+
+  // }, [current])
 
 
   async function getData(link) {
@@ -209,7 +237,15 @@ function MapController(props) {
           variable1={variable1} 
           variable2={variable2} 
           current={current} 
-          range={range} />
+          range={range}
+          scaleVar1={scaleVar1}
+          scaleVar2={scaleVar2}
+          colors1d={colors1d}
+          colors2d={colors2d}
+          nullclr={nullclr}
+          
+          
+          />
 
         </Grid>
         <Grid item xs={12} sx={{ width: 1 }}>
@@ -221,7 +257,7 @@ function MapController(props) {
 
 
             <Typography mb={-2} ml={1}>Country</Typography>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{country}</Typography>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{(country != null ? country.Country : "Select a Country")}</Typography>
 
             <Typography mt={3} mb={-2} ml={1}>Source</Typography>
             <Typography mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{source}</Typography>

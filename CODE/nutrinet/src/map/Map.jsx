@@ -18,24 +18,24 @@ const width = 1000,
 height = 700;
 
 // 3x3 Bivariate Colors
-// const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
-// const colors2d = [
+// const props.colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
+// const props.colors2d = [
 // ["#e8e8e8", "#ace4e4", "#5ac8c8"], 
 // ["#dfb0d6", "#a5add3", "#5698b9"], 
 // ["#be64ac", "#8c62aa", "#3b4994"]
 // ];
 
 // 4x4 Bivariate Colors
-const colors1d = ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8", "#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8", "#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1", "#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"];
-const colors2d = [
-  ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8"], 
-  ["#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8"],
-  ["#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1"],
-  ["#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"]
-]
+// const props.colors1d = ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8", "#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8", "#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1", "#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"];
+// const props.colors2d = [
+//   ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8"], 
+//   ["#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8"],
+//   ["#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1"],
+//   ["#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"]
+// ]
 
-// const colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
-// const colors2d = [
+// const props.colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
+// const props.colors2d = [
 //   ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8"],
 //   ["#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8"], 
 //   ["#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8"],
@@ -127,7 +127,7 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
-          .attr("fill", "steelblue");
+          .attr("fill", d => d.color);
        
        
           // Drawing the legend bar
@@ -143,13 +143,13 @@ useEffect(() => {
           //.attr("transform", "rotate(135)");
 
           legend.selectAll("rect")
-          .data(colors1d)
+          .data(props.colors1d)
           .enter()
           .append("rect")
           .attr("width", legendSize)
           .attr("height", legendSize)
-          .attr("x", (d,idx) => legendSize*(idx%(colors2d.length))-85)
-          .attr("y", (d,idx) => legendSize*(parseInt(idx/(colors2d.length)))-50)
+          .attr("x", (d,idx) => legendSize*(idx%(props.colors2d.length))-85)
+          .attr("y", (d,idx) => legendSize*(parseInt(idx/(props.colors2d.length)))-50)
           .attr("fill", d => d)
           .on("mouseover", (event,d) => {
             console.log(d)
@@ -159,23 +159,23 @@ useEffect(() => {
           // Low -> High label
           legend.append("text")
           .attr("x", 10)
-          .attr("y", colors2d.length*legendSize+10)
+          .attr("y", props.colors2d.length*legendSize+10)
           .attr("class", "label")
           .attr("font-weight", "lighter")
           //.attr("transform", "rotate(45)")
           .text("Low");
 
           legend.append("text")
-          .attr("x", ((colors2d.length*legendSize)))
-          .attr("y", ((colors2d.length*legendSize)/2)-20)
+          .attr("x", ((props.colors2d.length*legendSize)))
+          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
           .attr("class", "label")
           .attr("font-weight", "lighter")
           //.attr("transform", "rotate(45)")
           .text("High");
 
           legend.append("text")
-          .attr("x", -((colors2d.length*legendSize))+15)
-          .attr("y", ((colors2d.length*legendSize)/2)-20)
+          .attr("x", -((props.colors2d.length*legendSize))+15)
+          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
           .attr("class", "label")
           .attr("font-weight", "lighter")
           //.attr("transform", "rotate(45)")
@@ -226,20 +226,20 @@ useEffect(() => {
 useEffect(() => {
 
 
-  //let colorDist = d3.rollup(colors1d, v => v.length-1, d => d);
-  //let colorDist = d3.map(colors1d, {})
-  // let colorDist = colors1d.map(d => {
+  //let colorDist = d3.rollup(props.colors1d, v => v.length-1, d => d);
+  //let colorDist = d3.map(props.colors1d, {})
+  // let colorDist = props.colors1d.map(d => {
   //   let temp = {};
   //   temp[d] = 0;
   //   return temp;
   // })
 
   let colorDist = {};
-  colors1d.forEach(d => {
+  props.colors1d.forEach(d => {
     colorDist[d] = 0;
   })
   // let colorDist = d3.map();
-  // colors1d.forEach(d => colorDist.set(d, 0));
+  // props.colors1d.forEach(d => colorDist.set(d, 0));
 
 
   // Update legend labels
@@ -252,18 +252,23 @@ useEffect(() => {
   // let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
   // let q2 = d3.quantile(props.current, .80, d => d[props.variable2]);
 
+
+
+  // Maximum values for true value scale
   var m1 = d3.max(props.current, d => parseFloat(d[props.variable1]));
   var m2 = d3.max(props.current, d => parseFloat(d[props.variable2]));
   
-  let scalevar1 = d3.scaleQuantile()
-  .domain([0, m1])
-  .range(d3.range(0,colors2d.length));
+  // let props.scaleVar1 = d3.scaleQuantile()
+  // .domain([0, m1])
+  // .range(d3.range(0,props.colors2d.length));
 
-  let scalevar2 = d3.scaleQuantile()
-  .domain([0,m2])
-  .range(d3.range(0,colors2d.length-1));
+  // let props.scaleVar2 = d3.scaleQuantile()
+  // .domain([0,m2])
+  // .range(d3.range(0,props.colors2d.length-1));
 
 
+
+  // Simple color interpolation
   // let magmaClr = (d) => d3.interpolateMagma( d/q1 );
   // let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
@@ -280,34 +285,17 @@ useEffect(() => {
       //var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
       var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))
       
-      
-
+    
 
       if(!val) {
         nf.push(d.properties);
       }
 
-      //let nullclr = "#808080";
-      let nullclr = "black"
-
       //return val ? secondClr(val.avg1) : "#808080";
-      if(!val) return nullclr;
-      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return nullclr;
-  
-      // let v1 = !isNaN(val[props.variable1]) ? scalevar1(parseFloat(val[props.variable1])) : 0;
-      // let v2 = !isNaN(val[props.variable2]) ? scalevar2(parseFloat(val[props.variable2])) : 0;
-      let v1 = scalevar1(parseFloat(val[props.variable1]));
-      let v2 = scalevar2(parseFloat(val[props.variable2]));
+      if(!val) return props.nullclr;
+      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
 
-      //return val ? colors2d[2][1] : "#808080";
-      if(val) {
-
-        colorDist[colors2d[v2][v1]] += 1;
-        return colors2d[v2][v1];
-
-      }
-
-      return "#808080";
+      return val.color;
 
     })
     .on("click", (e, d) => {
@@ -316,17 +304,13 @@ useEffect(() => {
         //var val = props.current.find(f => (f.country === d.properties.formal_en || f.country === d.properties.admin))
         var val = props.current.find(f => f.ISO3_Code === d.properties.iso_a3)
 
-
-        // props.setLabel("Country: " + val.Country + " Variable: " + props.variable1 + " Avg. " + val[props.variable1] + " max " + m1 + "\n" +
-        //   "||| Variable: " + props.variable2 + " Avg. " + val[props.variable2] + " max " + m2);
-
-        props.setCountry(val.Country);
+        props.setCountry(val);
         
         //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
-        props.setLabel([val[props.variable1], m1]);
+        props.setLabel([val[props.variable1], props.m1]);
 
         //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
-        props.setLabel2([val[props.variable2], m2]);
+        props.setLabel2([val[props.variable2], props.m2]);
 
     });
 
