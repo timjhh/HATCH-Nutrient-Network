@@ -106,7 +106,6 @@ function MapController(props) {
       var scaleVar1;
       var scaleVar2;
 
-      console.log(scaleType1);
       if(scaleType1 === "Quantile") {
 
         scaleVar1 = d3.scaleQuantile()
@@ -142,8 +141,8 @@ function MapController(props) {
       data.forEach(d => {
 
 
-        let v1;
-        let v2;
+        let v1 = 0;
+        let v2 = 0;
 
         // Apply scale each variable for coloring
         if(scaleType1 === "Quantile") {
@@ -152,8 +151,8 @@ function MapController(props) {
 
         } else {
   
-          v1 = parseInt(scaleVar1(parseFloat(d[variable1])) * colors2d.length)-1;
-          
+          v1 = Math.round(scaleVar1(parseFloat(d[variable1])) * colors2d.length)-1;
+          v1 = v1 < 0 ? 0 : v1;
         }
 
         if(scaleType2 === "Quantile") {
@@ -161,16 +160,23 @@ function MapController(props) {
           v2 = scaleVar2(parseFloat(d[variable2]));
   
         } else {
-  
-          v2 = parseInt(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
-  
+          //console.log(scaleVar2(parseFloat(d[variable2])));
+          v2 = Math.round(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
+          v2 = v2 < 0 ? 0 : v2;
         }
 
-
-        
+        //console.log(v1)
         // Apply a color if it's found, else apply our default null coloring(defined above)
-        d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
+        try {
+
+          d.color = ((v1 === undefined || v2 === undefined) || (isNaN(v1) || isNaN(v2))) ? nullclr : colors2d[v2][v1];
+          
+        } catch(e) {
+          //console.log(v2)
+          // console.log(scaleVar2(parseFloat(d[variable2])) * colors2d.length);
+        }
         
+        //d.color = (v1 === -1 || v2 === -1) ? nullclr : colors2d[v2][v1];
 
 
       })
@@ -197,7 +203,7 @@ function MapController(props) {
 
 
 
-  }, [variable1, variable2, source, scaleType1])
+  }, [variable1, variable2, source, scaleType1, scaleType2])
 
   useEffect(() => {
 

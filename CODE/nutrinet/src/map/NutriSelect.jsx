@@ -84,7 +84,7 @@ useEffect(() => {
       </Select>
       <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Quantile</Typography>
-            <Switch id="scaleVar1Switch" checked={props.scaleType2 != "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
+            <Switch id="scaleVar2Switch" checked={props.scaleType2 != "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
           <Typography>Logarithm</Typography>
       </Stack>
 
