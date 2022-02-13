@@ -291,7 +291,7 @@ useEffect(() => {
         nf.push(d.properties);
       }
 
-      //return val ? secondClr(val.avg1) : "#808080";
+      // Assure that this value truly exists in our database
       if(!val) return props.nullclr;
       if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
 
@@ -306,11 +306,6 @@ useEffect(() => {
 
         props.setCountry(val);
         
-        //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
-        props.setLabel([val[props.variable1], props.m1]);
-
-        //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
-        props.setLabel2([val[props.variable2], props.m2]);
 
     });
 

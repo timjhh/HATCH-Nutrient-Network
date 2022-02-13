@@ -146,12 +146,14 @@ function MapController(props) {
 
     if(country) {
 
-
+    let m1 = d3.max(current, d => parseFloat(d[variable1]));
+    let m2 = d3.max(current, d => parseFloat(d[variable2]));
+    
     //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
-    setLabel([country[variable1], 2]);
+    setLabel([country[variable1], m1]);
 
     //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
-    setLabel2([country[variable2], 2]);
+    setLabel2([country[variable2], m2]);
 
 
     }
@@ -278,7 +280,7 @@ function MapController(props) {
               <>
                 <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable1}</Typography>
                 <p>{label[0]} / {label[1]}</p>
-                <p>= {(100*(label[0] / label[1])).toFixed(5)}%</p>
+                <p>= {(100*(label[0] / label[1])).toFixed(4)}%</p>
               </>
               }
 
@@ -292,7 +294,7 @@ function MapController(props) {
               <>
                 <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable2}</Typography>
                 <p>{label2[0]} / {label2[1]}</p>
-                <p>= {(100*(label2[0] / label2[1])).toFixed(5)}%</p>
+                <p>= {(100*(label2[0] / label2[1])).toFixed(4)}%</p>
               </>
               }
 
