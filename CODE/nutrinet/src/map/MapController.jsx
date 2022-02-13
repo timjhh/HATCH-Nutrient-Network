@@ -104,6 +104,7 @@ function MapController(props) {
 
 
       var scaleVar1;
+      var scaleVar2;
 
       console.log(scaleType1);
       if(scaleType1 === "Quantile") {
@@ -117,38 +118,58 @@ function MapController(props) {
         scaleVar1 = d3.scaleSymlog()
         .domain([0, m1])
         .range([0,1]);
-        // .range(d3.range(0,colors2d.length));
-        //.nice();
-
-        //console.log(d3.range(0,colors2d.length))
-
-        // scaleVar1 = d3.scaleSqrt()
-        // .domain([0, m1])
-        // .range(d3.range(0,colors2d.length));
 
       }
 
+      if(scaleType2 === "Quantile") {
+
+        scaleVar2 = d3.scaleQuantile()
+        .domain([0,m2])
+        .range(d3.range(0,colors2d.length));
+
+      } else {
+
+        scaleVar2 = d3.scaleSymlog()
+        .domain([0,m2])
+        .range([0,1]);
+
+      }
     
-      var scaleVar2 = d3.scaleQuantile()
-      .domain([0,m2])
-      .range(d3.range(0,colors2d.length));
+ 
 
 
       // Iterate over data to assign colors to each country
       data.forEach(d => {
 
+
+        let v1;
+        let v2;
+
         // Apply scale each variable for coloring
-        let v1 = scaleVar1(parseFloat(d[variable1]));
-        let v2 = scaleVar2(parseFloat(d[variable2]));
-        
-        //console.log(v1);
+        if(scaleType1 === "Quantile") {
+
+          v1 = scaleVar1(parseFloat(d[variable1]));
+
+        } else {
+  
+          v1 = parseInt(scaleVar1(parseFloat(d[variable1])) * colors2d.length)-1;
+          
+        }
+
+        if(scaleType2 === "Quantile") {
+
+          v2 = scaleVar2(parseFloat(d[variable2]));
+  
+        } else {
+  
+          v2 = parseInt(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
+  
+        }
+
+
         
         // Apply a color if it's found, else apply our default null coloring(defined above)
-        if(scaleType1 === "Quantile") {
-          d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
-        } else {
-          d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][parseInt(v1*colors2d.length)-1];
-        }
+        d.color = (isNaN(v1) || isNaN(v2)) ? nullclr : d.color = colors2d[v2][v1];
         
 
 
