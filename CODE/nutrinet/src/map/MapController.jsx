@@ -102,15 +102,29 @@ function MapController(props) {
       let m1 = d3.max(data, d => parseFloat(d[variable1]));
       let m2 = d3.max(data, d => parseFloat(d[variable2]));
 
-
       var scaleVar1;
       var scaleVar2;
 
       if(scaleType1 === "Quantile") {
 
+        // PASS THE ENTIRE DOMAIN DATASET INSTEAD OF MIN/MAX
+        // YES YES YES!!!!!
         scaleVar1 = d3.scaleQuantile()
-        .domain([0, m1])
+        .domain(data.map(e => e[variable1]))
         .range(d3.range(0,colors2d.length));
+
+        // scaleVar1 = d3.scaleQuantile()
+        // .domain([0, m1])
+        // .range(d3.range(0,colors2d.length));
+
+        // scaleVar1 = d3.scaleSequentialQuantile()
+        // .domain(data.map(e => e[variable1]))
+        // .range(d3.range(0,colors2d.length));
+        //console.log(data.map(e => e[variable1]));
+
+        // scaleVar1 = d3.scaleSequentialQuantile()
+        // .domain([0, m1])
+        // .range(d3.range(0,colors2d.length));
 
       } else {
         
@@ -118,12 +132,17 @@ function MapController(props) {
         .domain([0, m1])
         .range([0,1]);
 
-      }
+        // Experimental: rangeRound to flatten numbers to array index
+        // scaleVar1 = d3.scaleSymlog()
+        // .domain([0, m1])
+        // .rangeRound(d3.range(0, colors2d.length));
 
+      }
+      //console.log(scaleVar1.quantiles())
       if(scaleType2 === "Quantile") {
 
         scaleVar2 = d3.scaleQuantile()
-        .domain([0,m2])
+        .domain(data.map(e => e[variable2]))
         .range(d3.range(0,colors2d.length));
 
       } else {
@@ -143,6 +162,7 @@ function MapController(props) {
 
         let v1 = 0;
         let v2 = 0;
+
 
         // Apply scale each variable for coloring
         if(scaleType1 === "Quantile") {

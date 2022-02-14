@@ -250,7 +250,7 @@ useEffect(() => {
 
     paths.attr("fill", (d,idx) => {
       
-      var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
 
       if(!val) {
         nf.push(d.properties);
@@ -265,7 +265,7 @@ useEffect(() => {
     })
     .on("click", (e, d) => {
 
-        var val = props.current.find(f => f.ISO3_Code === d.properties.iso_a3)
+        var val = props.current.find(f => f["ISO3.Code"] === d.properties.iso_a3)
 
         props.setCountry(val);
         
@@ -288,37 +288,46 @@ useEffect(() => {
 
 function genHistogram() {
 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
+  // const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  // hWidth = 300 - hMargin.right - hMargin.left,
+  // hHeight = 200 - (hMargin.top+hMargin.bottom);
 
   
-  let scaleX = d3.scaleLinear()
-  .domain(props.distribution.size)
-  .range([0,hWidth]);
+  // let scaleX = d3.scaleLinear()
+  // .domain(props.colors1d.length)
+  // .range([0,hWidth]);
 
-  let scaleY = d3.scaleLinear()
-  .domain(d3.extent(props.distribution.entries(), d => d[1]))
-  .range([0, hHeight])
+  // let scaleY = d3.scaleLinear()
+  // //.domain(d3.extent(props.distribution.entries(), d => d[1]))
+  // .domain([0,255])
+  // .range([hHeight, 0])
 
 
-  var svg = d3.select("#map")
-  .select("svg").append("g")
-  .attr("class", "histogram")
-  .attr("height", hHeight)
-  .attr("width", hWidth)
-  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
-  .append("g");
+  // var svg = d3.select("#map")
+  // .select("svg").append("g")
+  // .attr("class", "histogram")
+  // .attr("height", hHeight)
+  // .attr("width", hWidth)
+  // .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
+  // .append("g")
+  // .attr("class", "histG");
 
-  // var histogram = d3.histogram()
-  //   .value(d => d.)
+  // // var histogram = d3.histogram()
+  // //   .value(d => d.)
 
-  svg.append("g")
-      .call(d3.axisBottom(scaleX));
+  // svg.append("g")
+  //     .call(d3.axisBottom(scaleX));
 
-  svg.append("g")
-      .call(d3.axisLeft(scaleY))
-      .attr("transform", "translate(0," + (0-hHeight) + ")")
+  // svg.append("g")
+  //     .call(d3.axisLeft(scaleY))
+  //     .attr("transform", "translate(0," + (0-hHeight) + ")")
+
+  // if(props.distribution && props.distribution.size > 0) {
+
+  //   console.log(props.distribution);
+
+
+  // }
 
 
 }
@@ -327,42 +336,47 @@ function genHistogram() {
 useEffect(() => {
 
 
-  var svg = d3.select("#map")
-  .select(".histogram");
+  // var svg = d3.select("#map")
+  // .select(".histogram")
+  // .select("histG");
 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
+  // const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  // hWidth = 300 - hMargin.right - hMargin.left,
+  // hHeight = 200 - (hMargin.top+hMargin.bottom);
 
-  let itemWidth = 10; // Width of each individual rectangle
+  // let itemWidth = 10; // Width of each individual rectangle
+
+  // let scaleX = d3.scaleLinear()
+  // .domain(props.colors1d.length)
+  // .range([0,hWidth]);
+
+  // let scaleY = d3.scaleLinear()
+  // //.domain(d3.extent(props.distribution.entries(), d => d[1]))
+  // .domain([0,255])
+  // .range([hHeight, 0])
 
 
-  let scaleX = d3.scaleLinear()
-  .domain(props.distribution.size)
-  .range([0,hWidth]);
+  // var histogram = d3.bin()
+  // .value(function(d) { return d.value; })
+  // .domain(scaleX.domain());
+  // //.thresholds(scaleX.ticks(d3.timeMonth));
 
-  let scaleY = d3.scaleLinear()
-  .domain(d3.extent(props.distribution.entries(), d => d[1]))
-  .range([0, hHeight])
+  // let data = [{id: 0, value: 200}, {id: 1, value: 100}];
 
+  // var bins = histogram(data);
 
-  var histogram = d3.bin()
-  .value(function(d) { return d; })
-  .domain(scaleX.domain())
-  .thresholds(scaleX.ticks(d3.timeMonth));
-
-  var bins = histogram(props.distribution);
-
-    // append the bar rectangles to the svg element
-  svg.selectAll("rect")
-    .data(bins)
-  .enter().append("rect")
-    .attr("class", "bar")
-    .attr("x", 1)
-    .attr("transform", function(d) {
-    return "translate(" + scaleX(d.x0) + "," + scaleY(d.length) + ")"; })
-    .attr("width", function(d) { return scaleX(d.x1) - scaleX(d.x0) -1 ; })
-    .attr("height", function(d) { return height - scaleY(d.length); });
+  //   // append the bar rectangles to the svg element
+  // svg.selectAll("rect")
+  //   .data(bins)
+  // .enter().append("rect")
+  //   .attr("class", "bar")
+  //   .attr("x", 1)
+  //   // .attr("transform", function(d) {
+  //   // //return "translate(" + scaleX(d.id) + "," + scaleY(d.value) + ")"; })
+  //   //   return "translate("
+  //   // })
+  //   .attr("width", itemWidth)
+  //   .attr("height", function(d) { return hHeight - scaleY(d.value); });
 
 
 }, [props.distribution])
