@@ -224,24 +224,6 @@ function MapController(props) {
 
   }, [country])
 
-  // useEffect(() => {
-
-  //   if(current.length > 0) {
-      
-  //     let m1 = d3.max(current, d => parseFloat(d[variable1]));
-  //     let m2 = d3.max(current, d => parseFloat(d[variable2]));
-      
-  //     setScaleVar1(d3.scaleQuantile()
-  //     .domain([0, m1])
-  //     .range(d3.range(0,colors2d.length)));
-    
-  //     setScaleVar2(d3.scaleQuantile()
-  //     .domain([0,m2])
-  //     .range(d3.range(0,colors2d.length-1)));
-  //   }
-
-  // }, [current])
-
 
   async function getData(link) {
 

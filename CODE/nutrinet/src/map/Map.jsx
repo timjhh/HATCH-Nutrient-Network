@@ -9,6 +9,7 @@ import Histogram from './Histogram.jsx';
 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { margin } from '@mui/system';
 
 
 function Map(props) {
@@ -199,12 +200,16 @@ useEffect(() => {
           .text("Variable 2");
 
 
+          // Generate histogram base once
+          genHistogram();
+
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
               .extent([[0, 0], [width, height]])
               .on("zoom", (d) => g.attr("transform", d.transform));
           
           svg.call(zoom);
+
 
 
 
@@ -245,10 +250,7 @@ useEffect(() => {
 
     paths.attr("fill", (d,idx) => {
       
-      //var val = props.current.find(e => (e.country === d.properties.formal_en || e.country === d.properties.admin))
-      var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))
-      
-    
+      var val = props.current.find(e => (e.ISO3_Code === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
 
       if(!val) {
         nf.push(d.properties);
@@ -262,9 +264,7 @@ useEffect(() => {
 
     })
     .on("click", (e, d) => {
-        //var val = props.current.find(f => (f[0] === d.properties.formal_en || f[0] === d.properties.admin))
-        
-        //var val = props.current.find(f => (f.country === d.properties.formal_en || f.country === d.properties.admin))
+
         var val = props.current.find(f => f.ISO3_Code === d.properties.iso_a3)
 
         props.setCountry(val);
@@ -286,13 +286,97 @@ useEffect(() => {
 }, [props.current]);
 
 
+function genHistogram() {
+
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
+  
+  let scaleX = d3.scaleLinear()
+  .domain(props.distribution.size)
+  .range([0,hWidth]);
+
+  let scaleY = d3.scaleLinear()
+  .domain(d3.extent(props.distribution.entries(), d => d[1]))
+  .range([0, hHeight])
+
+
+  var svg = d3.select("#map")
+  .select("svg").append("g")
+  .attr("class", "histogram")
+  .attr("height", hHeight)
+  .attr("width", hWidth)
+  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
+  .append("g");
+
+  // var histogram = d3.histogram()
+  //   .value(d => d.)
+
+  svg.append("g")
+      .call(d3.axisBottom(scaleX));
+
+  svg.append("g")
+      .call(d3.axisLeft(scaleY))
+      .attr("transform", "translate(0," + (0-hHeight) + ")")
+
+
+}
+
+// Update histogram rectangles on data update
+useEffect(() => {
+
+
+  var svg = d3.select("#map")
+  .select(".histogram");
+
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
+  let itemWidth = 10; // Width of each individual rectangle
+
+
+  let scaleX = d3.scaleLinear()
+  .domain(props.distribution.size)
+  .range([0,hWidth]);
+
+  let scaleY = d3.scaleLinear()
+  .domain(d3.extent(props.distribution.entries(), d => d[1]))
+  .range([0, hHeight])
+
+
+  var histogram = d3.bin()
+  .value(function(d) { return d; })
+  .domain(scaleX.domain())
+  .thresholds(scaleX.ticks(d3.timeMonth));
+
+  var bins = histogram(props.distribution);
+
+    // append the bar rectangles to the svg element
+  svg.selectAll("rect")
+    .data(bins)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", 1)
+    .attr("transform", function(d) {
+    return "translate(" + scaleX(d.x0) + "," + scaleY(d.length) + ")"; })
+    .attr("width", function(d) { return scaleX(d.x1) - scaleX(d.x0) -1 ; })
+    .attr("height", function(d) { return height - scaleY(d.length); });
+
+
+}, [props.distribution])
+
+
   return (
 
 
     <>
 
+      {/* <Histogram distribution={props.distribution} /> */}
       <div id="map">
-        {/* <Histogram distribution={props.distribution} /> */}
+    
+      
 
       </div>
 

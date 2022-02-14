@@ -24,12 +24,13 @@ function Histogram(props) {
 
   useEffect(() => {
 
-    const svg = d3.select("#hist")
-    .append("svg")
+    const svg = d3.select("#map").select("svg")
+    .append("g")
+    .attr("class", "histogram")
     .attr("height", height)
     .attr("width", width)
     .append("g")
-    .attr("transform", "translate(0,0)")
+    .attr("transform", "translate(0,200)");
 
 
   }, [])
