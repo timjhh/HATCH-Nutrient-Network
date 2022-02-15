@@ -350,9 +350,10 @@ function genHistogram() {
 useEffect(() => {
 
 
-  if(props.distribution && props.distribution.length > 0) {
-    populateHistogram();
-  }
+  populateHistogram();
+  // if(props.distribution && props.distribution.length > 0) {
+  //   populateHistogram();
+  // }
 
 
 }, [props.distribution])
@@ -410,9 +411,7 @@ function populateHistogram() {
     .attr("fill", d => d.color)
     .attr("x", d => scaleX(d.place)+(itemWidth/2))
     .attr("y", d => (0-(hHeight-scaleY(d.value))))
-    //.attr("transform", function(d) { return "translate(" +  + "," + (-scaleY(d.value)) + ")"; })
-    // .attr("x", itemWidth/2)
-    // .attr("transform", function(d) { return "translate(" + scaleX(d.place) + "," + (-scaleY(d.value)) + ")"; })
+
     .attr("width", itemWidth)
 
     // Animate graph on page load
