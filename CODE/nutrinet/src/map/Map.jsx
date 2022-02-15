@@ -273,7 +273,7 @@ useEffect(() => {
     });
 
 
-  } else console.log("CURRENT 0")
+  } // else console.log("CURRENT 0")
 
   props.setTitle(props.variable1 + " + " + props.variable2);
 
@@ -336,13 +336,6 @@ function genHistogram() {
       .call(d3.axisLeft(scaleY))
       .attr("transform", "translate(0," + (0-hHeight) + ")");
 
-  if(props.distribution && props.distribution.length > 0) {
-
-    console.log(props.distribution);
-
-
-  }
-
 
 }
 
@@ -351,9 +344,6 @@ useEffect(() => {
 
 
   populateHistogram();
-  // if(props.distribution && props.distribution.length > 0) {
-  //   populateHistogram();
-  // }
 
 
 }, [props.distribution])
@@ -364,9 +354,7 @@ function populateHistogram() {
   var svg = d3.select("#map")
   .select(".histogram")
   .select("#histG");
-
-
-  
+ 
   const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
   hWidth = 300 - hMargin.right - hMargin.left,
   hHeight = 200 - (hMargin.top+hMargin.bottom);
@@ -379,20 +367,21 @@ function populateHistogram() {
 
   let scaleY = d3.scaleLinear()
   .domain([0,d3.max(props.distribution, d => d.value)+1])
-  //.domain([0,200])
   .range([hHeight, 0])
   
-  console.log(scaleY.domain())
-
   svg.selectAll("rect")
-  .transition()
-  .duration(400)
-  //.attr("x", d => scaleX(0))
-  //.attr("height", d => scaleY(d.Value))
-  .attr("height", 0)
-  .delay((d,i) => (i*10))
   .remove();
 
+  // svg.selectAll("rect")
+  // .transition()
+  // .duration(400)
+  // //.attr("x", d => scaleX(0))
+  // //.attr("height", d => scaleY(d.Value))
+  // .attr("height", 0)
+  // .delay((d,i) => (i*10))
+  // .remove();
+
+  // Diagnostic info: Sorted values in place of histogram
   console.log(props.distribution.sort((a,b) => a.place-b.place))
 
   d3.select("#histYAxis").remove("*");
@@ -411,6 +400,7 @@ function populateHistogram() {
     .attr("fill", d => d.color)
     .attr("x", d => scaleX(d.place)+(itemWidth/2))
     .attr("y", d => (0-(hHeight-scaleY(d.value))))
+    //.attr("y", 0)
 
     .attr("width", itemWidth)
 
@@ -420,8 +410,10 @@ function populateHistogram() {
     .duration(400)
     //.attr("x", d => scaleX(0))
     //.attr("height", d => scaleY(d.Value))
-    .attr("height", d => hHeight-scaleY(d.value))
-    .delay((d,i) => (i*10))
+    .attr("height", d => (hHeight-scaleY(d.value)))
+    
+    //.ease(d3.easeSinIn)
+    .delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
 
     // Animate rectangle labels on page load
     // svg.selectAll(".label")
