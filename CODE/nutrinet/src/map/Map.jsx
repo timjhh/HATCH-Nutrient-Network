@@ -10,13 +10,18 @@ import Histogram from './Histogram.jsx';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { margin } from '@mui/system';
+import { nice } from 'd3';
 
 
 function Map(props) {
 
-
+// Dimensions of map
 const width = 1000,
 height = 700;
+
+const itemWidth = 10; // Width of each individual rectangle for histogram
+const scR = 3; // Radius of each scatterplot circle
+
 
 // 3x3 Bivariate Colors
 // const props.colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
@@ -203,6 +208,8 @@ useEffect(() => {
           // Generate histogram base once
           genHistogram();
 
+          genScatterPlot();
+
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
               .extent([[0, 0], [width, height]])
@@ -282,9 +289,155 @@ useEffect(() => {
   // console.log(nf);
 
 
+  populateScatterPlot();
 
 }, [props.current]);
 
+
+function genScatterPlot() {
+
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
+  let scaleX = d3.scaleLinear()
+  .domain([0,d3.max(props.current, d => d[props.variable1])])
+  .range([0,hWidth]);
+
+  // let scaleY = d3.scaleLinear()
+  // .domain([0,d3.max(props.current, d => d[props.variable2])])
+  // .range([hHeight, 0])
+
+  let scaleY = d3.scaleSymlog()
+  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .range([hHeight,0])
+
+
+
+  var svg = d3.select("#map")
+  .select("svg").append("g")
+  .attr("class", "scatterplot")
+  .attr("height", hHeight)
+  .attr("width", hWidth)
+  .attr("transform", "translate(" + ((width-hMargin.right-hMargin.left-hWidth)/2) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
+  .append("g")
+  .attr("id", "scatterPl");
+
+  // Append x-axis label
+  svg.append("text")
+    .attr("x", ((hWidth/2-hMargin.right-hMargin.left)))
+    .attr("y", hHeight+hMargin.bottom+10)
+    .attr("font-weight", "bold")
+    .attr("id", "scatterL1")
+    .text(props.variable1 + " (Log.)");
+
+  // Append y-axis label
+  svg.append("text")
+  .attr("x", -hHeight/2-hMargin.right)
+  .attr("y", -hMargin.left-hMargin.right)
+  .attr("font-weight", "bold")
+  .attr("transform", "rotate(-90)")
+  .attr("id", "scatterL2")
+  .text(props.variable2 + " (Lin.)");
+
+
+  svg.append("g")
+      .attr("id", "scXAxis")
+      .call(d3.axisBottom(scaleX))
+      .attr("transform", "translate(0," + hHeight + ")");
+
+  svg.append("g")
+      .attr("id", "scYAxis")
+      .call(d3.axisLeft(scaleY))
+      // .attr("transform", "translate(0," + (0-hHeight) + ")");
+
+
+}
+function populateScatterPlot() {
+  
+
+  var svgScatter = d3.select("#map")
+  .select(".scatterplot")
+  .select("#scatterPl");
+ 
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
+  // let scaleSX = d3.scaleLinear()
+  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+  // .range([0,hWidth]);
+
+  let scaleSX = d3.scaleSymlog()
+  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+  .range([0,hWidth]);
+
+
+  let scaleSY = d3.scaleLinear()
+  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .range([hHeight,0])
+
+  // let scaleSY = d3.scaleSymlog()
+  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  // .range([hHeight,0])
+
+
+  // .range([(height-hMargin.top-hMargin.bottom-hHeight)+hHeight, (height-hMargin.top-hMargin.bottom-hHeight)])
+  
+  svgScatter.selectAll("circle")
+  .remove();
+
+  // Diagnostic info: Sorted values in place of histogram
+  // console.log(props.distribution.sort((a,b) => a.place-b.place))
+
+  d3.select("#scXAxis").remove("*");
+  d3.select("#scYAxis").remove("*");
+
+  d3.select("#scatterL1").text(props.variable1 + " (Log.)");
+  d3.select("#scatterL2").text(props.variable2 + " (Lin.)")
+
+  svgScatter.append("g")
+      .attr("id", "scXAxis")
+      .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
+      .attr("transform", "translate(0," + hHeight + ")")
+      .selectAll("text")
+        .attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
+        .style("text-anchor", "end")
+        .style("fill", "#69a3b2");
+    //(idx%2===1 ? 5 : 20)
+
+
+  svgScatter
+      .append("g")
+      .attr("id", "scYAxis")
+      .call(d3.axisLeft(scaleSY))
+      //.attr("transform", "translate(0," + (0-hHeight) + ")");
+
+  let circles = svgScatter.selectAll("circle")
+    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
+    .data(props.current)
+  .enter().append("circle")
+    .attr("class", "circle")
+    .attr("fill", d => d.color)
+    .attr("r", 0)
+    .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
+    .attr("cy", d => hHeight);
+    // .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
+
+
+    // Animate graph on page load
+    circles
+    .transition()
+    .duration(200)
+    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+    .attr("r", scR)
+    //.attr("height", d => (hHeight-scaleY(d.value)))
+    //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
+    .delay((d,i) => (i*2)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
+
+
+
+}
 
 function genHistogram() {
 
@@ -308,20 +461,20 @@ function genHistogram() {
   .attr("class", "histogram")
   .attr("height", hHeight)
   .attr("width", hWidth)
-  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
+  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
   .append("g")
   .attr("id", "histG");
 
   // Append x-axis label
   svg.append("text")
     .attr("x", ((hWidth/2)-hMargin.right))
-    .attr("y", hMargin.bottom)
+    .attr("y", hHeight+hMargin.bottom)
     .attr("font-weight", "bold")
     .text("Color");
 
   // Append y-axis label
   svg.append("text")
-  .attr("x", hMargin.right)
+  .attr("x", -hMargin.top-hMargin.bottom-(hHeight/5))
   .attr("y", -hMargin.left)
   .attr("font-weight", "bold")
   .attr("transform", "rotate(-90)")
@@ -329,12 +482,13 @@ function genHistogram() {
 
 
   svg.append("g")
-      .call(d3.axisBottom(scaleX));
+      .call(d3.axisBottom(scaleX))
+      .attr("transform", "translate(0," + hHeight + ")");
 
   svg.append("g")
       .attr("id", "histYAxis")
       .call(d3.axisLeft(scaleY))
-      .attr("transform", "translate(0," + (0-hHeight) + ")");
+      //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
 
 }
@@ -359,7 +513,7 @@ function populateHistogram() {
   hWidth = 300 - hMargin.right - hMargin.left,
   hHeight = 200 - (hMargin.top+hMargin.bottom);
 
-  let itemWidth = 10; // Width of each individual rectangle
+  
 
   let scaleX = d3.scaleLinear()
   .domain([0,props.colors1d.length+1])
@@ -372,17 +526,8 @@ function populateHistogram() {
   svg.selectAll("rect")
   .remove();
 
-  // svg.selectAll("rect")
-  // .transition()
-  // .duration(400)
-  // //.attr("x", d => scaleX(0))
-  // //.attr("height", d => scaleY(d.Value))
-  // .attr("height", 0)
-  // .delay((d,i) => (i*10))
-  // .remove();
-
   // Diagnostic info: Sorted values in place of histogram
-  console.log(props.distribution.sort((a,b) => a.place-b.place))
+  // console.log(props.distribution.sort((a,b) => a.place-b.place))
 
   d3.select("#histYAxis").remove("*");
 
@@ -390,7 +535,7 @@ function populateHistogram() {
       .append("g")
       .attr("id", "histYAxis")
       .call(d3.axisLeft(scaleY))
-      .attr("transform", "translate(0," + (0-hHeight) + ")");
+      //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
   let rects = svg.selectAll("rect")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
@@ -399,29 +544,18 @@ function populateHistogram() {
     .attr("class", "bar")
     .attr("fill", d => d.color)
     .attr("x", d => scaleX(d.place)+(itemWidth/2))
-    .attr("y", d => (0-(hHeight-scaleY(d.value))))
-    //.attr("y", 0)
-
+    .attr("height", 0)
+    .attr("y", hHeight)
     .attr("width", itemWidth)
 
     // Animate graph on page load
     rects
     .transition()
     .duration(400)
-    //.attr("x", d => scaleX(0))
-    //.attr("height", d => scaleY(d.Value))
+    .attr("y", d => scaleY(d.value))
     .attr("height", d => (hHeight-scaleY(d.value)))
-    
-    //.ease(d3.easeSinIn)
+    //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
     .delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
-
-    // Animate rectangle labels on page load
-    // svg.selectAll(".label")
-    // .transition()
-    // .duration(600)
-    // .style("opacity", 1)
-    // .delay((d,i) => (i*100))
-
 
 }
 
