@@ -3,18 +3,18 @@ import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Paper from '@mui/material/Paper';
+
 import Papa from 'papaparse';
 
 
 
 
 import * as d3 from "d3";
-import Stack from '@mui/material/Stack';
+
 import Typography from '@mui/material/Typography';
-import { color } from '@mui/system';
 import { InternMap } from 'd3';
+import { color } from '@mui/system';
 
 function MapController(props) {
 
@@ -24,7 +24,7 @@ function MapController(props) {
 
   const [current, setCurrent] = useState([]);
   
-  const [distribution, setDistribution] = useState(new InternMap);
+  const [distribution, setDistribution] = useState([]);
  
 
   const [country, setCountry] = useState(null);
@@ -202,25 +202,23 @@ function MapController(props) {
       })
 
       // Create color distribution for later use in histogram
-      let colorDist = d3.rollup(data, v => v.length-1, d => d.color);
+      let colorDist = d3.rollups(data, v => v.length-1, d => d.color);
 
       colors1d.forEach((d,idx) => {
-        if(colorDist.get(d) == undefined) colorDist.set(d, 0)
+        if(colorDist.filter(e => e[0] === d).length === 0) colorDist.push([d, 0]);
       })
 
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(data);
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
-      setDistribution(colorDist);
+
+      // Now map colors into a usable object with values { color: x, value: y, place: sequential index of color in order }
+      // We add one to place because our null color has an index of -1
+      setDistribution(colorDist.map(e => ({color: e[0], value: e[1], place: (colors1d.indexOf(e[0])+1) }))); 
       
 
-      
-
-
+    
     });
-
-
-
 
 
   }, [variable1, variable2, source, scaleType1, scaleType2])
@@ -300,24 +298,26 @@ function MapController(props) {
 
         <Grid item xs={12}>
           
-          <Map
-          setTitle={setTitle} 
-          setLabel={setLabel} 
-          setLabel2={setLabel2}
-          setCountry={setCountry}
-          className="viz" 
-          variable1={variable1} 
-          variable2={variable2} 
-          current={current} // Current data applied
-          distribution={distribution}
-          colors1d={colors1d}
-          colors2d={colors2d}
-          nullclr={nullclr}
+          <Paper  sx={{ m: 2, elevation: 24 }}>
+            <Map
+            setTitle={setTitle} 
+            setLabel={setLabel} 
+            setLabel2={setLabel2}
+            setCountry={setCountry}
+            className="viz" 
+            variable1={variable1} 
+            variable2={variable2} 
+            current={current} // Current data applied
+            distribution={distribution}
+            colors1d={colors1d}
+            colors2d={colors2d}
+            nullclr={nullclr}
   
-          
-          />
-
+            />
+          </Paper>
         </Grid>
+
+
         <Grid item xs={12} sx={{ width: 1 }}>
           <Box       
           sx={{ backgroundColor: 'primary.dark',

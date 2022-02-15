@@ -250,7 +250,7 @@ useEffect(() => {
 
     paths.attr("fill", (d,idx) => {
       
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
 
       if(!val) {
         nf.push(d.properties);
@@ -265,7 +265,7 @@ useEffect(() => {
     })
     .on("click", (e, d) => {
 
-        var val = props.current.find(f => f["ISO3.Code"] === d.properties.iso_a3)
+        var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
 
         props.setCountry(val);
         
@@ -288,46 +288,60 @@ useEffect(() => {
 
 function genHistogram() {
 
-  // const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  // hWidth = 300 - hMargin.right - hMargin.left,
-  // hHeight = 200 - (hMargin.top+hMargin.bottom);
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
 
   
-  // let scaleX = d3.scaleLinear()
-  // .domain(props.colors1d.length)
-  // .range([0,hWidth]);
+  let scaleX = d3.scaleLinear()
+  .domain(props.colors1d.length)
+  .range([0,hWidth]);
 
-  // let scaleY = d3.scaleLinear()
-  // //.domain(d3.extent(props.distribution.entries(), d => d[1]))
-  // .domain([0,255])
-  // .range([hHeight, 0])
-
-
-  // var svg = d3.select("#map")
-  // .select("svg").append("g")
-  // .attr("class", "histogram")
-  // .attr("height", hHeight)
-  // .attr("width", hWidth)
-  // .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
-  // .append("g")
-  // .attr("class", "histG");
-
-  // // var histogram = d3.histogram()
-  // //   .value(d => d.)
-
-  // svg.append("g")
-  //     .call(d3.axisBottom(scaleX));
-
-  // svg.append("g")
-  //     .call(d3.axisLeft(scaleY))
-  //     .attr("transform", "translate(0," + (0-hHeight) + ")")
-
-  // if(props.distribution && props.distribution.size > 0) {
-
-  //   console.log(props.distribution);
+  let scaleY = d3.scaleLinear()
+  //.domain(d3.extent(props.distribution.entries(), d => d[1]))
+  .domain([0,200]) // There are 195 countries in the world, so let's start with 200
+  .range([hHeight, 0])
 
 
-  // }
+  var svg = d3.select("#map")
+  .select("svg").append("g")
+  .attr("class", "histogram")
+  .attr("height", hHeight)
+  .attr("width", hWidth)
+  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom) + ")")
+  .append("g")
+  .attr("id", "histG");
+
+  // Append x-axis label
+  svg.append("text")
+    .attr("x", ((hWidth/2)-hMargin.right))
+    .attr("y", hMargin.bottom)
+    .attr("font-weight", "bold")
+    .text("Color");
+
+  // Append y-axis label
+  svg.append("text")
+  .attr("x", hMargin.right)
+  .attr("y", -hMargin.left)
+  .attr("font-weight", "bold")
+  .attr("transform", "rotate(-90)")
+  .text("Frequency");
+
+
+  svg.append("g")
+      .call(d3.axisBottom(scaleX));
+
+  svg.append("g")
+      .attr("id", "histYAxis")
+      .call(d3.axisLeft(scaleY))
+      .attr("transform", "translate(0," + (0-hHeight) + ")");
+
+  if(props.distribution && props.distribution.length > 0) {
+
+    console.log(props.distribution);
+
+
+  }
 
 
 }
@@ -336,50 +350,89 @@ function genHistogram() {
 useEffect(() => {
 
 
-  // var svg = d3.select("#map")
-  // .select(".histogram")
-  // .select("histG");
-
-  // const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  // hWidth = 300 - hMargin.right - hMargin.left,
-  // hHeight = 200 - (hMargin.top+hMargin.bottom);
-
-  // let itemWidth = 10; // Width of each individual rectangle
-
-  // let scaleX = d3.scaleLinear()
-  // .domain(props.colors1d.length)
-  // .range([0,hWidth]);
-
-  // let scaleY = d3.scaleLinear()
-  // //.domain(d3.extent(props.distribution.entries(), d => d[1]))
-  // .domain([0,255])
-  // .range([hHeight, 0])
-
-
-  // var histogram = d3.bin()
-  // .value(function(d) { return d.value; })
-  // .domain(scaleX.domain());
-  // //.thresholds(scaleX.ticks(d3.timeMonth));
-
-  // let data = [{id: 0, value: 200}, {id: 1, value: 100}];
-
-  // var bins = histogram(data);
-
-  //   // append the bar rectangles to the svg element
-  // svg.selectAll("rect")
-  //   .data(bins)
-  // .enter().append("rect")
-  //   .attr("class", "bar")
-  //   .attr("x", 1)
-  //   // .attr("transform", function(d) {
-  //   // //return "translate(" + scaleX(d.id) + "," + scaleY(d.value) + ")"; })
-  //   //   return "translate("
-  //   // })
-  //   .attr("width", itemWidth)
-  //   .attr("height", function(d) { return hHeight - scaleY(d.value); });
+  if(props.distribution && props.distribution.length > 0) {
+    populateHistogram();
+  }
 
 
 }, [props.distribution])
+
+function populateHistogram() {
+
+
+  var svg = d3.select("#map")
+  .select(".histogram")
+  .select("#histG");
+
+
+  
+  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+  hWidth = 300 - hMargin.right - hMargin.left,
+  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
+  let itemWidth = 10; // Width of each individual rectangle
+
+  let scaleX = d3.scaleLinear()
+  .domain([0,props.colors1d.length+1])
+  .range([0,hWidth]);
+
+  let scaleY = d3.scaleLinear()
+  .domain([0,d3.max(props.distribution, d => d.value)+1])
+  //.domain([0,200])
+  .range([hHeight, 0])
+  
+  console.log(scaleY.domain())
+
+  svg.selectAll("rect")
+  .transition()
+  .duration(400)
+  //.attr("x", d => scaleX(0))
+  //.attr("height", d => scaleY(d.Value))
+  .attr("height", 0)
+  .delay((d,i) => (i*10))
+  .remove();
+
+  console.log(props.distribution.sort((a,b) => a.place-b.place))
+
+  d3.select("#histYAxis").remove("*");
+
+  svg
+      .append("g")
+      .attr("id", "histYAxis")
+      .call(d3.axisLeft(scaleY))
+      .attr("transform", "translate(0," + (0-hHeight) + ")");
+
+  let rects = svg.selectAll("rect")
+    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
+    .data(props.distribution)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("fill", d => d.color)
+    .attr("x", d => scaleX(d.place)+(itemWidth/2))
+    .attr("y", d => (0-(hHeight-scaleY(d.value))))
+    //.attr("transform", function(d) { return "translate(" +  + "," + (-scaleY(d.value)) + ")"; })
+    // .attr("x", itemWidth/2)
+    // .attr("transform", function(d) { return "translate(" + scaleX(d.place) + "," + (-scaleY(d.value)) + ")"; })
+    .attr("width", itemWidth)
+
+    // Animate graph on page load
+    rects
+    .transition()
+    .duration(400)
+    //.attr("x", d => scaleX(0))
+    //.attr("height", d => scaleY(d.Value))
+    .attr("height", d => hHeight-scaleY(d.value))
+    .delay((d,i) => (i*10))
+
+    // Animate rectangle labels on page load
+    // svg.selectAll(".label")
+    // .transition()
+    // .duration(600)
+    // .style("opacity", 1)
+    // .delay((d,i) => (i*100))
+
+
+}
 
 
   return (
