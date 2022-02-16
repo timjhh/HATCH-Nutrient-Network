@@ -325,7 +325,7 @@ function genScatterPlot() {
 
   // Append x-axis label
   svg.append("text")
-    .attr("x", ((hWidth/2-hMargin.right-hMargin.left)))
+    .attr("x", (hWidth/2)-hMargin.right-hMargin.left-hMargin.right-(props.variable1.length))
     .attr("y", hHeight+hMargin.bottom+10)
     .attr("font-weight", "bold")
     .attr("id", "scatterL1")
@@ -333,7 +333,7 @@ function genScatterPlot() {
 
   // Append y-axis label
   svg.append("text")
-  .attr("x", -hHeight/2-hMargin.right)
+  .attr("x", -hHeight/2-hMargin.right-hMargin.left)
   .attr("y", -hMargin.left-hMargin.right)
   .attr("font-weight", "bold")
   .attr("transform", "rotate(-90)")
@@ -350,6 +350,20 @@ function genScatterPlot() {
       .attr("id", "scYAxis")
       .call(d3.axisLeft(scaleY))
       // .attr("transform", "translate(0," + (0-hHeight) + ")");
+
+  let circles = svg.selectAll("circle")
+    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
+    .data(props.current)
+    .join("circle")
+    .attr("fill", d => d.color)
+    .attr("r", scR)
+    .attr("cx", d => scaleX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
+    .transition()
+    .delay(200)
+    .ease(d3.easeCubicOut)
+    .attr("cy", d => scaleY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
+    //.attr("cy", d => hHeight);
+
 
 
 }
@@ -381,59 +395,69 @@ function populateScatterPlot() {
   // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
   // .range([hHeight,0])
 
-
-  // .range([(height-hMargin.top-hMargin.bottom-hHeight)+hHeight, (height-hMargin.top-hMargin.bottom-hHeight)])
   
-  svgScatter.selectAll("circle")
-  .remove();
+
 
   // Diagnostic info: Sorted values in place of histogram
-  // console.log(props.distribution.sort((a,b) => a.place-b.place))
-
-  d3.select("#scXAxis").remove("*");
-  d3.select("#scYAxis").remove("*");
+  // console.log(props.distribution.sort((a,b) => a.place-b.place)
 
   d3.select("#scatterL1").text(props.variable1 + " (Log.)");
   d3.select("#scatterL2").text(props.variable2 + " (Lin.)")
 
-  svgScatter.append("g")
-      .attr("id", "scXAxis")
+  svgScatter
+      .select("#scXAxis")
+      .transition()
       .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
       .attr("transform", "translate(0," + hHeight + ")")
       .selectAll("text")
         .attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
-        .style("text-anchor", "end")
-        .style("fill", "#69a3b2");
+        //.style("text-anchor", "end")
+        //.style("fill", "#69a3b2");
+
+
     //(idx%2===1 ? 5 : 20)
 
 
   svgScatter
-      .append("g")
-      .attr("id", "scYAxis")
-      .call(d3.axisLeft(scaleSY))
+      .select("#scYAxis")
+      .transition()
+      .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
       //.attr("transform", "translate(0," + (0-hHeight) + ")");
+
+  // let circles = svgScatter.selectAll("circle")
+  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
+  //   .data(props.current)
+  // .enter().append("circle")
+  //   .attr("class", "circle")
+  //   .attr("fill", d => d.color)
+  //   .attr("r", 0)
+  //   .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
+  //   .attr("cy", d => hHeight);
 
   let circles = svgScatter.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.current)
-  .enter().append("circle")
-    .attr("class", "circle")
+    .join("circle")
     .attr("fill", d => d.color)
-    .attr("r", 0)
+    .attr("r", scR)
     .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-    .attr("cy", d => hHeight);
-    // .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
+    .attr("cy", hHeight)
+    .transition()
+    .ease(d3.easeCubicOut)
+    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+    //.attr("cy", d => hHeight);
+
 
 
     // Animate graph on page load
-    circles
-    .transition()
-    .duration(200)
-    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
-    .attr("r", scR)
-    //.attr("height", d => (hHeight-scaleY(d.value)))
-    //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
-    .delay((d,i) => (i*2)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
+    // circles
+    // .transition()
+    // .duration(200)
+    // .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+    // .attr("r", scR)
+    // //.attr("height", d => (hHeight-scaleY(d.value)))
+    // //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
+    // .delay((d,i) => (i*2)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
 
 
 
@@ -513,8 +537,6 @@ function populateHistogram() {
   hWidth = 300 - hMargin.right - hMargin.left,
   hHeight = 200 - (hMargin.top+hMargin.bottom);
 
-  
-
   let scaleX = d3.scaleLinear()
   .domain([0,props.colors1d.length+1])
   .range([0,hWidth]);
@@ -523,39 +545,50 @@ function populateHistogram() {
   .domain([0,d3.max(props.distribution, d => d.value)+1])
   .range([hHeight, 0])
   
-  svg.selectAll("rect")
-  .remove();
+  // svg.selectAll("rect")
+  // .remove();
 
   // Diagnostic info: Sorted values in place of histogram
   // console.log(props.distribution.sort((a,b) => a.place-b.place))
 
-  d3.select("#histYAxis").remove("*");
-
   svg
-      .append("g")
-      .attr("id", "histYAxis")
-      .call(d3.axisLeft(scaleY))
-      //.attr("transform", "translate(0," + (0-hHeight) + ")");
+    .select("#histYAxis")
+    .transition()
+    .call(d3.axisLeft(scaleY))
+
+  // let rects = svg.selectAll("rect")
+  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
+  //   .data(props.distribution)
+  // .enter().append("rect")
+  //   .attr("class", "bar")
+  //   .attr("fill", d => d.color)
+  //   .attr("x", d => scaleX(d.place)+(itemWidth/2))
+  //   .attr("height", 0)
+  //   .attr("y", hHeight)
+  //   .attr("width", itemWidth)
+
 
   let rects = svg.selectAll("rect")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.distribution)
-  .enter().append("rect")
-    .attr("class", "bar")
+    .join("rect")
     .attr("fill", d => d.color)
     .attr("x", d => scaleX(d.place)+(itemWidth/2))
     .attr("height", 0)
-    .attr("y", hHeight)
     .attr("width", itemWidth)
-
-    // Animate graph on page load
-    rects
+    .attr("y", hHeight)
     .transition()
-    .duration(400)
+    .duration(200)
     .attr("y", d => scaleY(d.value))
     .attr("height", d => (hHeight-scaleY(d.value)))
+
+
+    // Animate graph change on reload
+    // rects
+    // .transition()
+
     //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
-    .delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
+    //.delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
 
 }
 
