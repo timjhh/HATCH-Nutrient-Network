@@ -408,10 +408,11 @@ function populateScatterPlot() {
       .select("#scXAxis")
       .transition()
       .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
-      .attr("transform", "translate(0," + hHeight + ")")
+      //.attr("transform", "translate(0," + hHeight + ")")
       .selectAll("text")
-        .attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
-        //.style("text-anchor", "end")
+        .attr("y", (d,idx) => (idx)*10)
+        //.attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
+        .style("text-anchor", "end")
         //.style("fill", "#69a3b2");
 
 
