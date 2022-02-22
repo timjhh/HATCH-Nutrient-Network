@@ -132,90 +132,80 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
+          //.on("pointermove", (d,e) => pointerMove(d,e))
           .attr("fill", d => d.color);
-       
-       
-          // Drawing the legend bar
-          const legend = svg.append("g")
-          .attr("class", "legend")
-          .attr("font-weight", "bold")
-          .attr("width", 50)
-          .attr("height", 100)
-          .style('position', 'absolute')
-          //.style('top', '85%')
-          .style('right', '0')
-          .attr("transform", "translate(120," + (height-(height/4)) + ")")
-          //.attr("transform", "rotate(135)");
-
-          legend.selectAll("rect")
-          .data(props.colors1d)
-          .enter()
-          .append("rect")
-          .attr("width", legendSize)
-          .attr("height", legendSize)
-          .attr("x", (d,idx) => legendSize*(idx%(props.colors2d.length))-85)
-          .attr("y", (d,idx) => legendSize*(parseInt(idx/(props.colors2d.length)))-50)
-          .attr("fill", d => d)
-          .on("mouseover", (event,d) => {
-            console.log(d)
-          })
-          .attr("transform", "rotate(-135)");
-          
-          // Low -> High label
-          legend.append("text")
-          .attr("x", 10)
-          .attr("y", props.colors2d.length*legendSize+10)
-          .attr("class", "label")
-          .attr("font-weight", "lighter")
-          //.attr("transform", "rotate(45)")
-          .text("Low");
-
-          legend.append("text")
-          .attr("x", ((props.colors2d.length*legendSize)))
-          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
-          .attr("class", "label")
-          .attr("font-weight", "lighter")
-          //.attr("transform", "rotate(45)")
-          .text("High");
-
-          legend.append("text")
-          .attr("x", -((props.colors2d.length*legendSize))+15)
-          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
-          .attr("class", "label")
-          .attr("font-weight", "lighter")
-          //.attr("transform", "rotate(45)")
-          .text("High");
-          
-
-          // Variable 1 label
-          legend.append("text")
-          .attr("x", -20)
-          .attr("y", 90)
-          .attr("class", "v1label")
-          .attr("transform", "rotate(45)")
-          .text(props.variable1);
-
-
-          // Variable 2 label
-          legend.append("text")
-          .attr("x", -45)
-          .attr("y", 120)
-          .attr("class", "v2label")
-          .attr("transform", "rotate(-45)")
-          .text("Variable 2");
-
 
           // Generate histogram base once
-          genHistogram();
+          // genHistogram();
 
-          genScatterPlot();
+          // genScatterPlot();
+
+          const tooltip = svg.append("g")
+          .attr("id", "ttlbl")
+          .attr("opacity", 0);
+    
+    
+          tooltip.append("rect")
+          //.attr("fill", (d,idx) => yC[idx])
+          .attr("fill", "ghostwhite")
+          .attr("rx", 4)
+          .attr("ry", 4)
+          .attr("stroke", "black")
+          .attr("stroke-width", "2px")
+          .attr("opacity", 1)
+          //.attr("width", d => d.length * 10 + ((": $0.00").length*5))
+          .attr("width", 80)
+          .attr("height", 4 * 23)
+          .attr("transform", (d,idx) => "translate(0," + parseFloat(50) + ")");
+    
+    
+        // tooltip.selectAll("path")
+        // .data(lines)
+        // .join("circle")
+        //   // Manually add offset based on index of year
+        //   // Oh boy is this some spaghetti
+        //   // Note - 20 is the offset in this case, as each index is multiplied by 20
+        //   .attr("transform", (d,idx) => "translate(8," + (parseFloat(idx * 15)-3) + ")")
+        //   .attr("r", 6)
+        //   .attr("fill", (d,idx) => yC[idx]);
+    
+
+    
+          // tooltip.selectAll("text")
+          // .data(lines)
+          // .join("text")
+          // .style("font-size", 12)
+          // .style("border", "solid")
+          // .style("border-width", "2px")
+          // .style("border-radius", "5px")
+          // .attr("transform", (d,idx) => "translate(16," + (parseFloat((idx * 15))+1) + ")")
+          // .text(d => d + ": $0.00"); 
+    
+          tooltip.append("text")
+          .attr("id", "ttlblyear")
+          .style("font-size", 12)
+          .style("font-weight", "bold")
+          .style("border", "solid")
+          .style("border-width", "2px")
+          .style("border-radius", "5px")
+          .attr("transform", "translate(16," + parseFloat(-13) + ")")
+          .text("Year 0");
+    
+
+
+
+
+
+
+
 
           const zoom = d3.zoom()
               .scaleExtent([1, 8])
               .extent([[0, 0], [width, height]])
+              //.translateBy(g, 500, -500)
               .on("zoom", (d) => g.attr("transform", d.transform));
           
-          svg.call(zoom);
+          svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4));
 
 
 
@@ -288,310 +278,86 @@ useEffect(() => {
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
   // console.log(nf);
 
-
-  populateScatterPlot();
-
 }, [props.current]);
 
 
-function genScatterPlot() {
-
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
-
-  let scaleX = d3.scaleLinear()
-  .domain([0,d3.max(props.current, d => d[props.variable1])])
-  .range([0,hWidth]);
-
-  // let scaleY = d3.scaleLinear()
-  // .domain([0,d3.max(props.current, d => d[props.variable2])])
-  // .range([hHeight, 0])
-
-  let scaleY = d3.scaleSymlog()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  .range([hHeight,0])
 
 
-
-  var svg = d3.select("#map")
-  .select("svg").append("g")
-  .attr("class", "scatterplot")
-  .attr("height", hHeight)
-  .attr("width", hWidth)
-  .attr("transform", "translate(" + ((width-hMargin.right-hMargin.left-hWidth)/2) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
-  .append("g")
-  .attr("id", "scatterPl");
-
-  // Append x-axis label
-  svg.append("text")
-    .attr("x", (hWidth/2)-hMargin.right-hMargin.left-hMargin.right-(props.variable1.length))
-    .attr("y", hHeight+hMargin.bottom+10)
-    .attr("font-weight", "bold")
-    .attr("id", "scatterL1")
-    .text(props.variable1 + " (Log.)");
-
-  // Append y-axis label
-  svg.append("text")
-  .attr("x", -hHeight/2-hMargin.right-hMargin.left)
-  .attr("y", -hMargin.left-hMargin.right)
-  .attr("font-weight", "bold")
-  .attr("transform", "rotate(-90)")
-  .attr("id", "scatterL2")
-  .text(props.variable2 + " (Lin.)");
+function pointerMove(d,e) {
 
 
-  svg.append("g")
-      .attr("id", "scXAxis")
-      .call(d3.axisBottom(scaleX))
-      .attr("transform", "translate(0," + hHeight + ")");
+  let position = d3.pointer(d);
 
-  svg.append("g")
-      .attr("id", "scYAxis")
-      .call(d3.axisLeft(scaleY))
-      // .attr("transform", "translate(0," + (0-hHeight) + ")");
+  let boundX = position[0]-(margin.right+(margin.left*2));
+  let boundY = position[1]-margin.top-margin.bottom;
 
-  let circles = svg.selectAll("circle")
-    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-    .data(props.current)
-    .join("circle")
-    .attr("fill", d => d.color)
-    .attr("r", scR)
-    .attr("cx", d => scaleX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-    .transition()
-    .delay(200)
-    .ease(d3.easeCubicOut)
-    .attr("cy", d => scaleY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
-    //.attr("cy", d => hHeight);
+  let visible = true;
+  if(boundX > (width-margin.right-margin.left) || boundX <= 0) visible = false;
+  if(boundY > height-margin.top-margin.bottom || boundY <= -margin.top) visible = false;
 
+  console.log(e.properties.name);
 
+  // Max width before graph flips, calculated by label + figure amount
+  // let maxWidth = d3.max(lines, d => {
+  //   return d.length * 10 + ((": $0.00").length*5);
+  // });
 
-}
-function populateScatterPlot() {
-  
+  // let maxWidth = d3.max(lines, d => {
+  //   return ((": $0.00").length*5);
+  // });
 
-  var svgScatter = d3.select("#map")
-  .select(".scatterplot")
-  .select("#scatterPl");
- 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
-
-  // let scaleSX = d3.scaleLinear()
-  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
-  // .range([0,hWidth]);
-
-  let scaleSX = d3.scaleSymlog()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
-  .range([0,hWidth]);
+  // d3.select("#ttline")
+  // .attr("opacity", visible ? 1 : 0);
 
 
-  let scaleSY = d3.scaleLinear()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  .range([hHeight,0])
+  // d3.select("#ttlbl")
+  // .attr("opacity", visible ? 1 : 0);
 
-  // let scaleSY = d3.scaleSymlog()
-  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  // .range([hHeight,0])
+  // Get point on graph by inverting the mouse's x coordinate, converting it to an integer
+  // and making sure its positive to convert into an index for data array
+  //let idx = Math.floor(d3.max([0,x.invert(position[0]-(margin.right+(margin.left*2)))-1]));
 
-  
-
-
-  // Diagnostic info: Sorted values in place of histogram
-  // console.log(props.distribution.sort((a,b) => a.place-b.place)
-
-  d3.select("#scatterL1").text(props.variable1 + " (Log.)");
-  d3.select("#scatterL2").text(props.variable2 + " (Lin.)")
-
-  svgScatter
-      .select("#scXAxis")
-      .transition()
-      .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
-      //.attr("transform", "translate(0," + hHeight + ")")
-      .selectAll("text")
-        .attr("y", (d,idx) => (idx)*10)
-        //.attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
-        .style("text-anchor", "end")
-        //.style("fill", "#69a3b2");
+  //if(idx > props.length) idx = props.length-1;
 
 
-    //(idx%2===1 ? 5 : 20)
+  //let minY = d3.min([props.data[idx].revenue, props.data[idx].cost]);
+  //let maxY = d3.max([props.data[idx].revenue, props.data[idx].cost]);
+
+  // d3.select("#ttline")
+  // .attr("x1", position[0]-(margin.right+(margin.left*2)))
+  // .attr("x2", position[0]-(margin.right+(margin.left*2)));
+  // .attr("y1", y(0))
+  // .attr("y2", y(maxY));
+
+  // Move all elements about graph
+  // d3.select("#ttlbl")
+  // .selectAll("*")
+  // .attr("x", position[0] - (margin.right+margin.left) - (maxWidth+position[0] >= width ? 120 : 15))
+  // .attr("y", position[1]-35);
+
+  // And the circles too
+  // d3.select("#ttlbl")
+  // .selectAll("circle")
+  // .attr("cx", position[0] - (margin.right+margin.left) - (maxWidth+position[0] >= width ? 120 : 15))
+  // .attr("cy", position[1]-35);
 
 
-  svgScatter
-      .select("#scYAxis")
-      .transition()
-      .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
-      //.attr("transform", "translate(0," + (0-hHeight) + ")");
+  // Update all tooltip data points
+  // d3.select("#ttlbl")
+  // .selectAll("text")
+  // .text((d,idy) => {
+  //   let point = props.data[idx];
+  //   // Set label accordingly - each data point is in the format of [revenue, cost, value]
+  //   let num = idy === 0 ? point.revenue : idy === 1 ? point.cost : idy === 2 ? (point.revenue + point.cost) : (point.value);
+  //   return new Intl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(num);
+  //   //return d + ":" + new Intl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(num);
+  // });
 
-  // let circles = svgScatter.selectAll("circle")
-  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-  //   .data(props.current)
-  // .enter().append("circle")
-  //   .attr("class", "circle")
-  //   .attr("fill", d => d.color)
-  //   .attr("r", 0)
-  //   .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-  //   .attr("cy", d => hHeight);
-
-  let circles = svgScatter.selectAll("circle")
-    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-    .data(props.current)
-    .join("circle")
-    .attr("fill", d => d.color)
-    .attr("r", scR)
-    .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-    .attr("cy", hHeight)
-    .transition()
-    .ease(d3.easeCubicOut)
-    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
-    //.attr("cy", d => hHeight);
-
-
-
-    // Animate graph on page load
-    // circles
-    // .transition()
-    // .duration(200)
-    // .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
-    // .attr("r", scR)
-    // //.attr("height", d => (hHeight-scaleY(d.value)))
-    // //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
-    // .delay((d,i) => (i*2)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
-
-
+  // d3.select("#ttlblyear")
+  // .text("Year " + props.data[idx].year);
 
 }
 
-function genHistogram() {
-
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
-
-  
-  let scaleX = d3.scaleLinear()
-  .domain(props.colors1d.length)
-  .range([0,hWidth]);
-
-  let scaleY = d3.scaleLinear()
-  //.domain(d3.extent(props.distribution.entries(), d => d[1]))
-  .domain([0,200]) // There are 195 countries in the world, so let's start with 200
-  .range([hHeight, 0])
-
-
-  var svg = d3.select("#map")
-  .select("svg").append("g")
-  .attr("class", "histogram")
-  .attr("height", hHeight)
-  .attr("width", hWidth)
-  .attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
-  .append("g")
-  .attr("id", "histG");
-
-  // Append x-axis label
-  svg.append("text")
-    .attr("x", ((hWidth/2)-hMargin.right))
-    .attr("y", hHeight+hMargin.bottom)
-    .attr("font-weight", "bold")
-    .text("Color");
-
-  // Append y-axis label
-  svg.append("text")
-  .attr("x", -hMargin.top-hMargin.bottom-(hHeight/5))
-  .attr("y", -hMargin.left)
-  .attr("font-weight", "bold")
-  .attr("transform", "rotate(-90)")
-  .text("Frequency");
-
-
-  svg.append("g")
-      .call(d3.axisBottom(scaleX))
-      .attr("transform", "translate(0," + hHeight + ")");
-
-  svg.append("g")
-      .attr("id", "histYAxis")
-      .call(d3.axisLeft(scaleY))
-      //.attr("transform", "translate(0," + (0-hHeight) + ")");
-
-
-}
-
-// Update histogram rectangles on data update
-useEffect(() => {
-
-
-  populateHistogram();
-
-
-}, [props.distribution])
-
-function populateHistogram() {
-
-
-  var svg = d3.select("#map")
-  .select(".histogram")
-  .select("#histG");
- 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
-
-  let scaleX = d3.scaleLinear()
-  .domain([0,props.colors1d.length+1])
-  .range([0,hWidth]);
-
-  let scaleY = d3.scaleLinear()
-  .domain([0,d3.max(props.distribution, d => d.value)+1])
-  .range([hHeight, 0])
-  
-  // svg.selectAll("rect")
-  // .remove();
-
-  // Diagnostic info: Sorted values in place of histogram
-  // console.log(props.distribution.sort((a,b) => a.place-b.place))
-
-  svg
-    .select("#histYAxis")
-    .transition()
-    .call(d3.axisLeft(scaleY))
-
-  // let rects = svg.selectAll("rect")
-  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-  //   .data(props.distribution)
-  // .enter().append("rect")
-  //   .attr("class", "bar")
-  //   .attr("fill", d => d.color)
-  //   .attr("x", d => scaleX(d.place)+(itemWidth/2))
-  //   .attr("height", 0)
-  //   .attr("y", hHeight)
-  //   .attr("width", itemWidth)
-
-
-  let rects = svg.selectAll("rect")
-    // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-    .data(props.distribution)
-    .join("rect")
-    .attr("fill", d => d.color)
-    .attr("x", d => scaleX(d.place)+(itemWidth/2))
-    .attr("height", 0)
-    .attr("width", itemWidth)
-    .attr("y", hHeight)
-    .transition()
-    .duration(200)
-    .attr("y", d => scaleY(d.value))
-    .attr("height", d => (hHeight-scaleY(d.value)))
-
-
-    // Animate graph change on reload
-    // rects
-    // .transition()
-
-    //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
-    //.delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
-
-}
 
 
   return (

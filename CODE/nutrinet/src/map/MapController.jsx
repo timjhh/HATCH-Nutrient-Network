@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
+import MapGraphs from './MapGraphs.jsx';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -20,7 +21,7 @@ function MapController(props) {
 
   const [variable1, setVariable1] = useState("Population");
 
-  const [variable2, setVariable2] = useState("GDP");
+  const [variable2, setVariable2] = useState("Population");
 
   const [current, setCurrent] = useState([]);
   
@@ -87,7 +88,7 @@ function MapController(props) {
     var max = Number.MAX_VALUE;
     var min = Number.MIN_VALUE;
 
-    setCurrent([]);
+    //setCurrent([]);
 
 
 
@@ -292,13 +293,14 @@ function MapController(props) {
 
 
 
-      <Grid container spacing={0} direction="column"
+      {/* <Grid container spacing={0} direction="column"
       alignItems="center"
-      justifyContent="center">
+      justifyContent="center"> */}
+      <Grid container spacing={0}>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} lg={9}>
           
-          <Paper  sx={{ m: 2, elevation: 24 }}>
+          <Paper  sx={{ mx: 1, elevation: 24 }}>
             <Map
             setTitle={setTitle} 
             setLabel={setLabel} 
@@ -316,7 +318,26 @@ function MapController(props) {
             />
           </Paper>
         </Grid>
-
+        <Grid item xs={12} lg={3}>
+          
+          <Paper  sx={{ elevation: 24 }}>
+            <MapGraphs
+            setTitle={setTitle} 
+            setLabel={setLabel} 
+            setLabel2={setLabel2}
+            setCountry={setCountry}
+            className="viz" 
+            variable1={variable1} 
+            variable2={variable2} 
+            current={current} // Current data applied
+            distribution={distribution}
+            colors1d={colors1d}
+            colors2d={colors2d}
+            nullclr={nullclr}
+  
+            />
+          </Paper>
+        </Grid>
 
         <Grid item xs={12} sx={{ width: 1 }}>
           <Box       
