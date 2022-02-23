@@ -168,8 +168,8 @@ useEffect(() => {
           .attr("x", (d,idx) => legendSize*(idx%(props.colors2d.length))-85)
           .attr("y", (d,idx) => legendSize*(parseInt(idx/(props.colors2d.length)))-50)
           .attr("fill", d => d)
-          .on("mouseover", (event,d) => {
-            console.log(d)
+          .on("click", (event,d) => {
+            props.setHighlight(d);
           })
           .attr("transform", "rotate(-135)");
           

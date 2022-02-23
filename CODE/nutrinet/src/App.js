@@ -33,17 +33,17 @@ function App() {
 
 
 
-    <Grid container spacing={2}>
-      <Grid item xs={2}>
+    <Grid container spacing={0}>
+      <Grid item xs={1}>
 
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={10}>
 
         <DataController />
 
       </Grid>
 
-      <Grid item xs={2}>
+      <Grid item xs={1}>
 
       </Grid>
     </Grid>

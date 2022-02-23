@@ -26,11 +26,6 @@ function MapController(props) {
   const [current, setCurrent] = useState([]);
   
   const [distribution, setDistribution] = useState([]);
- 
-
-  const [country, setCountry] = useState(null);
-  const [label, setLabel] = useState([]);
-  const [label2, setLabel2] = useState([]);
 
   const [title, setTitle] = useState("Title");
 
@@ -40,6 +35,9 @@ function MapController(props) {
   const [variables, setVariables] = useState([]);
 
   const [sources, setSources] = useState(["Import_kg"]);
+
+  // Selected color will highlight all affected countries
+  const [highlight, setHighlight] = useState(null);
 
   const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
 
@@ -224,24 +222,24 @@ function MapController(props) {
 
   }, [variable1, variable2, source, scaleType1, scaleType2])
 
-  useEffect(() => {
+  // useEffect(() => {
 
 
-    if(country) {
+  //   if(country) {
 
-    let m1 = d3.max(current, d => parseFloat(d[variable1]));
-    let m2 = d3.max(current, d => parseFloat(d[variable2]));
+  //   let m1 = d3.max(current, d => parseFloat(d[variable1]));
+  //   let m2 = d3.max(current, d => parseFloat(d[variable2]));
     
-    //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
-    setLabel([country[variable1], m1]);
+  //   //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
+  //   setLabel([country[variable1], m1]);
 
-    //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
-    setLabel2([country[variable2], m2]);
+  //   //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
+  //   setLabel2([country[variable2], m2]);
 
 
-    }
+  //   }
 
-  }, [country])
+  // }, [country])
 
 
   async function getData(link) {
@@ -303,10 +301,8 @@ function MapController(props) {
           <Paper  sx={{ mx: 1, elevation: 24 }}>
             <Map
             setTitle={setTitle} 
-            setLabel={setLabel} 
-            setLabel2={setLabel2}
-            setCountry={setCountry}
-            className="viz" 
+            className="viz"
+            highlight={highlight}
             variable1={variable1} 
             variable2={variable2} 
             current={current} // Current data applied
@@ -323,9 +319,7 @@ function MapController(props) {
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
             setTitle={setTitle} 
-            setLabel={setLabel} 
-            setLabel2={setLabel2}
-            setCountry={setCountry}
+            setHighlight={setHighlight}
             className="viz" 
             variable1={variable1} 
             variable2={variable2} 
@@ -347,48 +341,10 @@ function MapController(props) {
       }}>
 
 
-            <Typography mb={-2} ml={1}>Country</Typography>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{(country != null ? country.Country : "Select a Country")}</Typography>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter", "textAlign": "center"}}>Sample Text</Typography>
 
-            <Typography mt={3} mb={-2} ml={1}>Source</Typography>
-            <Typography mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{source}</Typography>
+        <hr/>
 
-            <Typography mt={3} mb={-2} ml={1}>Variables</Typography>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter"}}>{title}</Typography>
-
-            <hr/>
-          <Grid container spacing={2}>
-            <Grid item xs={12} lg={6}>
-
-              
-              {/* {label.map(d => (
-                <p>{d}</p>
-              ))} */}
-              
-              {label.length > 0 &&
-              <>
-                <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable1}</Typography>
-                <p>{label[0]} / {label[1]}</p>
-                <p>= {(100*(label[0] / label[1])).toFixed(4)}%</p>
-              </>
-              }
-
-            </Grid>
-            <Grid item xs={12} md={6}>
-
-              {/* {label2.map((d,idx) => (
-                <p>{d}</p>
-              ))} */}
-              {label2.length > 0 &&
-              <>
-                <Typography mb={0} mt={2} variant={"p"} style={{"fontSize": "1em", "fontWeight": "lighter"}}>{variable2}</Typography>
-                <p>{label2[0]} / {label2[1]}</p>
-                <p>= {(100*(label2[0] / label2[1])).toFixed(4)}%</p>
-              </>
-              }
-
-            </Grid>
-          </Grid>
             
             
           </Box>

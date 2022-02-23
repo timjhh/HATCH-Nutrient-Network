@@ -16,7 +16,7 @@ import { nice } from 'd3';
 function Map(props) {
 
 // Dimensions of map
-const width = 1000,
+const width = 1200,
 height = 700;
 
 const itemWidth = 10; // Width of each individual rectangle for histogram
@@ -190,13 +190,7 @@ useEffect(() => {
           .style("border-radius", "5px")
           .attr("transform", "translate(16," + parseFloat(-13) + ")")
           .text("Year 0");
-    
-
-
-
-
-
-
+  
 
 
           const zoom = d3.zoom()
@@ -205,7 +199,7 @@ useEffect(() => {
               //.translateBy(g, 500, -500)
               .on("zoom", (d) => g.attr("transform", d.transform));
           
-          svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4));
+          svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
 
 
 
@@ -281,6 +275,37 @@ useEffect(() => {
 }, [props.current]);
 
 
+// Update highlighted countries
+useEffect(() => {
+
+  console.log(props.highlight);
+
+  var g = d3.select("#map").select("svg").select("g");
+
+  g.selectAll("path")
+  .data(props.current)
+  .style("stroke", d => d.color === props.highlight ? "red" : "white")
+  .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5);
+
+  // var g = d3.select("#map").select("svg").select("g");
+  // console.log(props.current)
+  // g.selectAll("path")
+  // .data(props.current)
+  // .style("fill", d => d.color === props.highlight ? "red" : "white");
+
+  // const g = svg.append("g")you did
+  // .selectAll("path")
+  // .data(data.features)
+  // .enter()
+  // .append("path")
+  // .style("stroke-width", 0.5)
+  // .style("stroke", "white")
+  // .attr("d", d => path(d))
+  // //.on("pointermove", (d,e) => pointerMove(d,e))
+  // .attr("fill", d => d.color);
+
+
+}, [props.highlight])
 
 
 function pointerMove(d,e) {
