@@ -50,6 +50,7 @@ function MapController(props) {
 
   // What color to show for unavailable data
   var nullclr = "black";
+  var highlightClr = "#FF7F7F";
 
   // 3x3 Bivariate Colors
   // const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
@@ -318,6 +319,7 @@ function MapController(props) {
             colors1d={colors1d}
             colors2d={colors2d}
             nullclr={nullclr}
+            highlightClr={highlightClr}
   
             />
           </Paper>

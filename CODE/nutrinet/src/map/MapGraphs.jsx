@@ -120,6 +120,14 @@ useEffect(() => {
           .attr("height", height)
           .attr("viewBox", [0, 0, width, height])
           .on("change", {forceUpdate})
+          .on("click", (event,d) => {
+    
+            if(event.srcElement.tagName != "rect") {
+
+              props.setHighlight(null);
+            }
+          
+          })
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 //           // 75th q1 of data, to remove extraneous value
@@ -175,6 +183,7 @@ useEffect(() => {
           .attr("fill", d => d)
           .on("click", (event,d) => {
             props.setHighlight(d);
+          
           })
           .attr("transform", "rotate(-135)");
           

@@ -93,15 +93,7 @@ useEffect(() => {
   
         }).then(data => {
 
-          // let q1 = d3.quantile(props.current, .80, d => d.avg1);
          
-
-          let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
-          let secondClr = (d) => d3.interpolateCividis( d/q1 );
-
-          let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
-
-
           let projection = d3.geoMercator();
 
           let path = d3.geoPath()
@@ -115,12 +107,6 @@ useEffect(() => {
           .attr("viewBox", [0, 0, width, height])
           .on("change", {forceUpdate})
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-
-          // 75th q1 of data, to remove extraneous value
-          //q1 = d3.quantile(props.current, .80, d => d[2])
-          q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
-
-          let magmaClr = (d) => d3.interpolateMagma( d/q1 );
 
 
 
@@ -138,11 +124,6 @@ useEffect(() => {
           //   d3.select(this.parentNode.appendChild(this)).transition().duration(300)
           //       .style({'stroke-opacity':1,'stroke':'#F00'});
           // });
-
-          // Generate histogram base once
-          // genHistogram();
-
-          // genScatterPlot();
 
           const tooltip = svg.append("g")
           .attr("id", "ttlbl")
@@ -242,10 +223,10 @@ useEffect(() => {
   if(props.current.length != 0) { 
 
     let paths = g.selectAll("path");
-
+    
     paths.attr("fill", (d,idx) => {
-      
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
+
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
 
       if(!val) {
         nf.push(d.properties);
@@ -282,38 +263,62 @@ useEffect(() => {
 // Update highlighted countries
 useEffect(() => {
 
-  console.log(props.highlight);
-
   var g = d3.select("#map").select("svg").select("g");
 
-  g.selectAll("path")
-  .data(props.current)
-  // .transition()
-  // .duration(300)
-  .style("stroke", d => d.color === props.highlight ? "red" : "white")
-  .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5)
-  .on("change", (d,i) => {
-    d3.select(this.parentNode.appendChild(this)).transition().duration(300)
-    .style({'stroke-opacity':1,'stroke':'#F00'});
-  });
+  if(props.highlight != null) {
 
-  // var g = d3.select("#map").select("svg").select("g");
-  // console.log(props.current)
-  // g.selectAll("path")
-  // .data(props.current)
-  // .style("fill", d => d.color === props.highlight ? "red" : "white");
 
-  // const g = svg.append("g")you did
-  // .selectAll("path")
-  // .data(data.features)
-  // .enter()
-  // .append("path")
-  // .style("stroke-width", 0.5)
-  // .style("stroke", "white")
-  // .attr("d", d => path(d))
-  // //.on("pointermove", (d,e) => pointerMove(d,e))
-  // .attr("fill", d => d.color);
 
+    console.log(g.selectAll("path").data())
+
+    g.selectAll("path")
+    .transition()
+    .duration(200)
+    .style("stroke", d => {
+
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+
+      // Assure that this value truly exists in our database
+      if(!val) return props.nullclr;
+      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
+
+      return val.color === props.highlight ? props.highlightClr : "white";
+      
+    })
+    .style("stroke-width", d => {
+      
+
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+
+      // Assure that this value truly exists in our database
+      if(!val) return props.nullclr;
+      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
+
+      return val.color === props.highlight ? 2 : 0.5;
+
+
+    });
+
+    // g.selectAll("path")
+    // .data(props.current)
+    // // .transition()
+    // // .duration(300)
+    // .style("stroke", d => d.color === props.highlight ? "red" : "white")
+    // .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5);
+    // .on("change", (d,i) => {
+    //   d3.select(this.parentNode.appendChild(this)).transition().duration(300)
+    //   .style({'stroke-opacity':1,'stroke':'#F00'});
+    // });
+
+  } else {
+
+    g.selectAll("path")
+    .transition()
+    .duration(300)
+    .style("stroke", "white")
+    .style("stroke-width", 0.5);
+
+  }
 
 }, [props.highlight])
 
