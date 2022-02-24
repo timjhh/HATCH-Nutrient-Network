@@ -250,6 +250,7 @@ function MapController(props) {
             colors2d={colors2d}
             nullclr={nullclr}
             highlightClr={highlightClr}
+            selected={selected}
             setSelected={setSelected}
   
             />
@@ -284,12 +285,13 @@ function MapController(props) {
       }}>
 
 
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "2em", "fontWeight": "lighter", "textAlign": "center"}}>Sample Text</Typography>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
+        <br/>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
+        <br/>
 
         <hr/>
 
-            
-            
           </Box>
         </Grid>
 

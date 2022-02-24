@@ -18,8 +18,6 @@ function NutriSelect(props) {
 
 <Paper sx={{ m: 2, p: 2, background: 'primary.main', elevation: 24 }}>
 
-<Typography variant={"p"} align="center"  sx={{ fontWeight: 'light' }} style={{"fontSize": "1em"}}>Select a color in the legend to highlight all countries in the same color class</Typography>
-
 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
 
     

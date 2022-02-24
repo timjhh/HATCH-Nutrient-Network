@@ -281,16 +281,6 @@ useEffect(() => {
 
     });
 
-    // g.selectAll("path")
-    // .data(props.current)
-    // // .transition()
-    // // .duration(300)
-    // .style("stroke", d => d.color === props.highlight ? "red" : "white")
-    // .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5);
-    // .on("change", (d,i) => {
-    //   d3.select(this.parentNode.appendChild(this)).transition().duration(300)
-    //   .style({'stroke-opacity':1,'stroke':'#F00'});
-    // });
 
   } else {
 
@@ -304,6 +294,30 @@ useEffect(() => {
 
 }, [props.highlight])
 
+
+useEffect(() => {
+
+  var g = d3.select("#map").select("svg").select("g");
+
+  if(props.selected != null) {
+
+    g.selectAll("path")
+    .transition()
+    .duration(200)
+    .style("stroke", d => d.properties.iso_a3 === props.selected ? props.highlightClr : "white")
+    .style("stroke-width", d => d.properties.iso_a3 === props.selected ? 3 : 0.5);
+
+  } else {
+
+    g.selectAll("path")
+    .transition()
+    .duration(300)
+    .style("stroke", "white")
+    .style("stroke-width", 0.5);
+
+  }
+
+}, [props.selected])
 
 function pointerMove(d,e) {
 
