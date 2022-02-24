@@ -446,7 +446,6 @@ function genHistogram() {
   svg.append("g")
       .attr("id", "histYAxis")
       .call(d3.axisLeft(scaleY))
-      //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
 
 }

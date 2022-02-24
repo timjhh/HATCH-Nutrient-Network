@@ -102,21 +102,16 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
-          //.on("click", d => props.setSelected(d.properties.iso_a3))
           .on("click", (event, d) => {
             props.setSelected(d.properties.iso_a3)
           })
-          //.on("pointermove", (d,e) => pointerMove(d,e))
           .attr("fill", d => d.color);
-          // .on("mouseover", function(d,i) {
-          //   d3.select(this.parentNode.appendChild(this)).transition().duration(300)
-          //       .style({'stroke-opacity':1,'stroke':'#F00'});
-          // });
 
           const tooltip = svg.append("g")
           .attr("id", "ttlbl")
           .attr("opacity", 0);
     
+
     
           tooltip.append("rect")
           //.attr("fill", (d,idx) => yC[idx])
@@ -165,16 +160,71 @@ useEffect(() => {
           .text("Year 0");
   
 
+          function slided(d) {
+
+
+            let transform = d3.zoomTransform(g.node());
+            transform.k = d.target.value
+
+            g.attr("transform", transform);
+            d3.select("#sliderP").select("input").attr("value", transform.k)
+
+
+          }
 
           const zoom = d3.zoom()
-              .scaleExtent([1, 8])
-              .extent([[0, 0], [width, height]])
-              //.translateBy(g, 500, -500)
-              .on("zoom", (d) => g.attr("transform", d.transform));
+          .scaleExtent([1, 8])
+          .extent([[0, 0], [width, height]])
+          //.translateBy(g, 500, -500)
+          .on("zoom", (d) => {
+
+            g.attr("transform", d.transform)
+            console.log(d.transform)
+            console.log(d3.select("#sliderP").select("input").attr("value"))
+            d3.select("#sliderP").select("input").attr("value", d.transform.k)
+          
+          });
+          
+          let zoomSlider = d3.select("#sliderP")
+          //.attr("className", "position-absolute")
+          .append("input")
+          .datum({})
+          .attr("type", "range")
+          .attr("value", zoom.scaleExtent()[0])
+          .attr("min", zoom.scaleExtent()[0])
+          .attr("max", zoom.scaleExtent()[1])
+          .attr("step", (zoom.scaleExtent()[1] - zoom.scaleExtent()[0]) / 100)
+          .on("input", slided);
+
           
           svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
 
 
+
+
+          // function setupZoom(svg, circles, gx, gy) {
+          //   // D3 Zoom API:
+          //   const extent = [[margin.left, margin.top], [width - margin.right, height - margin.bottom]];
+          //   const zoom = d3.zoom()
+          //       .extent(extent)          // Where the interaction occurs
+          //       .translateExtent(extent) // Limits panning to the original extent
+          //       .scaleExtent([1, 32])    // Sets the maximum zoom factor
+          //       .on("zoom", zooming);
+          //   svg.call(zoom);
+            
+          //   function zooming(event) {
+          //       mutable transform = event.transform;
+          //       // Do zooming here, event.transform expresses the pan+zoom from original x & y scales
+          //       const xz = event.transform.rescaleX(x);  // generates a new Scale with modified domain
+          //       const yz = event.transform.rescaleY(y);
+          //       circles.attr("cx", d => xz(d.Longitude))
+          //              .attr("cy", d => yz(d.Latitude));
+          //       gx.call(xAxis, xz);
+          //       gy.call(yAxis, yz);
+          //   }
+          // }
+          
+          // mutable transform = null;
 
 
 
@@ -407,6 +457,7 @@ function pointerMove(d,e) {
     <>
 
       {/* <Histogram distribution={props.distribution} /> */}
+      <p id="sliderP"></p>
       <div id="map">
     
       
