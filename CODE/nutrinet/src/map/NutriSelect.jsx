@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -9,28 +9,8 @@ import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';  
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 
 function NutriSelect(props) {
-
-
-
-
-useEffect(() => {
-
-
-
-
-}, [])
-
-
-  function handleChange(e) {
-
-    console.log(e.target)
-    props.setSelected(e.target.value);
-
-  }
-
 
 
   return (
@@ -59,7 +39,7 @@ useEffect(() => {
       {/* <Typography sx={{m:2, width:1}} style={{"font-size": "2em", "font-weight": "lighter"}}>Scaling</Typography> */}
       <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Quantile</Typography>
-            <Switch id="scaleVar1Switch" checked={props.scaleType1 != "Quantile"} onChange={() => { props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile") }} name="scaleType1" />
+            <Switch id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile") }} name="scaleType1" />
           <Typography>Log</Typography>
       </Stack>
     </FormControl>
@@ -80,7 +60,7 @@ useEffect(() => {
       </Select>
       <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Quantile</Typography>
-            <Switch id="scaleVar2Switch" checked={props.scaleType2 != "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
+            <Switch id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
           <Typography>Log</Typography>
       </Stack>
     </FormControl>
@@ -109,14 +89,14 @@ useEffect(() => {
     <Typography sx={{ ml:3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography>
     <Stack sx={{ ml:2, my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Linear</Typography>
-            <Switch id="scatterX" checked={props.scatterX == "Log"} onChange={() => { props.scatterX === "Log" ? props.setScatterX("Linear") : props.setScatterX("Log") }} name="scatterX" />
+            <Switch id="scatterX" checked={props.scatterX === "Log"} onChange={() => { props.scatterX === "Log" ? props.setScatterX("Linear") : props.setScatterX("Log") }} name="scatterX" />
           <Typography>Log</Typography>
     </Stack>
 
     <Typography sx={{ ml:3, width: 1 }}>Scatterplot Y Scale</Typography>
     <Stack sx={{ ml:2, my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
           <Typography>Linear</Typography>
-            <Switch id="scatterY" checked={props.scatterY == "Log"} onChange={() => { props.scatterY === "Log" ? props.setScatterY("Linear") : props.setScatterY("Log") }} name="scatterY" />
+            <Switch id="scatterY" checked={props.scatterY === "Log"} onChange={() => { props.scatterY === "Log" ? props.setScatterY("Linear") : props.setScatterY("Log") }} name="scatterY" />
           <Typography>Log</Typography>
     </Stack>
     

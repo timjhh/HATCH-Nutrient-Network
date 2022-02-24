@@ -267,10 +267,6 @@ useEffect(() => {
 
   if(props.highlight != null) {
 
-
-
-    console.log(g.selectAll("path").data())
-
     g.selectAll("path")
     .transition()
     .duration(200)

@@ -2,17 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import * as d3 from "d3";
 
-import Grid from '@mui/material/Grid';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Histogram from './Histogram.jsx';
-
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { margin } from '@mui/system';
-import { nice } from 'd3';
-
-
 function MapGraphs(props) {
 
 // Dimensions of map
@@ -59,12 +48,8 @@ hHeight = 200 - (hMargin.top+hMargin.bottom);
 const legendSize = 30;
 
 
-const forceUpdate = useForceUpdate();
 
-function useForceUpdate(){
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => value + 1); // update the state to force render
-}
+
 
 function multiplyColors(c1, c2) {
   
@@ -119,7 +104,6 @@ useEffect(() => {
           .attr("width", width)
           .attr("height", height)
           .attr("viewBox", [0, 0, width, height])
-          .on("change", {forceUpdate})
           .on("click", (event,d) => {
     
             if(event.srcElement.tagName != "rect") {
