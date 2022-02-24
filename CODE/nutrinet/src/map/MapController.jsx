@@ -260,6 +260,7 @@ function MapController(props) {
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
             selected={selected}
+            highlightClr={highlightClr}
             setHighlight={setHighlight}
             className="viz" 
             variable1={variable1} 

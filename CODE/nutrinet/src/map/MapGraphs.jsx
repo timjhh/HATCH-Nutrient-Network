@@ -118,6 +118,7 @@ useEffect(() => {
           .enter()
           .append("rect")
           .attr("width", legendSize)
+          .style("cursor", "pointer")
           .attr("height", legendSize)
           .attr("x", (d,idx) => legendSize*(idx%(props.colors2d.length))-85)
           .attr("y", (d,idx) => legendSize*(parseInt(idx/(props.colors2d.length)))-50)
@@ -596,6 +597,12 @@ function populateHistogram() {
 useEffect(() => {
 
 
+  d3.selection.prototype.moveToFront = function() {  
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+  };
+
   var svgScatter = d3.select("#mapGraphs")
   .select(".scatterplot")
   .select("#scatterPl");
@@ -605,10 +612,17 @@ useEffect(() => {
     //.filter(d => d["ISO3_Code"] === props.selected)
     .transition()
     .duration(300)
-    .attr("r", d => (d["ISO3_Code"] === props.selected) ? scR*3 : scR)
-    //.ease(d3.easeCubicOut)
-    //.attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-    //.attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+    .attr("r", d => (d["ISO3_Code"] === props.selected) ? (scR*scR) : scR)
+    .attr("fill", d => (d["ISO3_Code"] === props.selected) ? props.highlightClr : d.color);
+
+  svgScatter.selectAll("circle")
+  .filter(d => d["ISO3_Code"] === props.selected)
+  .each(function() {  
+    this.parentNode.appendChild(this); 
+    });
+  //.call(d => d3.select(this).moveToFront())
+  
+
 
 }, [props.selected])
 
