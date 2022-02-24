@@ -8,14 +8,10 @@ import Paper from '@mui/material/Paper';
 
 import Papa from 'papaparse';
 
-
-
-
 import * as d3 from "d3";
 
 import Typography from '@mui/material/Typography';
-import { InternMap } from 'd3';
-import { color } from '@mui/system';
+
 
 function MapController(props) {
 
@@ -27,9 +23,6 @@ function MapController(props) {
   
   const [distribution, setDistribution] = useState([]);
 
-  const [title, setTitle] = useState("Title");
-
-  const [method, setMethod] = useState(props.methods[0]);
   const [source, setSource] = useState("Import_kg");
 
   const [variables, setVariables] = useState([]);
@@ -83,18 +76,6 @@ function MapController(props) {
 
   useEffect(() => {
 
-
-    let regex = new RegExp(`_${method}_`);
-
-    var filtered = props.files.filter(d => d.match(regex));
-    var max = Number.MAX_VALUE;
-    var min = Number.MIN_VALUE;
-
-    //setCurrent([]);
-
-
-
-
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
 
@@ -116,18 +97,6 @@ function MapController(props) {
         .domain(data.map(e => e[variable1]))
         .range(d3.range(0,colors2d.length));
 
-        // scaleVar1 = d3.scaleQuantile()
-        // .domain([0, m1])
-        // .range(d3.range(0,colors2d.length));
-
-        // scaleVar1 = d3.scaleSequentialQuantile()
-        // .domain(data.map(e => e[variable1]))
-        // .range(d3.range(0,colors2d.length));
-        //console.log(data.map(e => e[variable1]));
-
-        // scaleVar1 = d3.scaleSequentialQuantile()
-        // .domain([0, m1])
-        // .range(d3.range(0,colors2d.length));
 
       } else {
         
@@ -226,46 +195,6 @@ function MapController(props) {
 
   }, [variable1, variable2, source, scaleType1, scaleType2])
 
-  // useEffect(() => {
-
-
-  //   if(country) {
-
-  //   let m1 = d3.max(current, d => parseFloat(d[variable1]));
-  //   let m2 = d3.max(current, d => parseFloat(d[variable2]));
-    
-  //   //props.setLabel(" Variable: " + props.variable1 + " val " + val[props.variable1] + " max " + m1);
-  //   setLabel([country[variable1], m1]);
-
-  //   //props.setLabel2("Variable: " + props.variable2 + " val " + val[props.variable2] + " max " + m2);
-  //   setLabel2([country[variable2], m2]);
-
-
-  //   }
-
-  // }, [country])
-
-
-  async function getData(link) {
-
-    var csvFilePath = require(link);
-
-
-      return new Promise(function(resolve, error) {
-        
-        Papa.parse(csvFilePath, {
-          header: true,
-          download: true,
-          skipEmptyLines: true,
-          dynamicTyping: true,
-          complete: (res) => { resolve(res.data) }
-        }); 
-
-      });
-
-  }
-
-
 
   return (
 
@@ -274,7 +203,6 @@ function MapController(props) {
       <NutriSelect
         //methods={props.methods} // Many .csv files
         sources={sources}
-        //variables={props.nutrients} // Many .csv files
         variables={variables} // Single .csv file
         variable1={variable1}
         setVariable1={setVariable1}
@@ -309,7 +237,6 @@ function MapController(props) {
 
           <Paper  sx={{ mx: 1, elevation: 24 }}>
             <Map
-            setTitle={setTitle} 
             className="viz"
             highlight={highlight}
             variable1={variable1} 
@@ -328,7 +255,6 @@ function MapController(props) {
           
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
-            setTitle={setTitle} 
             setHighlight={setHighlight}
             className="viz" 
             variable1={variable1} 

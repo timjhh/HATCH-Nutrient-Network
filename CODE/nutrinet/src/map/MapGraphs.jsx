@@ -75,28 +75,6 @@ function rgbToHex(r, g, b) {
 
 
 useEffect(() => {
-
-
-
-//   fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
-
-//           return response.json();
-  
-//         }).then(data => {
-
-//           // let q1 = d3.quantile(props.current, .80, d => d.avg1);
-         
-
-//           let q1 = d3.quantile(props.current, .80, d => d[props.variable1]);
-//           let secondClr = (d) => d3.interpolateCividis( d/q1 );
-
-//           let clr = multiplyColors(d3.interpolateBlues(0.01), d3.interpolateBlues(0.7));
-
-
-//           let projection = d3.geoMercator();
-
-//           let path = d3.geoPath()
-//             .projection(projection);
        
             
           const svg = d3.select("#mapGraphs")
@@ -106,7 +84,7 @@ useEffect(() => {
           .attr("viewBox", [0, 0, width, height])
           .on("click", (event,d) => {
     
-            if(event.srcElement.tagName != "rect") {
+            if(event.srcElement.tagName !== "rect") {
 
               props.setHighlight(null);
             }
@@ -122,27 +100,6 @@ useEffect(() => {
 
 
         const g = svg.append("g");
-        //.selectAll("path");
-        // .data(data.features)
-        // .enter()
-        // .append("path")
-        // .style("stroke-width", 0.5)
-        // .style("stroke", "white")
-        // .attr("d", d => path(d))
-        // .attr("fill", d => d.color);
-
-
-
-        //   const g = svg.append("g")
-        //   .selectAll("path")
-        //   .data(data.features)
-        //   .enter()
-        //   .append("path")
-        //   .style("stroke-width", 0.5)
-        //   .style("stroke", "white")
-        //   .attr("d", d => path(d))
-        //   .attr("fill", d => d.color);
-       
        
           // Drawing the legend bar
           const legend = g.append("g")
@@ -284,7 +241,6 @@ useEffect(() => {
 
   } // else console.log("CURRENT 0")
 
-  props.setTitle(props.variable1 + " + " + props.variable2);
 
   // Diagnostic print statements for associating countries with data
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
@@ -350,7 +306,7 @@ function genScatterPlot() {
       .call(d3.axisLeft(scaleY))
       // .attr("transform", "translate(0," + (0-hHeight) + ")");
 
-  let circles = svg.selectAll("circle")
+  svg.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.current)
     .join("circle")
@@ -421,7 +377,7 @@ function populateScatterPlot() {
       .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
       //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
-  let circles = svgScatter.selectAll("circle")
+  svgScatter.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.current)
     .join("circle")
@@ -482,7 +438,7 @@ useEffect(() => {
   d3.select("#scatterL2").text(props.variable2 + " (" + props.scatterY + ")");
 
 
-  let circles = svgScatter.selectAll("circle")
+  svgScatter.selectAll("circle")
     .data(props.current)
     .join("circle")
     .attr("fill", d => d.color)

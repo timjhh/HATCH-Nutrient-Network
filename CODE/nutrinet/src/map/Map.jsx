@@ -1,27 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import * as d3 from "d3";
-
-import Grid from '@mui/material/Grid';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Histogram from './Histogram.jsx';
-
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { margin } from '@mui/system';
-import { nice } from 'd3';
-
 
 function Map(props) {
 
 // Dimensions of map
 const width = 1200,
 height = 700;
-
-const itemWidth = 10; // Width of each individual rectangle for histogram
-const scR = 3; // Radius of each scatterplot circle
-
 
 // 3x3 Bivariate Colors
 // const props.colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
@@ -49,37 +34,28 @@ const scR = 3; // Radius of each scatterplot circle
 //   ["#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"]
 // ];
 
-// Length of one side of the square legend
-const legendSize = 25;
 
 
-const forceUpdate = useForceUpdate();
-
-function useForceUpdate(){
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => value + 1); // update the state to force render
-}
-
-function multiplyColors(c1, c2) {
+// function multiplyColors(c1, c2) {
   
-  let rgb1 = d3.color(c1);
-  let rgb2 = d3.color(c2);
+//   let rgb1 = d3.color(c1);
+//   let rgb2 = d3.color(c2);
 
-  let r = Math.floor((rgb1['r'] * rgb2['r']) / 255);
-  let g = Math.floor((rgb1['g'] * rgb2['g']) / 255);
-  let b = Math.floor((rgb1['b'] * rgb2['b']) / 255);
+//   let r = Math.floor((rgb1['r'] * rgb2['r']) / 255);
+//   let g = Math.floor((rgb1['g'] * rgb2['g']) / 255);
+//   let b = Math.floor((rgb1['b'] * rgb2['b']) / 255);
 
 
-  return rgbToHex(r,g,b);
+//   return rgbToHex(r,g,b);
 
-}
-function rgbToHex(r, g, b) {
-  const componentToHex = c => {
-    const hex = c.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  };
-  return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
-}
+// }
+// function rgbToHex(r, g, b) {
+//   const componentToHex = c => {
+//     const hex = c.toString(16);
+//     return hex.length === 1 ? '0' + hex : hex;
+//   };
+//   return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+// }
 
 
 
@@ -105,7 +81,6 @@ useEffect(() => {
           .attr("width", width)
           .attr("height", height)
           .attr("viewBox", [0, 0, width, height])
-          .on("change", {forceUpdate})
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 
@@ -220,7 +195,7 @@ useEffect(() => {
 
   let nf = [];
 
-  if(props.current.length != 0) { 
+  if(props.current.length !== 0) { 
 
     let paths = g.selectAll("path");
     
@@ -250,8 +225,6 @@ useEffect(() => {
 
 
   } // else console.log("CURRENT 0")
-
-  props.setTitle(props.variable1 + " + " + props.variable2);
 
   // Diagnostic print statements for associating countries with data
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
@@ -322,16 +295,21 @@ useEffect(() => {
 function pointerMove(d,e) {
 
 
-  let position = d3.pointer(d);
+  // let position = d3.pointer(d);
 
-  let boundX = position[0]-(margin.right+(margin.left*2));
-  let boundY = position[1]-margin.top-margin.bottom;
+  // let boundX = position[0]-(margin.right+(margin.left*2));
+  // let boundY = position[1]-margin.top-margin.bottom;
 
-  let visible = true;
-  if(boundX > (width-margin.right-margin.left) || boundX <= 0) visible = false;
-  if(boundY > height-margin.top-margin.bottom || boundY <= -margin.top) visible = false;
+  // let visible = true;
+  // if(boundX > (width-margin.right-margin.left) || boundX <= 0) visible = false;
+  // if(boundY > height-margin.top-margin.bottom || boundY <= -margin.top) visible = false;
 
-  console.log(e.properties.name);
+  // console.log(e.properties.name);
+
+
+
+
+
 
   // Max width before graph flips, calculated by label + figure amount
   // let maxWidth = d3.max(lines, d => {
