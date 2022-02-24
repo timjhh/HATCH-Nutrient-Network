@@ -501,7 +501,23 @@ useEffect(() => {
     .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
 
 
+    svgScatter
+    .select("#scXAxis")
+    .transition()
+    .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
+    //.attr("transform", "translate(0," + hHeight + ")")
+    .selectAll("text")
+      .attr("y", (d,idx) => (idx)*10)
+      //.attr("transform", (d,idx) => "translate(-10," + (idx*10) + ")rotate(-45)")
+      .style("text-anchor", "end")
 
+
+
+  svgScatter
+      .select("#scYAxis")
+      .transition()
+      .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
+      //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
 
 

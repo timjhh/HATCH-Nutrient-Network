@@ -303,8 +303,9 @@ function MapController(props) {
       justifyContent="center"> */}
       <Grid container spacing={0}>
 
-        <Grid item xs={12} lg={9}>
-          
+        {/* <Grid item xs={12} lg={9}> */}
+        <Grid item xs={9}>
+
           <Paper  sx={{ mx: 1, elevation: 24 }}>
             <Map
             setTitle={setTitle} 
@@ -321,7 +322,7 @@ function MapController(props) {
             />
           </Paper>
         </Grid>
-        <Grid item xs={12} lg={3}>
+        <Grid item xs={3}>
           
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
