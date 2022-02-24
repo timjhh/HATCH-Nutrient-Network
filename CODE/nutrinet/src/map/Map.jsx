@@ -80,6 +80,15 @@ useEffect(() => {
           .append("svg")
           .attr("width", width)
           .attr("height", height)
+          .on("click", (event,d) => {
+
+            if(event.srcElement.tagName === "svg") {
+
+              props.setSelected(null);
+
+            }
+            
+          })
           .attr("viewBox", [0, 0, width, height])
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
@@ -93,6 +102,10 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
+          //.on("click", d => props.setSelected(d.properties.iso_a3))
+          .on("click", (event, d) => {
+            props.setSelected(d.properties.iso_a3)
+          })
           //.on("pointermove", (d,e) => pointerMove(d,e))
           .attr("fill", d => d.color);
           // .on("mouseover", function(d,i) {
@@ -213,15 +226,15 @@ useEffect(() => {
 
       return val.color;
 
-    })
-    .on("click", (e, d) => {
+    });
+    // .on("click", (e, d) => {
 
-        var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
+    //     var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
 
-        props.setCountry(val);
+    //     props.setCountry(val);
         
 
-    });
+    // });
 
 
   } // else console.log("CURRENT 0")

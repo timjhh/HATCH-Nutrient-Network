@@ -469,9 +469,6 @@ useEffect(() => {
       .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")));
       //.call(d3.axisLeft(scaleSY).tickFormat(3, ".2"));
 
-
-
-
 }, [props.scatterX, props.scatterY])
 
 function genHistogram() {
@@ -595,6 +592,25 @@ function populateHistogram() {
     //.delay((d,i) => (i*10)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
 
 }
+
+useEffect(() => {
+
+
+  var svgScatter = d3.select("#mapGraphs")
+  .select(".scatterplot")
+  .select("#scatterPl");
+ 
+  svgScatter.selectAll("circle")
+    //.data(props.current)
+    //.filter(d => d["ISO3_Code"] === props.selected)
+    .transition()
+    .duration(300)
+    .attr("r", d => (d["ISO3_Code"] === props.selected) ? scR*3 : scR)
+    //.ease(d3.easeCubicOut)
+    //.attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
+    //.attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+
+}, [props.selected])
 
 
   return (

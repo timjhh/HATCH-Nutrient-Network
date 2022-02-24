@@ -32,6 +32,9 @@ function MapController(props) {
   // Selected color will highlight all affected countries
   const [highlight, setHighlight] = useState(null);
 
+  // Selected country will be highlighted on the scatterplot
+  const [selected, setSelected] = useState(null);
+
   const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
 
   const [scaleType1, setScaleType1] = useState("Quantile");
@@ -200,6 +203,7 @@ function MapController(props) {
 
     <>
 
+
       <NutriSelect
         //methods={props.methods} // Many .csv files
         sources={sources}
@@ -225,12 +229,11 @@ function MapController(props) {
 
 
 
-
-
       {/* <Grid container spacing={0} direction="column"
       alignItems="center"
       justifyContent="center"> */}
       <Grid container spacing={0}>
+
 
         {/* <Grid item xs={12} lg={9}> */}
         <Grid item xs={9}>
@@ -247,6 +250,7 @@ function MapController(props) {
             colors2d={colors2d}
             nullclr={nullclr}
             highlightClr={highlightClr}
+            setSelected={setSelected}
   
             />
           </Paper>
@@ -255,6 +259,7 @@ function MapController(props) {
           
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
+            selected={selected}
             setHighlight={setHighlight}
             className="viz" 
             variable1={variable1} 
