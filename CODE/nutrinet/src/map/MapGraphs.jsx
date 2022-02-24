@@ -396,6 +396,71 @@ function populateScatterPlot() {
 
 useEffect(() => {
 
+  resetScatterAxes();
+
+}, [props.scatterX, props.scatterY])
+
+function genHistogram() {
+
+  
+  let scaleX = d3.scaleLinear()
+  .domain(props.colors1d.length)
+  .range([0,hWidth]);
+
+  let scaleY = d3.scaleLinear()
+  //.domain(d3.extent(props.distribution.entries(), d => d[1]))
+  .domain([0,200]) // There are 195 countries in the world, so let's start with 200
+  .range([hHeight, 0])
+
+
+  var svg = d3.select("#mapGraphs")
+  .select("svg").append("g")
+  .attr("class", "histogram")
+  .attr("height", hHeight)
+  .attr("width", hWidth)
+  .attr("transform", "translate(" + (margin.left+margin.right/2) + "," + (height/3) + ")")
+  //.attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
+  .append("g")
+  .attr("id", "histG");
+
+  // Append x-axis label
+  svg.append("text")
+    .attr("x", ((hWidth/2)-hMargin.right))
+    .attr("y", hHeight+hMargin.bottom)
+    .attr("font-weight", "bold")
+    .text("Color");
+
+  // Append y-axis label
+  svg.append("text")
+  .attr("x", -hMargin.top-hMargin.bottom-(hHeight/5))
+  .attr("y", -hMargin.left)
+  .attr("font-weight", "bold")
+  .attr("transform", "rotate(-90)")
+  .text("Frequency");
+
+
+  svg.append("g")
+      .call(d3.axisBottom(scaleX))
+      .attr("transform", "translate(0," + hHeight + ")");
+
+  svg.append("g")
+      .attr("id", "histYAxis")
+      .call(d3.axisLeft(scaleY))
+      //.attr("transform", "translate(0," + (0-hHeight) + ")");
+
+
+}
+
+// Update histogram rectangles on data update
+useEffect(() => {
+
+  populateHistogram();
+  resetScatterAxes();
+
+}, [props.distribution])
+
+function resetScatterAxes() {
+
   let scaleSX;
 
   let scaleSY;
@@ -470,67 +535,9 @@ useEffect(() => {
       .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")));
       //.call(d3.axisLeft(scaleSY).tickFormat(3, ".2"));
 
-}, [props.scatterX, props.scatterY])
-
-function genHistogram() {
-
-  
-  let scaleX = d3.scaleLinear()
-  .domain(props.colors1d.length)
-  .range([0,hWidth]);
-
-  let scaleY = d3.scaleLinear()
-  //.domain(d3.extent(props.distribution.entries(), d => d[1]))
-  .domain([0,200]) // There are 195 countries in the world, so let's start with 200
-  .range([hHeight, 0])
-
-
-  var svg = d3.select("#mapGraphs")
-  .select("svg").append("g")
-  .attr("class", "histogram")
-  .attr("height", hHeight)
-  .attr("width", hWidth)
-  .attr("transform", "translate(" + (margin.left+margin.right/2) + "," + (height/3) + ")")
-  //.attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
-  .append("g")
-  .attr("id", "histG");
-
-  // Append x-axis label
-  svg.append("text")
-    .attr("x", ((hWidth/2)-hMargin.right))
-    .attr("y", hHeight+hMargin.bottom)
-    .attr("font-weight", "bold")
-    .text("Color");
-
-  // Append y-axis label
-  svg.append("text")
-  .attr("x", -hMargin.top-hMargin.bottom-(hHeight/5))
-  .attr("y", -hMargin.left)
-  .attr("font-weight", "bold")
-  .attr("transform", "rotate(-90)")
-  .text("Frequency");
-
-
-  svg.append("g")
-      .call(d3.axisBottom(scaleX))
-      .attr("transform", "translate(0," + hHeight + ")");
-
-  svg.append("g")
-      .attr("id", "histYAxis")
-      .call(d3.axisLeft(scaleY))
-      //.attr("transform", "translate(0," + (0-hHeight) + ")");
-
 
 }
 
-// Update histogram rectangles on data update
-useEffect(() => {
-
-
-  populateHistogram();
-
-
-}, [props.distribution])
 
 function populateHistogram() {
 

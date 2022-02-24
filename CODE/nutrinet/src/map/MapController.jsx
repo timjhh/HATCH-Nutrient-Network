@@ -171,7 +171,6 @@ function MapController(props) {
           // console.log(scaleVar2(parseFloat(d[variable2])) * colors2d.length);
         }
         
-        //d.color = (v1 === -1 || v2 === -1) ? nullclr : colors2d[v2][v1];
 
 
       })
