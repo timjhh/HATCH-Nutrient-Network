@@ -134,6 +134,10 @@ useEffect(() => {
           .attr("d", d => path(d))
           //.on("pointermove", (d,e) => pointerMove(d,e))
           .attr("fill", d => d.color);
+          // .on("mouseover", function(d,i) {
+          //   d3.select(this.parentNode.appendChild(this)).transition().duration(300)
+          //       .style({'stroke-opacity':1,'stroke':'#F00'});
+          // });
 
           // Generate histogram base once
           // genHistogram();
@@ -284,8 +288,14 @@ useEffect(() => {
 
   g.selectAll("path")
   .data(props.current)
+  // .transition()
+  // .duration(300)
   .style("stroke", d => d.color === props.highlight ? "red" : "white")
-  .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5);
+  .style("stroke-width", d => d.color === props.highlight ? 3 : 0.5)
+  .on("change", (d,i) => {
+    d3.select(this.parentNode.appendChild(this)).transition().duration(300)
+    .style({'stroke-opacity':1,'stroke':'#F00'});
+  });
 
   // var g = d3.select("#map").select("svg").select("g");
   // console.log(props.current)

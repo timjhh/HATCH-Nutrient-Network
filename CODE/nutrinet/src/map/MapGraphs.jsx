@@ -16,12 +16,17 @@ import { nice } from 'd3';
 function MapGraphs(props) {
 
 // Dimensions of map
-    const width = 400,
-    height = 800;
-    const margin = {top: 50, right: 50, bottom: 30, left: 50};
+const width = 400,
+height = 800;
+const margin = {top: 50, right: 50, bottom: 30, left: 50};
 
 const itemWidth = 10; // Width of each individual rectangle for histogram
 const scR = 3; // Radius of each scatterplot circle
+
+// Dimensions of individual graphs
+const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
+hWidth = 300 - hMargin.right - hMargin.left,
+hHeight = 200 - (hMargin.top+hMargin.bottom);
 
 
 // 3x3 Bivariate Colors
@@ -300,9 +305,6 @@ useEffect(() => {
 
 function genScatterPlot() {
 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
 
   let scaleX = d3.scaleLinear()
   .domain([0,d3.max(props.current, d => d[props.variable1])])
@@ -333,16 +335,16 @@ function genScatterPlot() {
     .attr("y", hHeight+hMargin.bottom+10)
     .attr("font-weight", "bold")
     .attr("id", "scatterL1")
-    .text(props.variable1 + " (Log.)");
+    .text(props.variable1 + " (" + props.scatterX + ")");
 
   // Append y-axis label
   svg.append("text")
-  .attr("x", -hHeight/2-hMargin.right-hMargin.left)
+  .attr("x", -hHeight/2-hMargin.right-hMargin.left-10)
   .attr("y", -hMargin.left-hMargin.right)
   .attr("font-weight", "bold")
   .attr("transform", "rotate(-90)")
   .attr("id", "scatterL2")
-  .text(props.variable2 + " (Lin.)");
+  .text(props.variable2 + " (" + props.scatterY + ")");
 
 
   svg.append("g")
@@ -369,7 +371,6 @@ function genScatterPlot() {
     //.attr("cy", d => hHeight);
 
 
-
 }
 function populateScatterPlot() {
   
@@ -378,9 +379,7 @@ function populateScatterPlot() {
   .select(".scatterplot")
   .select("#scatterPl");
  
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
+
 
   // let scaleSX = d3.scaleLinear()
   // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
@@ -405,8 +404,8 @@ function populateScatterPlot() {
   // Diagnostic info: Sorted values in place of histogram
   // console.log(props.distribution.sort((a,b) => a.place-b.place)
 
-  d3.select("#scatterL1").text(props.variable1 + " (Log.)");
-  d3.select("#scatterL2").text(props.variable2 + " (Lin.)")
+  d3.select("#scatterL1").text(props.variable1 + " (" + props.scatterX + ")");
+  d3.select("#scatterL2").text(props.variable2 + " (" + props.scatterY + ")");
 
   svgScatter
       .select("#scXAxis")
@@ -429,50 +428,86 @@ function populateScatterPlot() {
       .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
       //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
-  // let circles = svgScatter.selectAll("circle")
-  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-  //   .data(props.current)
-  // .enter().append("circle")
-  //   .attr("class", "circle")
-  //   .attr("fill", d => d.color)
-  //   .attr("r", 0)
-  //   .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-  //   .attr("cy", d => hHeight);
-
   let circles = svgScatter.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.current)
     .join("circle")
+    .attr("class", "circle")
     .attr("fill", d => d.color)
     .attr("r", scR)
+    .attr("cy", d => hHeight)
     .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
-    .attr("cy", hHeight)
     .transition()
-    .ease(d3.easeCubicOut)
-    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
-    //.attr("cy", d => hHeight);
-
-
-
-    // Animate graph on page load
-    // circles
-    // .transition()
-    // .duration(200)
-    // .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
-    // .attr("r", scR)
-    // //.attr("height", d => (hHeight-scaleY(d.value)))
-    // //.ease(d3.easeSinIn) // There are many other d3.ease animations out there for futher customization too!
-    // .delay((d,i) => (i*2)) // Sequentially applies animation - to make this instantaneous, simply comment/remove this line
-
+    .duration(500)
+    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
 
 
 }
 
-function genHistogram() {
+useEffect(() => {
 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
+  let scaleSX;
+
+  let scaleSY;
+
+  if(props.scatterX === "Log") {
+
+    scaleSX = d3.scaleSymlog()
+    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .range([0,hWidth]);
+  
+
+  } else {
+
+    scaleSX = d3.scaleLinear()
+    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .range([0,hWidth]);
+
+  }
+
+  if(props.scatterY === "Log") {
+
+    scaleSY = d3.scaleSymlog()
+    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .range([hHeight,0]);
+
+
+  } else {
+
+    scaleSY = d3.scaleLinear()
+    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .range([hHeight,0]);
+
+  }
+
+  var svgScatter = d3.select("#mapGraphs")
+  .select(".scatterplot")
+  .select("#scatterPl");
+ 
+
+  d3.select("#scatterL1").text(props.variable1 + " (" + props.scatterX + ")");
+  d3.select("#scatterL2").text(props.variable2 + " (" + props.scatterY + ")");
+
+
+  let circles = svgScatter.selectAll("circle")
+    .data(props.current)
+    .join("circle")
+    .attr("fill", d => d.color)
+    .attr("r", scR)
+    .transition()
+    .duration(500)
+    .ease(d3.easeCubicOut)
+    .attr("cx", d => scaleSX(d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
+    .attr("cy", d => scaleSY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+
+
+
+
+
+
+}, [props.scatterX, props.scatterY])
+
+function genHistogram() {
 
   
   let scaleX = d3.scaleLinear()
@@ -538,10 +573,6 @@ function populateHistogram() {
   var svg = d3.select("#mapGraphs")
   .select(".histogram")
   .select("#histG");
- 
-  const hMargin = {top: 50, right: 20, bottom: 30, left: 30},
-  hWidth = 300 - hMargin.right - hMargin.left,
-  hHeight = 200 - (hMargin.top+hMargin.bottom);
 
   let scaleX = d3.scaleLinear()
   .domain([0,props.colors1d.length+1])

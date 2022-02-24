@@ -44,6 +44,9 @@ function MapController(props) {
   const [scaleType1, setScaleType1] = useState("Quantile");
   const [scaleType2, setScaleType2] = useState("Quantile");
 
+  // Set scatterplot scale
+  const [scatterX, setScatterX] = useState("Log");
+  const [scatterY, setScatterY] = useState("Linear");
 
   // What color to show for unavailable data
   var nullclr = "black";
@@ -284,6 +287,10 @@ function MapController(props) {
         setScaleType2={setScaleType2}
         source={source}
         setSource={setSource}
+        scatterX={scatterX}
+        setScatterX={setScatterX}
+        scatterY={scatterY}
+        setScatterY={setScatterY}
         {...props} />
 
 
@@ -328,7 +335,8 @@ function MapController(props) {
             colors1d={colors1d}
             colors2d={colors2d}
             nullclr={nullclr}
-  
+            scatterX={scatterX}
+            scatterY={scatterY}
             />
           </Paper>
         </Grid>

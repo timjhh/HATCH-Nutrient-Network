@@ -24,12 +24,6 @@ useEffect(() => {
 }, [])
 
 
-
-
-
-
-
-
   function handleChange(e) {
 
     console.log(e.target)
@@ -110,6 +104,23 @@ useEffect(() => {
 
     </FormControl>
 
+    <FormControl sx={{ml: 3, border:1}}>
+
+    <Typography sx={{ ml:3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography>
+    <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+          <Typography>Linear</Typography>
+            <Switch id="scatterX" checked={props.scatterX == "Log"} onChange={() => { props.scatterX === "Log" ? props.setScatterX("Linear") : props.setScatterX("Log") }} name="scatterX" />
+          <Typography>Log</Typography>
+    </Stack>
+
+    <Typography sx={{ ml:3, width: 1 }}>Scatterplot Y Scale</Typography>
+    <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+          <Typography>Linear</Typography>
+            <Switch id="scatterY" checked={props.scatterY == "Log"} onChange={() => { props.scatterY === "Log" ? props.setScatterY("Linear") : props.setScatterY("Log") }} name="scatterY" />
+          <Typography>Log</Typography>
+    </Stack>
+    
+    </FormControl>
 
 {/*    <FormControl sx={{ m:2 }}>
 
