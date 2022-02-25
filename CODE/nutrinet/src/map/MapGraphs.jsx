@@ -6,7 +6,7 @@ function MapGraphs(props) {
 
 // Dimensions of map
 const width = 400,
-height = 800;
+height = 750;
 const margin = {top: 50, right: 50, bottom: 30, left: 50};
 
 const itemWidth = 10; // Width of each individual rectangle for histogram

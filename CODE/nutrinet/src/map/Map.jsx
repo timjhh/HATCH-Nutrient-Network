@@ -49,7 +49,7 @@ function Map(props) {
 
 // Dimensions of map
 const width = 1200,
-height = 700;
+height = 750;
 
 
 const projection = d3.geoMercator();

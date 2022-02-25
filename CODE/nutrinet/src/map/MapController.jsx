@@ -242,13 +242,13 @@ function MapController(props) {
       {/* <Grid container spacing={0} direction="column"
       alignItems="center"
       justifyContent="center"> */}
-      <Grid container spacing={0}>
+      <Grid container spacing={2}>
 
 
         {/* <Grid item xs={12} lg={9}> */}
-        <Grid item xs={9}>
+        <Grid item xs={9} sx={{ }}>
 
-          <Paper  sx={{ mx: 1, elevation: 24 }}>
+          <Paper  sx={{ elevation: 24 }}>
             <Map
             className="viz"
             
@@ -304,6 +304,8 @@ function MapController(props) {
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
         <br/>
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
+        <br/>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
         <br/>
 
         <hr/>
