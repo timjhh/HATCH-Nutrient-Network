@@ -171,6 +171,7 @@ useEffect(() => {
           // .on("mouseover", mouseOver)
           // .on("mouseout", mouseOut)
           .on("click", (event, d) => {
+            props.setHighlight(null);
             props.setSelected(d.properties.iso_a3)
           })
 

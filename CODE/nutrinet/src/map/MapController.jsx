@@ -30,9 +30,11 @@ function MapController(props) {
   const [sources, setSources] = useState(["Import_kg"]);
 
   // Selected color will highlight all affected countries
+  // This should be in the form of a hexidecimal color, or the nullclr attribute
   const [highlight, setHighlight] = useState(null);
 
   // Selected country will be highlighted on the scatterplot
+  // This should either be an ISO_A3 Code for a country, or null.
   const [selected, setSelected] = useState(null);
 
   const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
@@ -49,6 +51,9 @@ function MapController(props) {
   
   // What color to show for highlighted data
   var highlightClr = "#FF7F7F";
+
+  // What line thickness should highlighted rectangles be in the legend
+  var highlightLegendWidth = 4;
 
   // Categorical string descriptors meant for our color scale
   // This should be equal to colors2d.length, i.e. one strip of our 2d color scale
@@ -268,8 +273,11 @@ function MapController(props) {
           
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
+            highlightLegendWidth={highlightLegendWidth}
             selected={selected}
+            setSelected={setSelected}
             highlightClr={highlightClr}
+            highlight={highlight}
             setHighlight={setHighlight}
             className="viz" 
             variable1={variable1} 

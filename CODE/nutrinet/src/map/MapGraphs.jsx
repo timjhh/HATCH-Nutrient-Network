@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import * as d3 from "d3";
 
@@ -84,9 +84,12 @@ useEffect(() => {
           .attr("viewBox", [0, 0, width, height])
           .on("click", (event,d) => {
     
+            props.setSelected(null);
+
             if(event.srcElement.tagName !== "rect") {
 
               props.setHighlight(null);
+
             }
           
           })
@@ -117,6 +120,7 @@ useEffect(() => {
           .data(props.colors1d)
           .enter()
           .append("rect")
+          .attr("stroke-width", props.highlightLegendWidth)
           .attr("width", legendSize)
           .style("cursor", "pointer")
           .attr("height", legendSize)
@@ -124,8 +128,10 @@ useEffect(() => {
           .attr("y", (d,idx) => legendSize*(parseInt(idx/(props.colors2d.length)))-50)
           .attr("fill", d => d)
           .on("click", (event,d) => {
+
+            props.setSelected(null);
             props.setHighlight(d);
-          
+            
           })
           .attr("transform", "rotate(-135)");
           
@@ -231,6 +237,8 @@ useEffect(() => {
 
     })
     .on("click", (e, d) => {
+
+        props.setSelected(null);
 
         var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
 
@@ -632,6 +640,22 @@ useEffect(() => {
 
 }, [props.selected])
 
+
+useEffect(() => {
+
+  
+  // d3.select(".legend").selectAll("rect").filter(d => d === props.highlight).attr("fill", "black")
+  d3.select(".legend")
+  .selectAll("rect")
+  .attr("stroke", d => d === props.highlight ? props.highlightClr : null)
+  .filter(d => d === props.highlight)
+  .each(function() {  
+    this.parentNode.appendChild(this); 
+    });
+  //.attr("stroke-width", d => d === props.highlight)
+  //.filter(d => d === props.highlight).attr("fill", "black")
+
+}, [props.highlight])
 
   return (
 
