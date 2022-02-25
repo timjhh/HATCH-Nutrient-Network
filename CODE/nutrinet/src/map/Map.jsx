@@ -1,12 +1,33 @@
 import React, { useEffect } from 'react';
+import { margin } from '@mui/system';
+//import * as d3 from "d3";
 
-import * as d3 from "d3";
+// import *d3 from "d3";
+// import d3Tip from "d3-tip";
+// d3.tip = d3Tip;
+
+import * as d3module from 'd3'
+import d3tip from 'd3-tip'
+const d3 = {
+  ...d3module,
+  tip: d3tip
+}
+
+
+
 
 function Map(props) {
 
 // Dimensions of map
 const width = 1200,
 height = 700;
+
+
+const projection = d3.geoMercator();
+
+const path = d3.geoPath()
+  .projection(projection);
+
 
 // 3x3 Bivariate Colors
 // const props.colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
@@ -70,14 +91,12 @@ useEffect(() => {
         }).then(data => {
 
          
-          let projection = d3.geoMercator();
 
-          let path = d3.geoPath()
-            .projection(projection);
        
             
           const svg = d3.select("#map")
           .append("svg")
+          .attr("id", "mapSVG")
           .attr("width", width)
           .attr("height", height)
           .on("click", (event,d) => {
@@ -93,6 +112,18 @@ useEffect(() => {
           .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 
+          var tip = d3.tip()
+          .attr('class', 'd3-tip')
+          .direction('s')
+          .html(function(event,d) { 
+            
+            //console.log(props.current)
+            //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+
+            //console.log(val)
+            return d.properties.name; 
+          
+          });
 
           const g = svg.append("g")
           .selectAll("path")
@@ -102,29 +133,44 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
+          //.on("mousemove", (d,e) => pointerMove(d,e))
+          // .on("pointermove", (d,e) => pointerMove(d,e))
+          .on("mouseover", tip.show)
+          .on("mouseout", tip.hide)
+          // .on("mouseover", mouseOver)
+          // .on("mouseout", mouseOut)
           .on("click", (event, d) => {
             props.setSelected(d.properties.iso_a3)
           })
           .attr("fill", d => d.color);
 
+
+        
+          //let svg = d3.select("#mapSVG")
+          
+          g.call(tip);
+
+
           const tooltip = svg.append("g")
-          .attr("id", "ttlbl")
+          .attr("id", "ttg")
           .attr("opacity", 0);
     
 
     
           tooltip.append("rect")
           //.attr("fill", (d,idx) => yC[idx])
+          .attr("id", "tooltip")
           .attr("fill", "ghostwhite")
           .attr("rx", 4)
           .attr("ry", 4)
           .attr("stroke", "black")
           .attr("stroke-width", "2px")
           .attr("opacity", 1)
-          //.attr("width", d => d.length * 10 + ((": $0.00").length*5))
+          //.attr("x", 0)
+          //.attr("y", 0)
           .attr("width", 80)
-          .attr("height", 4 * 23)
-          .attr("transform", (d,idx) => "translate(0," + parseFloat(50) + ")");
+          .attr("height", 50)
+          .attr("transform", (d,idx) => "translate(0,0)");
     
     
         // tooltip.selectAll("path")
@@ -179,22 +225,46 @@ useEffect(() => {
           .on("zoom", (d) => {
 
             g.attr("transform", d.transform)
-            console.log(d.transform)
-            console.log(d3.select("#sliderP").select("input").attr("value"))
-            d3.select("#sliderP").select("input").attr("value", d.transform.k)
+            //console.log(d.transform)
+            //console.log(d3.select("#sliderP").select("input").attr("value"))
+            //d3.select("#sliderP").select("input").attr("value", d.transform.k)
           
+            //d3.select("#sliderP").node().value = zoom.scale();
+
           });
           
           let zoomSlider = d3.select("#sliderP")
           //.attr("className", "position-absolute")
-          .append("input")
+          //.append("input")
           .datum({})
           .attr("type", "range")
           .attr("value", zoom.scaleExtent()[0])
           .attr("min", zoom.scaleExtent()[0])
           .attr("max", zoom.scaleExtent()[1])
           .attr("step", (zoom.scaleExtent()[1] - zoom.scaleExtent()[0]) / 100)
-          .on("input", slided);
+          .on("input", () => {
+
+            // var scale = zoom.scale(), extent = zoom.scaleExtent(), translate = zoom.translate();
+            // var x = translate[0], y = translate[1];
+            // var target_scale = +this.value;
+            // var factor = target_scale / scale;
+
+            // var clamped_target_scale = Math.max(extent[0], Math.min(extent[1], target_scale));
+            // if (clamped_target_scale != target_scale) {
+            //     target_scale = clamped_target_scale;
+            //     factor = target_scale / scale;
+            // }
+            // x = (x - center[0]) * factor + center[0];
+            // y = (y - center[1]) * factor + center[1];
+
+            // zoom.scale(target_scale).translate([x, y]);
+
+            // g.transition()
+            //         .attr("transform", "translate(" + zoom.translate().join(",") + ") scale(" + zoom.scale() + ")");
+            // g.selectAll("path")
+            //         .attr("d", path.projection(projection));
+
+          });
 
           
           svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
@@ -369,23 +439,72 @@ useEffect(() => {
 
 }, [props.selected])
 
+function mouseOver(event, d) {
+
+  //console.log(d);
+  //console.log(event);
+  // setTimeout(() => {
+  //   d3.select("#ttg").transition().duration(250).attr("opacity", 1);
+  // }, 400)
+
+  var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .html(function(d) { return d; });
+
+  let svg = d3.select("#mapSVG")
+  
+  svg.call(tip);
+
+
+  // [x,y]
+  let coords = path.centroid(d);
+
+  // [left,top],[right,bottom]
+  let bounds = path.bounds(d);
+
+  let height = bounds[1][1] - bounds[0][1];
+  let width = bounds[1][0] - bounds[0][0];
+
+  d3.select("#ttg").attr("opacity", 1);
+
+  d3.select("#tooltip")
+
+  // Attach box to manually calculated center
+  .attr("transform", "translate(" + (bounds[0][0]+(width/2)) + "," + (bounds[0][1]+(height/2)) + ")")
+  
+  // Attach box to centroid
+  // .attr("transform", "translate(" + (coords[0]+(width/2)) + "," + (coords[1]+(height)) + ")")
+  
+  // Attach box to pointer
+  //.attr("transform", `translate(${d3.pointer(event, this)})`);
+
+
+
+}
+
+function mouseOut() {
+
+  // setTimeout(() => {
+  //   d3.select("#ttg").attr("opacity", 0);
+  // }, 400)
+  
+  d3.select("#ttg").attr("opacity", 0);
+
+}
+
 function pointerMove(d,e) {
 
+  let position = d3.pointer(d);
 
-  // let position = d3.pointer(d);
+  console.log(e.properties.name);
 
-  // let boundX = position[0]-(margin.right+(margin.left*2));
-  // let boundY = position[1]-margin.top-margin.bottom;
-
-  // let visible = true;
-  // if(boundX > (width-margin.right-margin.left) || boundX <= 0) visible = false;
-  // if(boundY > height-margin.top-margin.bottom || boundY <= -margin.top) visible = false;
-
-  // console.log(e.properties.name);
-
-
-
-
+  console.log(position);
+  d3.select("#tooltip")
+  //.attr("x", position[0])
+  //.attr("y", position[1])
+  // .attr("transform", "translate(" + position[0] + "," + position[1] + ")");
+  .attr("transform", `translate(${d3.pointer(d, this)})`);
+  
 
 
   // Max width before graph flips, calculated by label + figure amount
@@ -457,10 +576,11 @@ function pointerMove(d,e) {
     <>
 
       {/* <Histogram distribution={props.distribution} /> */}
-      <p id="sliderP"></p>
+      
       <div id="map">
     
-      
+        {/* <div id="sliderP"></div> */}
+        <input type="range" onChange={(e) => console.log(e.target.value)} value="1" min="1" max="8" orient="vertical" id="sliderP"/>
 
       </div>
 
