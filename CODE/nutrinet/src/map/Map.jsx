@@ -113,6 +113,7 @@ useEffect(() => {
 
 
           var tip = d3.tip()
+          .attr("id", "d3Tip")
           .attr('class', 'd3-tip')
           .direction('s')
           .html(function(event,d) { 
@@ -121,15 +122,15 @@ useEffect(() => {
             //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
 
             //console.log(val)
-            return d.properties.name; 
+            return d.properties.name + " " + d.color; 
           
           });
 
           const g = svg.append("g")
+          .attr("id", "pathsG")
           .selectAll("path")
           .data(data.features)
-          .enter()
-          .append("path")
+          .join("path")
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
@@ -142,7 +143,6 @@ useEffect(() => {
           .on("click", (event, d) => {
             props.setSelected(d.properties.iso_a3)
           })
-          .attr("fill", d => d.color);
 
 
         
@@ -241,8 +241,8 @@ useEffect(() => {
           .attr("value", zoom.scaleExtent()[0])
           .attr("min", zoom.scaleExtent()[0])
           .attr("max", zoom.scaleExtent()[1])
-          .attr("step", (zoom.scaleExtent()[1] - zoom.scaleExtent()[0]) / 100)
-          .on("input", () => {
+          .attr("step", (zoom.scaleExtent()[1] - zoom.scaleExtent()[0]) / 100);
+          //.on("input", () => {
 
             // var scale = zoom.scale(), extent = zoom.scaleExtent(), translate = zoom.translate();
             // var x = translate[0], y = translate[1];
@@ -264,7 +264,7 @@ useEffect(() => {
             // g.selectAll("path")
             //         .attr("d", path.projection(projection));
 
-          });
+         // });
 
           
           svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
@@ -324,15 +324,48 @@ useEffect(() => {
   // let magmaClr = (d) => d3.interpolateMagma( d/q1 );
   // let secondClr = (d) => d3.interpolateCividis( d/q1 );
 
-  var g = d3.select("#map").select("svg").select("g");
+  //var g = d3.select("#map").select("svg").select("g");
+  var g = d3.select("#pathsG");
 
+  
   let nf = [];
 
   if(props.current.length !== 0) { 
 
-    let paths = g.selectAll("path");
+
+    // var tip = d3.tip()
+    // .attr('class', 'd3-tip')
+    // .direction('s')
+    // .html(function(event,d) { 
+      
+    //   //console.log(props.current)
+    //   //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+
+    //   //console.log(val)
+    //   return d.properties.name + " " + d.color; 
     
-    paths.attr("fill", (d,idx) => {
+    // });
+
+    let g = d3.select("#pathsG");
+
+    let tip = d3.select("#d3Tip")
+    .html((d,idx) => {
+
+      console.log(d);
+      console.log(idx)
+      return d;
+
+    });
+
+
+    let paths = g.selectAll("path");
+
+    //paths.call(tip);
+    
+    paths
+    // .on("mouseover", tip.show)
+    // .on("mouseout", tip.hide)
+    .attr("fill", (d,idx) => {
 
       var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
 
@@ -446,15 +479,6 @@ function mouseOver(event, d) {
   // setTimeout(() => {
   //   d3.select("#ttg").transition().duration(250).attr("opacity", 1);
   // }, 400)
-
-  var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .html(function(d) { return d; });
-
-  let svg = d3.select("#mapSVG")
-  
-  svg.call(tip);
-
 
   // [x,y]
   let coords = path.centroid(d);
