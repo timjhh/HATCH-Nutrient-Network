@@ -133,6 +133,7 @@ useEffect(() => {
             if(event.srcElement.tagName === "svg") {
 
               props.setSelected(null);
+              props.setHighlight(null);
 
             }
             

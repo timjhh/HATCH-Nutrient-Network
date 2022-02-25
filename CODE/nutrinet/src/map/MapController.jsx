@@ -246,7 +246,7 @@ function MapController(props) {
           <Paper  sx={{ mx: 1, elevation: 24 }}>
             <Map
             className="viz"
-            highlight={highlight}
+            
             variable1={variable1} 
             variable2={variable2} 
             current={current} // Current data applied
@@ -256,6 +256,8 @@ function MapController(props) {
             descriptors={descriptors}
             nullclr={nullclr}
             highlightClr={highlightClr}
+            highlight={highlight}
+            setHighlight={setHighlight}
             selected={selected}
             setSelected={setSelected}
   
