@@ -16,7 +16,36 @@ const d3 = {
 
 
 
+
 function Map(props) {
+
+
+
+  // Given a color, finds the 2d array index
+  // In the form of [x, y]
+  // Uses props.colors1d and props.colors2d
+  function arrIdx2d(d) {
+      
+    let idx = props.colors1d.indexOf(d);
+    
+    let x = idx % props.colors2d.length;
+    let y = parseInt(idx / props.colors2d.length);
+
+    return [x,y];
+
+  }
+  
+  // Given a 2d array, converts:
+  // [x, y] - 2d index of a color
+  // To:
+  // [string, string] - a ramped description of these 2 values
+  // Uses props.descriptors
+  function descriptors2d(nums) {
+
+    return [props.descriptors[nums[0]], props.descriptors[nums[1]]];
+
+  }
+
 
 // Dimensions of map
 const width = 1200,
@@ -122,7 +151,7 @@ useEffect(() => {
             //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
 
             //console.log(val)
-            return d.properties.name + " " + d.color; 
+            return d.properties.name; 
           
           });
 
@@ -149,7 +178,6 @@ useEffect(() => {
           //let svg = d3.select("#mapSVG")
           
           g.call(tip);
-
 
           const tooltip = svg.append("g")
           .attr("id", "ttg")
@@ -348,23 +376,50 @@ useEffect(() => {
 
     let g = d3.select("#pathsG");
 
-    let tip = d3.select("#d3Tip")
-    .html((d,idx) => {
+    // let tip = d3.select("#d3Tip")
+    // .html((d,idx) => {
 
-      console.log(d);
-      console.log(idx)
-      return d;
+    //   console.log(d);
+    //   console.log(idx)
+    //   return d;
+
+    // });
+
+    var tip = d3.tip()
+    .attr("id", "d3Tip")
+    .attr('class', 'd3-tip')
+    .direction('s')
+    .html(function(event,d) { 
+      
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+
+      if(val) {
+        
+        let desc = descriptors2d(arrIdx2d(val.color));
+
+        return val.Country + "<br/>" + props.variable1 + ": " + desc[0] + "<br/>" + props.variable2 + ": " + desc[1]; 
+      
+      } else {
+      
+        return d.properties.name;
+        //let v1 = isNaN(val[props.variable1]) ? "N/A" 
+        //return d.properties.name + "<br/>" + val[props.variable1] + "<br/>" + val[props.variable2];
+      
+      }
 
     });
 
+  
 
     let paths = g.selectAll("path");
 
-    //paths.call(tip);
+
+
+    g.call(tip);
     
     paths
-    // .on("mouseover", tip.show)
-    // .on("mouseout", tip.hide)
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide)
     .attr("fill", (d,idx) => {
 
       var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));

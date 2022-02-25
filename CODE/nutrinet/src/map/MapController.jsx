@@ -46,7 +46,13 @@ function MapController(props) {
 
   // What color to show for unavailable data
   var nullclr = "black";
+  
+  // What color to show for highlighted data
   var highlightClr = "#FF7F7F";
+
+  // Categorical string descriptors meant for our color scale
+  // This should be equal to colors2d.length, i.e. one strip of our 2d color scale
+  var descriptors = ["Low", "Medium-Low", "Medium-High", "High"];
 
   // 3x3 Bivariate Colors
   // const colors1d = ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"];
@@ -247,6 +253,7 @@ function MapController(props) {
             distribution={distribution}
             colors1d={colors1d}
             colors2d={colors2d}
+            descriptors={descriptors}
             nullclr={nullclr}
             highlightClr={highlightClr}
             selected={selected}
