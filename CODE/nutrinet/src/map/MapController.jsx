@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import MapGraphs from './MapGraphs.jsx';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 
-import Papa from 'papaparse';
+import { Grid, Stack, Switch, Paper, Box, FormControl } from '@mui/material';
 
 import * as d3 from "d3";
 
@@ -214,27 +211,7 @@ function MapController(props) {
     <>
 
 
-      <NutriSelect
-        //methods={props.methods} // Many .csv files
-        sources={sources}
-        variables={variables} // Single .csv file
-        variable1={variable1}
-        setVariable1={setVariable1}
-        variable2={variable2}
-        setVariable2={setVariable2}  
-        // method={method}
-        // setMethod={setMethod}
-        scaleType1={scaleType1}
-        scaleType2={scaleType2}
-        setScaleType1={setScaleType1}
-        setScaleType2={setScaleType2}
-        source={source}
-        setSource={setSource}
-        scatterX={scatterX}
-        setScatterX={setScatterX}
-        scatterY={scatterY}
-        setScatterY={setScatterY}
-        {...props} />
+
 
 
 
@@ -247,6 +224,32 @@ function MapController(props) {
 
         {/* <Grid item xs={12} lg={9}> */}
         <Grid item xs={9} sx={{ }}>
+
+            <NutriSelect
+            //methods={props.methods} // Many .csv files
+            sources={sources}
+            variables={variables} // Single .csv file
+            variable1={variable1}
+            setVariable1={setVariable1}
+            variable2={variable2}
+            setVariable2={setVariable2}  
+            // method={method}
+            // setMethod={setMethod}
+            scaleType1={scaleType1}
+            scaleType2={scaleType2}
+            setScaleType1={setScaleType1}
+            setScaleType2={setScaleType2}
+            source={source}
+            setSource={setSource}
+            scatterX={scatterX}
+            setScatterX={setScatterX}
+            scatterY={scatterY}
+            setScatterY={setScatterY}
+            {...props} />
+
+
+
+
 
           <Paper  sx={{ elevation: 24 }}>
             <Map
@@ -271,6 +274,33 @@ function MapController(props) {
         </Grid>
         <Grid item xs={3}>
           
+
+
+        <Paper sx={{ mb: 2, background: 'primary.main', elevation: 24, width: 1 }}>
+          <FormControl sx={{ width: 1 }}>
+
+          {/* <Typography sx={{ ml: 3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography> */}
+          <Typography align="center" sx={{  mt: 1, fontWeight: "bold"  }}>Scatterplot X Scale</Typography>
+          <Stack justifyContent="center" sx={{ my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
+            <Typography>Linear</Typography>
+            <Switch id="scatterX" checked={scatterX === "Log"} onChange={() => { scatterX === "Log" ? setScatterX("Linear") : setScatterX("Log") }} name="scatterX" />
+            <Typography>Log</Typography>
+          </Stack>
+
+          <Typography align="center" sx={{ width: 1, fontWeight: "bold" }}>Scatterplot Y Scale</Typography>
+          <Stack justifyContent="center" sx={{ my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
+            <Typography>Linear</Typography>
+            <Switch id="scatterY" checked={scatterY === "Log"} onChange={() => { scatterY === "Log" ? setScatterY("Linear") : setScatterY("Log") }} name="scatterY" />
+            <Typography>Log</Typography>
+          </Stack>
+
+          </FormControl>
+        </Paper>
+
+
+
+
+
           <Paper  sx={{ elevation: 24 }}>
             <MapGraphs
             highlightLegendWidth={highlightLegendWidth}

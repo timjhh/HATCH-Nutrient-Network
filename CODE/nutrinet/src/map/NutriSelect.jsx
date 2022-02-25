@@ -1,17 +1,16 @@
 import React from 'react';
 import { Grid, Typography, Stack, Switch, Paper, Box, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
-import { light } from '@mui/material/styles/createPalette';
 
 function NutriSelect(props) {
 
 
   return (
 
-    <Grid sx={{mt: 2, mb:3}} container spacing={1}>
+    <Grid sx={{ mb:3}} container spacing={1}>
 
 
 
-      <Grid item xs={9} lg={10}>
+      <Grid item xs={12}>
 
 
         <Paper sx={{ background: 'primary.main', elevation: 24 }}>
@@ -101,30 +100,6 @@ function NutriSelect(props) {
 
           </Box>
         </Paper>
-
-      </Grid>
-      <Grid item xs={3} lg={2}>
-
-      <Paper sx={{ background: 'primary.main', elevation: 24, width: 1 }}>
-        <FormControl sx={{ width: 1 }}>
-
-        {/* <Typography sx={{ ml: 3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography> */}
-        <Typography align="center" sx={{  mt: 1, fontWeight: "bold"  }}>Scatterplot X Scale</Typography>
-        <Stack justifyContent="center" sx={{ my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
-          <Typography>Linear</Typography>
-          <Switch id="scatterX" checked={props.scatterX === "Log"} onChange={() => { props.scatterX === "Log" ? props.setScatterX("Linear") : props.setScatterX("Log") }} name="scatterX" />
-          <Typography>Log</Typography>
-        </Stack>
-
-        <Typography align="center" sx={{ width: 1, fontWeight: "bold" }}>Scatterplot Y Scale</Typography>
-        <Stack justifyContent="center" sx={{ my: 2, width: 1 }} direction="row" spacing={1} alignItems="center">
-          <Typography>Linear</Typography>
-          <Switch id="scatterY" checked={props.scatterY === "Log"} onChange={() => { props.scatterY === "Log" ? props.setScatterY("Linear") : props.setScatterY("Log") }} name="scatterY" />
-          <Typography>Log</Typography>
-        </Stack>
-
-        </FormControl>
-      </Paper>
 
       </Grid>
 

@@ -635,7 +635,6 @@ useEffect(() => {
     this.parentNode.appendChild(this); 
     });
   //.call(d => d3.select(this).moveToFront())
-  
 
 
 }, [props.selected])
