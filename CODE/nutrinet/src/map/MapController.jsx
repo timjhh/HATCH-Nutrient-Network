@@ -359,9 +359,3 @@ function MapController(props) {
 }
 
 export default MapController;
-
-
-
-
-
-
