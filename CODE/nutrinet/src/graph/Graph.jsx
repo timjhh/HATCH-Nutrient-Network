@@ -17,7 +17,7 @@ const nutrients = ["B12..USDA.only.","B6","Calcium","Calories","Carbohydrates","
 // Update margin once size ref is created
 const margin = {top: 50, right: 20, bottom: 30, left: 30},
 width = 700 - margin.right - margin.left,
-height = 700 - (margin.top+margin.bottom);
+height = 600 - (margin.top+margin.bottom);
 
 const linkClr = "rgba(211,211,211, 1)";
 
@@ -148,6 +148,7 @@ const [parsedData, setParsedData] = useState([]);
     // Consider adding async back
     async function genGraph(data) {
 
+    if(data.length === 0) return;
 
     d3.select("#graph").select("svg").remove();
 
@@ -233,6 +234,7 @@ const [parsedData, setParsedData] = useState([]);
     .force("y", forceY);
 
     setSim(simulation);
+  console.log(links)
 
   var link = g.append("g")
       .attr("class", "links")
@@ -244,7 +246,7 @@ const [parsedData, setParsedData] = useState([]);
       //.attr("stroke", d => d3.interpolateYlGn(d.width/3) )
       //.attr("stroke", d => d3.interpolateYlGnBu(d.width/3))
       //.attr("opacity", 0.6)
-      .attr("stroke-width", function(d) { return d.width+(0.2); });
+      .attr("stroke-width", function(d) { return (d.width+(0.2)); });
 
 
 

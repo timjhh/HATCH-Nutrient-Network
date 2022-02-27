@@ -37,11 +37,14 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 
   //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
-  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /\.(csv)$/));
+  // Old regex /\.(csv)$/
+  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
 
+  
   files.forEach(d => {
     let arr = d.substring(2).split("_");
     arr[2] = arr[2].split(".")[0];
+    //console.log(arr);
     if(!countries.includes(arr[0])) countries.push(arr[0]);
     if(!methods.includes(arr[1])) methods.push(arr[1]);
     if(!years.includes(arr[2])) years.push(arr[2]);
