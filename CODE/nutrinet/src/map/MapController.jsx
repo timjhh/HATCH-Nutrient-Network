@@ -211,6 +211,25 @@ function MapController(props) {
     <>
 
 
+<Grid mb={3} item xs={12} sx={{ width: 1 }}>
+          <Box       
+          sx={{ backgroundColor: 'primary.dark',
+          p: 2,
+          m: 0
+      }}>
+
+
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
+        <br/>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
+        <br/>
+        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
+        <br/>
+
+        <hr/>
+
+          </Box>
+        </Grid>
 
 
 
@@ -219,12 +238,13 @@ function MapController(props) {
       {/* <Grid container spacing={0} direction="column"
       alignItems="center"
       justifyContent="center"> */}
-      <Grid container spacing={2}>
+      <Grid mb={4} container spacing={2} sx={{ height: "70%" }}>
 
 
         {/* <Grid item xs={12} lg={9}> */}
-        <Grid item xs={9} sx={{ }}>
+        <Grid item xs={9}>
 
+          <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
             <NutriSelect
             //methods={props.methods} // Many .csv files
             sources={sources}
@@ -271,10 +291,13 @@ function MapController(props) {
   
             />
           </Paper>
+
+          </Grid>
+
         </Grid>
         <Grid item xs={3}>
           
-
+        <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
 
         <Paper sx={{ mb: 2, background: 'primary.main', elevation: 24, width: 1 }}>
           <FormControl sx={{ width: 1 }}>
@@ -323,29 +346,10 @@ function MapController(props) {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sx={{ width: 1 }}>
-          <Box       
-          sx={{ backgroundColor: 'primary.dark',
-          p: 2,
-          m: 0
-      }}>
-
-
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
-        <br/>
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
-        <br/>
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
-        <br/>
-
-        <hr/>
-
-          </Box>
         </Grid>
 
 
       </Grid>
-
 
 
 

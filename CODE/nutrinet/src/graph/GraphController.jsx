@@ -85,8 +85,12 @@ useEffect(() => {
         
         Object.entries(e).forEach(f => {
 
+
+            // Links are constructed from a crop to a nutrient
+            // Values are the explicit cell values of link strength
+            // Width is the value expressed from [0,maxWidth]
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*3 })
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*props.maxWidth })
             }
             
 
@@ -96,9 +100,6 @@ useEffect(() => {
       })
 
 
-
-
-      //return [nds,lnks];
       setCurrent([nds,lnks])
 
       setNodes(nodes);
@@ -109,9 +110,6 @@ useEffect(() => {
 
 
       async function getData(link) {
-
-        //var csvFilePath = require('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-        //var csvFilePath = require(link);
 
 
           return d3.csv(link).then((res, idz) => {
@@ -163,7 +161,7 @@ useEffect(() => {
         bipartite={bipartite} setBipartite={setBipartite}
         highlightOptions={nodes}
         highlighted={highlighted} setHighlighted={setHighlighted}
-      {...props} />
+        {...props} />
       </Grid>
 
 

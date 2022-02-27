@@ -6,7 +6,7 @@ function NutriSelect(props) {
 
   return (
 
-    <Grid sx={{ mb:3}} container spacing={1}>
+    <Grid sx={{  }} container spacing={1}>
 
 
 
@@ -15,7 +15,7 @@ function NutriSelect(props) {
 
         <Paper sx={{ background: 'primary.main', elevation: 24 }}>
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
 
 
 
