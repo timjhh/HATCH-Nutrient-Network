@@ -44,7 +44,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
   files.forEach(d => {
     let arr = d.substring(2).split("_");
     arr[2] = arr[2].split(".")[0];
-    //console.log(arr);
     if(!countries.includes(arr[0])) countries.push(arr[0]);
     if(!methods.includes(arr[1])) methods.push(arr[1]);
     if(!years.includes(arr[2])) years.push(arr[2]);
