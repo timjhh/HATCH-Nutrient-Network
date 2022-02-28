@@ -38,7 +38,13 @@ function NutriSelect(props) {
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
                 <Typography>Quantile</Typography>
-                <Switch id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile") }} name="scaleType1" />
+                <Switch id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { 
+                  
+                  props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile");
+                  props.setHighlight(null); 
+                  props.setSelected(null);
+                  
+                  }} name="scaleType1" />
                 <Typography>Log</Typography>
              </Stack>
 
@@ -58,7 +64,12 @@ function NutriSelect(props) {
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
                 <Typography>Quantile</Typography>
-                <Switch id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => { props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") }} name="scaleType2" />
+                <Switch id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => {
+                  props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") 
+                  props.setHighlight(null);
+                  props.setSelected(null);
+                }} 
+                name="scaleType2" />
                 <Typography>Log</Typography>
             </Stack>
 

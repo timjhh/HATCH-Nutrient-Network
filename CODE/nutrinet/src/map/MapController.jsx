@@ -247,6 +247,9 @@ function MapController(props) {
           <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
             <NutriSelect
             //methods={props.methods} // Many .csv files
+            setHighlight={setHighlight}
+            selected={selected}
+            setSelected={setSelected}
             sources={sources}
             variables={variables} // Single .csv file
             variable1={variable1}

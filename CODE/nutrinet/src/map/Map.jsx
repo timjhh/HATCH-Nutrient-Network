@@ -508,7 +508,7 @@ useEffect(() => {
 useEffect(() => {
 
   var g = d3.select("#map").select("svg").select("g");
-
+  console.log(props.selected);
   if(props.selected != null) {
 
     g.selectAll("path")

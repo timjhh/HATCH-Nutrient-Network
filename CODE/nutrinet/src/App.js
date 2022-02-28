@@ -34,10 +34,10 @@ function App() {
 
 
     <Grid container spacing={0}>
-      <Grid item xs={1}>
+      <Grid item xs={2}>
 
       </Grid>
-      <Grid item xs={10}>
+      <Grid item xs={8} justify='center' alignItems='center'>
 
         <DataController />
 
