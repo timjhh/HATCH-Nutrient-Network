@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Graph from './graph/Graph.jsx';
-import FileSelect from './graph/FileSelect.jsx';
+
 import Grid from '@mui/material/Grid';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
-import Stack from '@mui/material/Stack';
-
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 
 import Navigation from './Navigation.jsx';
-import GraphController from './graph/GraphController.jsx'
-import MapController from './map/MapController.jsx'
 import DataController from './DataController.jsx'
 
-import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
 
 function App() {
 
@@ -34,16 +23,16 @@ function App() {
 
 
     <Grid container spacing={0}>
-      <Grid item xs={2}>
+      <Grid item xs={1} lg={2}>
 
       </Grid>
-      <Grid item xs={8} justify='center' alignItems='center'>
+      <Grid item xs={12} lg={8} justify='center' alignItems='center'>
 
         <DataController />
 
       </Grid>
 
-      <Grid item xs={1}>
+      <Grid item xs={1} lg={2}>
 
       </Grid>
     </Grid>

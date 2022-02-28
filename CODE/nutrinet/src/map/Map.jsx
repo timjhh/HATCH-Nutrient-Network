@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { margin } from '@mui/system';
+import React, { useEffect, useState } from 'react';
 //import * as d3 from "d3";
 
 // import *d3 from "d3";
@@ -46,6 +45,8 @@ function Map(props) {
 
   }
 
+// Zoom slider value
+const [slider, setSlider] = useState(1);
 
 // Dimensions of map
 const width = 1200,
@@ -247,7 +248,7 @@ useEffect(() => {
 
 
           }
-
+          
           const zoom = d3.zoom()
           .scaleExtent([1, 8])
           .extent([[0, 0], [width, height]])
@@ -255,6 +256,7 @@ useEffect(() => {
           .on("zoom", (d) => {
 
             g.attr("transform", d.transform)
+            setSlider(parseFloat(d.transform.k))
             //console.log(d.transform)
             //console.log(d3.select("#sliderP").select("input").attr("value"))
             //d3.select("#sliderP").select("input").attr("value", d.transform.k)
@@ -460,7 +462,7 @@ useEffect(() => {
 useEffect(() => {
 
   var g = d3.select("#map").select("svg").select("g");
-
+  console.log(props.highlight)
   if(props.highlight != null) {
 
     g.selectAll("path")
@@ -661,7 +663,7 @@ function pointerMove(d,e) {
       <div id="map">
     
         {/* <div id="sliderP"></div> */}
-        <input type="range" onChange={(e) => console.log(e.target.value)} value="1" min="1" max="8" orient="vertical" id="sliderP"/>
+        <input type="range" onChange={(e) => setSlider(parseFloat(e.target.value))} value={slider} min={1} max={8} orient="vertical" id="sliderP"/>
 
       </div>
 
