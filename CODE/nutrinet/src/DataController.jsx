@@ -52,7 +52,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
   return (
 
-    <>
 
     <Routes>
         <Route path='/'
@@ -77,7 +76,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
     </Routes>
 
 
-    </>
 
 
   );
