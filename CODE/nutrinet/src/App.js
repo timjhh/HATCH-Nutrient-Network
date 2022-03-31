@@ -27,7 +27,7 @@ function App() {
 
       </Grid>
       <Grid item xs={10} xl={8} justify='center' alignItems='center'>
-        Hello World
+
         <DataController />
 
       </Grid>
