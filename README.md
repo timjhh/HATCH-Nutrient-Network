@@ -14,4 +14,4 @@ Run via `yarn start`
 
 Build via `yarn run build`
 
-Hosting is provided through Netlify - with administrative privilege, run `yarn run build && netlify deploy && netlify deploy --prod`f
+Hosting is provided through Netlify - with administrative privilege, run `yarn run build && netlify deploy && netlify deploy --prod`
