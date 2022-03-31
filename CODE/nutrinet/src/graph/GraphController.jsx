@@ -12,6 +12,9 @@ import Papa from 'papaparse';
 
 function GraphController(props) {
 
+  // All link widths will be between [0,maxWidth]
+  const maxWidth = 3;
+
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
   const [current, setCurrent] = useState([]);
@@ -69,10 +72,10 @@ useEffect(() => {
       let nodes = [];
 
       nutrients.forEach(e => {
-        //console.log(d.e)
-        nds.push({id: e, group: 2 });
+
+        nds.push({id: e, group: 2, degree: 0 });
         nodes.push(e);
-        // maxes.e = d3.max(d => Object.entries(d).e);
+
         maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
 
       })
@@ -80,7 +83,7 @@ useEffect(() => {
 
       d.forEach(e => {
 
-        nds.push({id: e.FAO_CropName, group: 1 })
+        nds.push({id: e.FAO_CropName, group: 1, degree: 0 })
         nodes.push(e.FAO_CropName);
         
         Object.entries(e).forEach(f => {
@@ -90,7 +93,7 @@ useEffect(() => {
             // Values are the explicit cell values of link strength
             // Width is the value expressed from [0,maxWidth]
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*props.maxWidth })
+              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
             }
             
 
@@ -99,13 +102,45 @@ useEffect(() => {
 
       })
 
+      lnks.forEach(function(d){
+
+        nds.find(e => e.id === d.source || e.id === d.target).degree++;
+
+      });
 
       setCurrent([nds,lnks])
 
       setNodes(nodes);
+      molloy_reed([nds,lnks]);
 
       }
 
+      // The mathematical derivation for the threshold at which a complex network will lose its giant component is based on the Molloy–Reed criterion.
+
+      // The Molloy–Reed criterion is derived from the basic principle that in order for a giant component to exist, on average each node in the network
+      // must have at least two links. This is analogous to each person holding two others' hands in order to form a chain.
+
+      // Using this criterion and an involved mathematical proof, one can derive a critical threshold for the fraction of nodes needed to
+      // be removed for the breakdown of the giant component of a complex network.
+      async function molloy_reed(data) {
+
+        let nodes = data[0];
+        let links = data[1];
+
+        let mean = d3.mean(nodes, d => d.degree);
+
+        let MR = (mean**2+1)/mean;
+        console.log(MR)
+
+        let fraction = 1 - (1/(MR-1));
+        
+        console.log(fraction);
+
+        console.log(nodes);
+        
+
+
+      }
 
 
 

@@ -19,7 +19,6 @@ function DataController() {
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
 
-  const graphMaxWidth = 3;
 
   var countries = [];
   var years = [];
@@ -58,7 +57,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
         <Route path='/'
          element={<GraphController
          files={files} selected={selected} setSelected={setSelected}
-         maxWidth={graphMaxWidth}
          // country={country} setCountry={setCountry}
          // method={method} setMethod={setMethod}
          // year={year} setYear={setYear}

@@ -12,10 +12,6 @@ const d3 = {
   tip: d3tip
 }
 
-
-
-
-
 function Map(props) {
 
 
@@ -165,12 +161,8 @@ useEffect(() => {
           .style("stroke-width", 0.5)
           .style("stroke", "white")
           .attr("d", d => path(d))
-          //.on("mousemove", (d,e) => pointerMove(d,e))
-          // .on("pointermove", (d,e) => pointerMove(d,e))
           .on("mouseover", tip.show)
           .on("mouseout", tip.hide)
-          // .on("mouseover", mouseOver)
-          // .on("mouseout", mouseOut)
           .on("click", (event, d) => {
             props.setHighlight(null);
             props.setSelected(d.properties.iso_a3)
@@ -531,125 +523,7 @@ useEffect(() => {
 
 }, [props.selected])
 
-function mouseOver(event, d) {
 
-  //console.log(d);
-  //console.log(event);
-  // setTimeout(() => {
-  //   d3.select("#ttg").transition().duration(250).attr("opacity", 1);
-  // }, 400)
-
-  // [x,y]
-  let coords = path.centroid(d);
-
-  // [left,top],[right,bottom]
-  let bounds = path.bounds(d);
-
-  let height = bounds[1][1] - bounds[0][1];
-  let width = bounds[1][0] - bounds[0][0];
-
-  d3.select("#ttg").attr("opacity", 1);
-
-  d3.select("#tooltip")
-
-  // Attach box to manually calculated center
-  .attr("transform", "translate(" + (bounds[0][0]+(width/2)) + "," + (bounds[0][1]+(height/2)) + ")")
-  
-  // Attach box to centroid
-  // .attr("transform", "translate(" + (coords[0]+(width/2)) + "," + (coords[1]+(height)) + ")")
-  
-  // Attach box to pointer
-  //.attr("transform", `translate(${d3.pointer(event, this)})`);
-
-
-
-}
-
-function mouseOut() {
-
-  // setTimeout(() => {
-  //   d3.select("#ttg").attr("opacity", 0);
-  // }, 400)
-  
-  d3.select("#ttg").attr("opacity", 0);
-
-}
-
-function pointerMove(d,e) {
-
-  let position = d3.pointer(d);
-
-  console.log(e.properties.name);
-
-  console.log(position);
-  d3.select("#tooltip")
-  //.attr("x", position[0])
-  //.attr("y", position[1])
-  // .attr("transform", "translate(" + position[0] + "," + position[1] + ")");
-  .attr("transform", `translate(${d3.pointer(d, this)})`);
-  
-
-
-  // Max width before graph flips, calculated by label + figure amount
-  // let maxWidth = d3.max(lines, d => {
-  //   return d.length * 10 + ((": $0.00").length*5);
-  // });
-
-  // let maxWidth = d3.max(lines, d => {
-  //   return ((": $0.00").length*5);
-  // });
-
-  // d3.select("#ttline")
-  // .attr("opacity", visible ? 1 : 0);
-
-
-  // d3.select("#ttlbl")
-  // .attr("opacity", visible ? 1 : 0);
-
-  // Get point on graph by inverting the mouse's x coordinate, converting it to an integer
-  // and making sure its positive to convert into an index for data array
-  //let idx = Math.floor(d3.max([0,x.invert(position[0]-(margin.right+(margin.left*2)))-1]));
-
-  //if(idx > props.length) idx = props.length-1;
-
-
-  //let minY = d3.min([props.data[idx].revenue, props.data[idx].cost]);
-  //let maxY = d3.max([props.data[idx].revenue, props.data[idx].cost]);
-
-  // d3.select("#ttline")
-  // .attr("x1", position[0]-(margin.right+(margin.left*2)))
-  // .attr("x2", position[0]-(margin.right+(margin.left*2)));
-  // .attr("y1", y(0))
-  // .attr("y2", y(maxY));
-
-  // Move all elements about graph
-  // d3.select("#ttlbl")
-  // .selectAll("*")
-  // .attr("x", position[0] - (margin.right+margin.left) - (maxWidth+position[0] >= width ? 120 : 15))
-  // .attr("y", position[1]-35);
-
-  // And the circles too
-  // d3.select("#ttlbl")
-  // .selectAll("circle")
-  // .attr("cx", position[0] - (margin.right+margin.left) - (maxWidth+position[0] >= width ? 120 : 15))
-  // .attr("cy", position[1]-35);
-
-
-  // Update all tooltip data points
-  // d3.select("#ttlbl")
-  // .selectAll("text")
-  // .text((d,idy) => {
-  //   let point = props.data[idx];
-  //   // Set label accordingly - each data point is in the format of [revenue, cost, value]
-  //   let num = idy === 0 ? point.revenue : idy === 1 ? point.cost : idy === 2 ? (point.revenue + point.cost) : (point.value);
-  //   return new Intl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(num);
-  //   //return d + ":" + new Intl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(num);
-  // });
-
-  // d3.select("#ttlblyear")
-  // .text("Year " + props.data[idx].year);
-
-}
 
 
 

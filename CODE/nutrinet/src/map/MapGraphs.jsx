@@ -312,7 +312,7 @@ function genScatterPlot() {
 
   svg.append("g")
       .attr("id", "scYAxis")
-      .call(d3.axisLeft(scaleY))
+      .call(d3.axisLeft(scaleY));
       // .attr("transform", "translate(0," + (0-hHeight) + ")");
 
   svg.selectAll("circle")
@@ -337,11 +337,6 @@ function populateScatterPlot() {
   .select(".scatterplot")
   .select("#scatterPl");
  
-
-
-  // let scaleSX = d3.scaleLinear()
-  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
-  // .range([0,hWidth]);
 
   let scaleSX = d3.scaleSymlog()
   .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
