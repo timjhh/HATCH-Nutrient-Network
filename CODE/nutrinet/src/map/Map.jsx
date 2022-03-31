@@ -174,66 +174,11 @@ useEffect(() => {
           
           g.call(tip);
 
-          const tooltip = svg.append("g")
-          .attr("id", "ttg")
-          .attr("opacity", 0);
-    
-
-    
-          tooltip.append("rect")
-          //.attr("fill", (d,idx) => yC[idx])
-          .attr("id", "tooltip")
-          .attr("fill", "ghostwhite")
-          .attr("rx", 4)
-          .attr("ry", 4)
-          .attr("stroke", "black")
-          .attr("stroke-width", "2px")
-          .attr("opacity", 1)
-          //.attr("x", 0)
-          //.attr("y", 0)
-          .attr("width", 80)
-          .attr("height", 50)
-          .attr("transform", (d,idx) => "translate(0,0)");
-    
-    
-        // tooltip.selectAll("path")
-        // .data(lines)
-        // .join("circle")
-        //   // Manually add offset based on index of year
-        //   // Oh boy is this some spaghetti
-        //   // Note - 20 is the offset in this case, as each index is multiplied by 20
-        //   .attr("transform", (d,idx) => "translate(8," + (parseFloat(idx * 15)-3) + ")")
-        //   .attr("r", 6)
-        //   .attr("fill", (d,idx) => yC[idx]);
-    
-
-    
-          // tooltip.selectAll("text")
-          // .data(lines)
-          // .join("text")
-          // .style("font-size", 12)
-          // .style("border", "solid")
-          // .style("border-width", "2px")
-          // .style("border-radius", "5px")
-          // .attr("transform", (d,idx) => "translate(16," + (parseFloat((idx * 15))+1) + ")")
-          // .text(d => d + ": $0.00"); 
-    
-          tooltip.append("text")
-          .attr("id", "ttlblyear")
-          .style("font-size", 12)
-          .style("font-weight", "bold")
-          .style("border", "solid")
-          .style("border-width", "2px")
-          .style("border-radius", "5px")
-          .attr("transform", "translate(16," + parseFloat(-13) + ")")
-          .text("Year 0");
-  
-
           function slided(d) {
 
 
             let transform = d3.zoomTransform(g.node());
-            transform.k = d.target.value
+            transform.k = d.target.value;
 
             g.attr("transform", transform);
             d3.select("#sliderP").select("input").attr("value", transform.k)
@@ -343,12 +288,6 @@ useEffect(() => {
   d3.select(".v2label").text(props.variable2.replace(regex, " "));
 
 
-
-  // Simple color interpolation
-  // let magmaClr = (d) => d3.interpolateMagma( d/q1 );
-  // let secondClr = (d) => d3.interpolateCividis( d/q1 );
-
-  //var g = d3.select("#map").select("svg").select("g");
   var g = d3.select("#pathsG");
 
   
@@ -356,30 +295,8 @@ useEffect(() => {
 
   if(props.current.length !== 0) { 
 
-
-    // var tip = d3.tip()
-    // .attr('class', 'd3-tip')
-    // .direction('s')
-    // .html(function(event,d) { 
-      
-    //   //console.log(props.current)
-    //   //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
-
-    //   //console.log(val)
-    //   return d.properties.name + " " + d.color; 
-    
-    // });
-
     let g = d3.select("#pathsG");
 
-    // let tip = d3.select("#d3Tip")
-    // .html((d,idx) => {
-
-    //   console.log(d);
-    //   console.log(idx)
-    //   return d;
-
-    // });
 
     var tip = d3.tip()
     .attr("id", "d3Tip")
@@ -398,9 +315,7 @@ useEffect(() => {
       } else {
       
         return d.properties.name;
-        //let v1 = isNaN(val[props.variable1]) ? "N/A" 
-        //return d.properties.name + "<br/>" + val[props.variable1] + "<br/>" + val[props.variable2];
-      
+
       }
 
     });
@@ -431,14 +346,6 @@ useEffect(() => {
       return val.color;
 
     });
-    // .on("click", (e, d) => {
-
-    //     var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
-
-    //     props.setCountry(val);
-        
-
-    // });
 
 
   } // else console.log("CURRENT 0")
@@ -532,12 +439,29 @@ useEffect(() => {
 
     <>
 
-      {/* <Histogram distribution={props.distribution} /> */}
-      
       <div id="map">
     
         {/* <div id="sliderP"></div> */}
-        <input type="range" onChange={(e) => setSlider(parseFloat(e.target.value))} value={slider} min={1} max={8} orient="vertical" id="sliderP"/>
+        <input type="range" onChange={(e) => {
+          
+          // let g = d3.select("#pathsG");
+          
+          //   const zoom = d3.zoom()
+          //   .scaleExtent([1, 8])
+          //   .extent([[0, 0], [width, height]])
+          //   //.translateBy(g, 500, -500)
+          //   .on("zoom", (d) => {
+  
+          //     g.attr("transform", d.transform);
+          //     setSlider(parseFloat(d.transform.k));
+
+          //   });
+
+          setSlider(parseFloat(e.target.value));
+
+          //d3.select("#mapSVG").call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
+       
+       }} value={slider} min={1} max={8} orient="vertical" id="sliderP"/>
 
       </div>
 

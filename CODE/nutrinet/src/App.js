@@ -23,16 +23,16 @@ function App() {
 
 
     <Grid container spacing={0}>
-      <Grid item xs={1} lg={2}>
+      <Grid item xs={1} xl={2}>
 
       </Grid>
-      <Grid item xs={12} lg={8} justify='center' alignItems='center'>
+      <Grid item xs={10} xl={8} justify='center' alignItems='center'>
 
         <DataController />
 
       </Grid>
 
-      <Grid item xs={1} lg={2}>
+      <Grid item xs={1} xl={2}>
 
       </Grid>
     </Grid>
