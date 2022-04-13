@@ -265,7 +265,7 @@ function genScatterPlot() {
 
 
   let scaleX = d3.scaleLinear()
-  .domain([0,d3.max(props.current, d => d[props.variable1])])
+  .domain([0,d3.max(props.currentSNA, d => d[props.variable1])])
   .range([0,hWidth]);
 
   // let scaleY = d3.scaleLinear()
@@ -273,7 +273,7 @@ function genScatterPlot() {
   // .range([hHeight, 0])
 
   let scaleY = d3.scaleSymlog()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
   .range([hHeight,0])
 
 
@@ -307,17 +307,17 @@ function genScatterPlot() {
 
   svg.append("g")
       .attr("id", "scXAxis")
-      .call(d3.axisBottom(scaleX))
+      .call(d3.axisBottom(scaleX).ticks(4))
       .attr("transform", "translate(0," + hHeight + ")");
 
   svg.append("g")
       .attr("id", "scYAxis")
-      .call(d3.axisLeft(scaleY));
+      .call(d3.axisLeft(scaleY).ticks(4));
       // .attr("transform", "translate(0," + (0-hHeight) + ")");
 
   svg.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-    .data(props.current)
+    .data(props.currentSNA)
     .join("circle")
     .attr("fill", d => d.color)
     .attr("r", scR)
@@ -332,6 +332,16 @@ function genScatterPlot() {
 }
 function populateScatterPlot() {
   
+  // let data = props.current.filter(d => {
+
+  //   d[props.variable1] && d[props.variable2] &&
+  //   d[props.variable1] != "NA" && d[props.variable2] != "NA" &&
+  //   (parseFloat((d[props.variable1]) != NaN) && parseFloat(d[props.variable2] != NaN) &&
+  //   parseFloat((d[props.variable1]) > 0) && (parseFloat(d[props.variable2] > 0)))
+    
+  // });
+  
+  // let data = props.current.filter(d => d.color != props.nullclr )
 
   var svgScatter = d3.select("#mapGraphs")
   .select(".scatterplot")
@@ -339,13 +349,13 @@ function populateScatterPlot() {
  
 
   let scaleSX = d3.scaleSymlog()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
   .range([0,hWidth]);
 
 
   let scaleSY = d3.scaleLinear()
-  .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  .range([hHeight,0])
+  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .range([hHeight,0]);
 
   // let scaleSY = d3.scaleSymlog()
   // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
@@ -363,7 +373,7 @@ function populateScatterPlot() {
   svgScatter
       .select("#scXAxis")
       .transition()
-      .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
+      .call(d3.axisBottom(scaleSX).ticks(4).tickFormat(d3.format(".2"))) 
       //.attr("transform", "translate(0," + hHeight + ")")
       .selectAll("text")
         .attr("y", (d,idx) => (idx)*10)
@@ -378,12 +388,12 @@ function populateScatterPlot() {
   svgScatter
       .select("#scYAxis")
       .transition()
-      .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")))
+      .call(d3.axisLeft(scaleSY).ticks(4).tickFormat(d3.format(".2")))
       //.attr("transform", "translate(0," + (0-hHeight) + ")");
 
   svgScatter.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-    .data(props.current)
+    .data(props.currentSNA)
     .join("circle")
     .attr("class", "circle")
     .attr("fill", d => d.color)
@@ -470,14 +480,14 @@ function resetScatterAxes() {
   if(props.scatterX === "Log") {
 
     scaleSX = d3.scaleSymlog()
-    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
     .range([0,hWidth]);
   
 
   } else {
 
     scaleSX = d3.scaleLinear()
-    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
     .range([0,hWidth]);
 
   }
@@ -485,14 +495,14 @@ function resetScatterAxes() {
   if(props.scatterY === "Log") {
 
     scaleSY = d3.scaleSymlog()
-    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
     .range([hHeight,0]);
 
 
   } else {
 
     scaleSY = d3.scaleLinear()
-    .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
     .range([hHeight,0]);
 
   }
@@ -507,7 +517,7 @@ function resetScatterAxes() {
 
 
   svgScatter.selectAll("circle")
-    .data(props.current)
+    .data(props.currentSNA)
     .join("circle")
     .attr("fill", d => d.color)
     .attr("r", scR)
@@ -521,7 +531,7 @@ function resetScatterAxes() {
     svgScatter
     .select("#scXAxis")
     .transition()
-    .call(d3.axisBottom(scaleSX).ticks(5, ".2")) 
+    .call(d3.axisBottom(scaleSX).ticks(4, ".2")) 
     // .call(d3.axisBottom(scaleSX).tickFormat(d3.format(".2"))) 
     //.attr("transform", "translate(0," + hHeight + ")")
     .selectAll("text")
@@ -534,7 +544,7 @@ function resetScatterAxes() {
   svgScatter
       .select("#scYAxis")
       .transition()
-      .call(d3.axisLeft(scaleSY).tickFormat(d3.format(".2")));
+      .call(d3.axisLeft(scaleSY).ticks(4).tickFormat(d3.format(".2")));
       //.call(d3.axisLeft(scaleSY).tickFormat(3, ".2"));
 
 

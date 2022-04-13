@@ -18,6 +18,8 @@ function MapController(props) {
 
   const [current, setCurrent] = useState([]);
   
+  const [currentSNA, setCurrentSNA] = useState([]); // Current Sans-NA values
+ 
   const [distribution, setDistribution] = useState([]);
 
   const [source, setSource] = useState("Import_kg");
@@ -192,6 +194,7 @@ function MapController(props) {
 
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(data);
+      setCurrentSNA(data.filter(z => z.color !== nullclr));
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
 
       // Now map colors into a usable object with values { color: x, value: y, place: sequential index of color in order }
@@ -339,6 +342,7 @@ function MapController(props) {
             variable1={variable1} 
             variable2={variable2} 
             current={current} // Current data applied
+            currentSNA={currentSNA}
             distribution={distribution}
             colors1d={colors1d}
             colors2d={colors2d}
