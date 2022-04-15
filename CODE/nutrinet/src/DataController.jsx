@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import Graph from './graph/Graph.jsx';
 import FileSelect from './graph/FileSelect.jsx';
-import Grid from '@mui/material/Grid';
+import { Grid, Paper } from '@mui/material/';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
@@ -29,10 +29,10 @@ function DataController() {
   }
 
 
-
+// 4.14 Removed "Omega.3..USDA.only.", "B12..USDA.only."
 const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
+            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA"];
 
 
 
@@ -51,10 +51,23 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
   return (
 
+    <>
+
+    <Grid container spacing={2}>
+
+      <Paper sx={{width: 1, p:1}} elevation={6} style={{"fontSize": "1.2em", "fontWeight": "lighter"}}>
+        <Typography variant={"h4"} style={{"textAlign": "center"}}>About the Project</Typography>
+        
+        <Typography variant={"p"}>
+          This site was developed starting in Fall 2021 to visualize global relationships between crop diversity and nutritional stability across the world.
+
+        </Typography>
+      </Paper>
 
     <Routes>
         <Route path='/'
          element={<GraphController
+         nutrients={nutrients}
          files={files} selected={selected} setSelected={setSelected}
          // country={country} setCountry={setCountry}
          // method={method} setMethod={setMethod}
@@ -73,7 +86,9 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
     </Routes>
 
+    </Grid>
 
+    </>
 
 
   );

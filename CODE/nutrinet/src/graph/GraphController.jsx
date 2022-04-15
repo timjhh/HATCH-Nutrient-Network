@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
-import Grid from '@mui/material/Grid';
+//import Grid from '@mui/material/Grid';
+import { Grid, Paper, Typography } from '@mui/material/'
 
 
 import * as d3 from "d3";
 
-
-
-import Papa from 'papaparse';
 
 function GraphController(props) {
 
@@ -22,9 +20,9 @@ function GraphController(props) {
 
   //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
 
-const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
+// const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
+//             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
+//             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
 const [country, setCountry] = useState(props.countries[0]);
 const [method, setMethod] = useState(props.methods[0]);
@@ -71,7 +69,7 @@ useEffect(() => {
       let lnks = [];
       let nodes = [];
 
-      nutrients.forEach(e => {
+      props.nutrients.forEach(e => {
 
         nds.push({id: e, group: 2, degree: 0 });
         nodes.push(e);
@@ -93,7 +91,7 @@ useEffect(() => {
             // Values are the explicit cell values of link strength
             // Width is the value expressed from [0,maxWidth]
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
+              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
             }
             
 
@@ -108,8 +106,7 @@ useEffect(() => {
 
       });
 
-      setCurrent([nds,lnks])
-
+      setCurrent([nds,lnks]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
 
@@ -134,9 +131,9 @@ useEffect(() => {
 
         let fraction = 1 - (1/(MR-1));
         
-        console.log(fraction);
+        // console.log(fraction);
 
-        console.log(nodes);
+        // console.log(nodes);
         
 
 
@@ -183,13 +180,43 @@ useEffect(() => {
     <>
 
     <Grid container spacing={2}>
+      <Grid item xs={12} lg={9} my={1}>
+        <Paper elevation={props.paperElevation} sx={{ p:2 }}>
+          <Grid container>
+          <Grid item xs={3}>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Crops</Typography>
+            <br/>
+            <p>{current === [] ? "a" : "b"}</p>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Links</Typography>
+            <br/>   
+            <p></p>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Density</Typography>
+            <br/>          
+            <p>{() => current ? current.length : "N/A"}</p>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Avg. Weight</Typography>
+            <br/>          
+            <p>(Max {maxWidth})</p>
+          </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
+    <Grid container spacing={2}>
 
       <Grid item xs={12} lg={9}>
-        <Graph nutrients={nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
+        <Paper  sx={{ elevation: 24 }}>
+          <Graph nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
+        </Paper>
       </Grid>
       <Grid item xs={12} lg={3}>
         <FileSelect 
-        nutrients={nutrients}
+        nutrients={props.nutrients}
         country={country} setCountry={setCountry}
         method={method} setMethod={setMethod}
         year={year} setYear={setYear}

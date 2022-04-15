@@ -54,6 +54,9 @@ function MapController(props) {
   // What line thickness should highlighted rectangles be in the legend
   var highlightLegendWidth = 4;
 
+  // What elevation each tile should have from the webpage
+  const paperElevation = 6;
+
   // Categorical string descriptors meant for our color scale
   // This should be equal to colors2d.length, i.e. one strip of our 2d color scale
   var descriptors = ["Low", "Medium-Low", "Medium-High", "High"];
@@ -215,23 +218,21 @@ function MapController(props) {
 
 
 <Grid mb={3} item xs={12} sx={{ width: 1 }}>
-          <Box       
+          {/* <Box       
           sx={{ backgroundColor: 'primary.dark',
           p: 2,
           m: 0
-      }}>
+      }}> */}
 
-
+      <Paper elevation={paperElevation} sx={{ p:2 }}>
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
         <br/>
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
         <br/>
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
         <br/>
-
-        <hr/>
-
-          </Box>
+      </Paper>
+          {/* </Box> */}
         </Grid>
 
 
@@ -250,6 +251,7 @@ function MapController(props) {
           <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
             <NutriSelect
             //methods={props.methods} // Many .csv files
+            paperElevation={paperElevation}
             setHighlight={setHighlight}
             selected={selected}
             setSelected={setSelected}
@@ -277,7 +279,7 @@ function MapController(props) {
 
 
 
-          <Paper  sx={{ elevation: 24 }}>
+          <Paper  elevation={paperElevation}>
             <Map
             className="viz"
             
@@ -305,7 +307,7 @@ function MapController(props) {
           
         <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
 
-        <Paper sx={{ mb: 2, background: 'primary.main', elevation: 24, width: 1 }}>
+        <Paper sx={{ mb: 2, background: 'primary.main', width: 1 }} elevation={paperElevation}>
           <FormControl sx={{ width: 1 }}>
 
           {/* <Typography sx={{ ml: 3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography> */}
@@ -330,7 +332,7 @@ function MapController(props) {
 
 
 
-          <Paper  sx={{ elevation: 24 }}>
+          <Paper elevation={paperElevation}>
             <MapGraphs
             highlightLegendWidth={highlightLegendWidth}
             selected={selected}
@@ -342,7 +344,7 @@ function MapController(props) {
             variable1={variable1} 
             variable2={variable2} 
             current={current} // Current data applied
-            currentSNA={currentSNA}
+            currentSNA={currentSNA} // Current data sans-NA/0 values
             distribution={distribution}
             colors1d={colors1d}
             colors2d={colors2d}

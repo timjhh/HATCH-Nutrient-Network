@@ -73,7 +73,7 @@ const [parsedData, setParsedData] = useState([]);
   }, [props.highlighted])
 
   useEffect(() => {
-    console.log(props.switch)
+
 
   // Checked if the graph is force directed
   if(props.switch) {
@@ -163,7 +163,7 @@ const [parsedData, setParsedData] = useState([]);
     .append("svg")
     .attr("class", "svg-content-responsive svg-container")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .style("border", "1px solid black")
+    //.style("border", "1px solid black")
     //.style("position", "absolute")
     .attr("viewBox", "0 0 " + (width) + " " + (height-100))
     .on("click", (event, item) => {
@@ -255,7 +255,7 @@ const [parsedData, setParsedData] = useState([]);
     .force("y", forceY);
 
     setSim(simulation);
-  console.log(links)
+    // console.log(links)
 
   var link = g.append("g")
       .attr("class", "links")

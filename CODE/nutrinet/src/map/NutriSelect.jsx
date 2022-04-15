@@ -13,7 +13,7 @@ function NutriSelect(props) {
       <Grid item xs={12}>
 
 
-        <Paper sx={{ background: 'primary.main', elevation: 24 }}>
+        <Paper sx={{ background: 'primary.main' }} elevation={props.paperElevation}>
 
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
 

@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 
 import Navigation from './Navigation.jsx';
 import DataController from './DataController.jsx'
-
+import Footer from 'Footer';
 
 function App() {
 
@@ -37,6 +37,7 @@ function App() {
       </Grid>
     </Grid>
 
+    <Footer/>
 
 
 
