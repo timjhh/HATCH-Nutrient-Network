@@ -13,10 +13,23 @@ function GraphController(props) {
   // All link widths will be between [0,maxWidth]
   const maxWidth = 3;
 
-  const [selected, setSelected] = useState(null);
+
+
+  // I literally cannot believe I need an object for this
+  var metadata = {
+    crops: 0,
+    links: 0,
+    density: 0,
+    avgWeight: 0,
+    significant: []
+  }
+
+  // Metadata about graph such as node/link count, density, etc.
+  const [metaData, setMetaData] = useState(metadata);
+
   const [bipartite, setBipartite] = useState(false);
   const [current, setCurrent] = useState([]);
-  const [nodes, setNodes] = useState([]);
+  const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
   //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
 
@@ -64,6 +77,7 @@ useEffect(() => {
       async function wrangle(d) {
 
       let maxes = {};
+      let sums = {};
 
       let nds = [];
       let lnks = [];
@@ -74,7 +88,8 @@ useEffect(() => {
         nds.push({id: e, group: 2, degree: 0 });
         nodes.push(e);
 
-        maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
+        // maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
+        sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
 
       })
 
@@ -91,7 +106,8 @@ useEffect(() => {
             // Values are the explicit cell values of link strength
             // Width is the value expressed from [0,maxWidth]
             if(!Number.isNaN(f[1]) && f[1] > 0) {
-              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
+              // if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
+              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
             }
             
 
@@ -102,9 +118,18 @@ useEffect(() => {
 
       lnks.forEach(function(d){
 
-        nds.find(e => e.id === d.source || e.id === d.target).degree++;
+        nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
+        
 
       });
+
+      // Maximum amount of links is p*q where p = crop count, q = nutrient count
+      metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
+      metadata["crops"] = (nds.length)-props.nutrients.length;
+      metadata["links"] = lnks.length;
+      metadata["avgWeight"] = d3.mean(lnks, d => d.width);
+
+      setMetaData(metadata);
 
       setCurrent([nds,lnks]);
       setNodes(nodes);
@@ -127,7 +152,7 @@ useEffect(() => {
         let mean = d3.mean(nodes, d => d.degree);
 
         let MR = (mean**2+1)/mean;
-        console.log(MR)
+        console.log("Molloy-Reed Number: " + MR)
 
         let fraction = 1 - (1/(MR-1));
         
@@ -179,29 +204,57 @@ useEffect(() => {
 
     <>
 
+
+
+
     <Grid container spacing={2}>
-      <Grid item xs={12} lg={9} my={1}>
+
+      <Grid item>
+        <Paper sx={{width: 1, p:2}} elevation={props.paperElevation} style={{"fontSize": "1em", "fontWeight": "lighter"}}>
+          <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
+          
+          <Typography variant={"p"}>
+            In this interactive graph, the relationship between nutrients(blue) and crops(red) is represented with undirected, weighted edges. 
+            Each edge weight represents the percent contribution each crop gives to a nutrient. For example, Iron may be provided equally by three crops.
+            Their thicknesses will all be equally one third of the maximum width. The Density of a graph is defined by the number of links, divided by the total amount possible.
+             In a bipartite graph, this is equal to (|Crops| * |Nutrients|)<sup>1</sup>. Use the drop-down selections to change the country, food source, and year displayed. Or,
+            use the "Highlight" dropdown to select a nutrient or crop specifically. Finally, try the bottom toggle to change graph views.
+            <br/>
+            <br/>
+            <b>Bipartite </b> graphs align two distinct categories to separate sides. Beacuse no link can exist between two crops or two nutrients, this classic view makes the
+            comparison between two groups simple.          
+            <br/>
+            <br/>
+            <b>Force-Directed </b> graphs use the weight of each edge as the 'force' between two nodes. As they are free to move, clustering naturally occurs
+            in this view with more connected nodes usually appearing closer to the center.
+            <br/>
+            <br/>
+            <small><sup>1</sup>|X| = Cardinality, or amount of items in of X</small>
+          </Typography>
+      </Paper>
+      </Grid>
+
+      <Grid item xs={12} lg={9} mb={1}>
         <Paper elevation={props.paperElevation} sx={{ p:2 }}>
           <Grid container>
           <Grid item xs={3}>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Crops</Typography>
-            <br/>
-            <p>{current === [] ? "a" : "b"}</p>
+            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Crops</Typography>
+            <p>{metaData["crops"]}</p>
           </Grid>
           <Grid item xs={3}>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Links</Typography>
-            <br/>   
-            <p></p>
+            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Links</Typography>
+ 
+            <p>{metaData["links"]}</p>
           </Grid>
           <Grid item xs={3}>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Density</Typography>
-            <br/>          
-            <p>{() => current ? current.length : "N/A"}</p>
+            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Density</Typography>
+         
+            <p>{metaData["density"]}%</p>
           </Grid>
           <Grid item xs={3}>
-            <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Avg. Weight</Typography>
-            <br/>          
-            <p>(Max {maxWidth})</p>
+            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Avg. Weight</Typography>
+       
+            <p>{metaData["avgWeight"]} (Max {maxWidth})</p>
           </Grid>
           </Grid>
         </Paper>
@@ -214,7 +267,7 @@ useEffect(() => {
           <Graph nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
         </Paper>
       </Grid>
-      <Grid item xs={12} lg={3}>
+      <Grid item xs={12} lg={3} sx={{height:'100%'}}>
         <FileSelect 
         nutrients={props.nutrients}
         country={country} setCountry={setCountry}

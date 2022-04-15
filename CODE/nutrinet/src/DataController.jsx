@@ -51,18 +51,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
   return (
 
-    <>
-
-    <Grid container spacing={2}>
-
-      <Paper sx={{width: 1, p:1}} elevation={6} style={{"fontSize": "1.2em", "fontWeight": "lighter"}}>
-        <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
-        
-        <Typography variant={"p"}>
-          sdfadf
-
-        </Typography>
-      </Paper>
 
     <Routes>
         <Route path='/'
@@ -86,9 +74,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
     </Routes>
 
-    </Grid>
-
-    </>
 
 
   );

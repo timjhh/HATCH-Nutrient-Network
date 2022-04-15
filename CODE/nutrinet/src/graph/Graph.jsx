@@ -45,8 +45,8 @@ const [parsedData, setParsedData] = useState([]);
 
     if(sel) {
 
-      var connected = link.filter(g => g.source.id === sel || g.target.id === sel);
-      var cnodes = [];
+      let connected = link.filter(g => g.source.id === sel || g.target.id === sel);
+      let cnodes = [];
       
       connected.each(d => {
         if(!cnodes.includes(d.source.id)) cnodes.push(d.source.id);
@@ -55,9 +55,6 @@ const [parsedData, setParsedData] = useState([]);
 
       link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
 
-
-      //if()
-      // link.attr("stroke", d => d.source.id === sel || d.target.id === sel ? "steelblue" : "");
       connected.attr("stroke", d => props.nutrients.includes(sel) ? "steelblue" : "red");
 
       node.attr("opacity", d => cnodes.includes(d.id) ? 1 : 0.1);
@@ -360,7 +357,7 @@ const [parsedData, setParsedData] = useState([]);
 
 
       // Re-compute y force on graph
-      simulation.force("y").initialize(nodes);
+      //simulation.force("y").initialize(nodes);
 
       // Restart simulation
       simulation

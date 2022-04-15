@@ -11,56 +11,35 @@ const Navigation = () => {
 
     return (
 
-        <Grid container spacing={2}  sx={{ mb: 4, bgcolor: '#c5cae9', display: 'inline-block' }}>
-        <Grid item sx={{ display: 'inline-flex' }} xs={6}>
-  
-            <Typography sx={{ fontWeight: 'light', ml:5, fontSize: "4em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
 
-        </Grid>
 
-        <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-
-  
-        <Button sx={{mx: 2}} href="/" variant="outlined">Graphs</Button>  
+        <Box spacing={0}  sx={{ width: 1, mb: 4, bgcolor: '#8f97cf', display: 'inline-flex', alignItems: 'center' }}>
         
-  
-        </Grid>
-  
-        <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-        <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
+        <Typography sx={{ fontWeight: 'light', ml:5, fontSize: "2.5em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
 
-        </Grid>
-        <Grid item sx={{ display: "inline-flex", justifyContent: "flex-end" }}>
+
+        <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "flex-start", alignItems: 'flex-center' }}>
+            <Button sx={{mx: 2}} href="/" variant="text">Graphs</Button>  
+        </Box>
+
+
+
+        <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
+            <Button href="/maps" variant="text">Maps</Button>    
+        </Box>
+        
+        <Box sx={{ width: 1, display: "inline-flex", justifyContent: "flex-end", px:4 }}>
+
+            <Typography variant="h6" sx={{mx: 1}}>GPL 2.0</Typography>
             <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
                 <img src={gh} />
             </a>
-        </Grid>
+       
+        </Box >
 
           
 
-      </Grid>
-
-
-        // <Box sx={{ py:2, mb: 4, bgcolor: '#c5cae9', display: 'block' }}>
-        //     <Box sx={{ display: 'inline-flex' }}>
-        //         <Typography sx={{ fontWeight: 'light', ml:5, fontSize: "4em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
-        //     </Box>
-
-        //     <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-        //         <Button sx={{mx: 2}} href="/" variant="outlined">Graphs</Button>    
-        //     </Box>
-        //     <Box sx={{ display: 'inline-flex' }}>
-            
-        //         <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
-                
-        //     </Box>
-        //     {/* style={{ "align-content": "flex-end"}} */}
-        //     <Box  display="flex" justifyContent="flex-end" sx={{ flexDirection: "column", justifyContent: "center", width:1/64 }}>
-        //         <img src={gh} />
-        //     </Box>
-
-
-        // </Box>
+      </Box>
     )
 
 }
