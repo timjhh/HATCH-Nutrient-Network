@@ -265,7 +265,8 @@ function genScatterPlot() {
 
 
   let scaleX = d3.scaleLinear()
-  .domain([0,d3.max(props.currentSNA, d => d[props.variable1])])
+  // .domain([0,d3.max(props.currentSNA, d => d[props.variable1])])
+  .domain(d3.extent(props.currentSNA, d => d[props.variable1]))
   .range([0,hWidth]);
 
   // let scaleY = d3.scaleLinear()
@@ -273,7 +274,8 @@ function genScatterPlot() {
   // .range([hHeight, 0])
 
   let scaleY = d3.scaleSymlog()
-  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
   .range([hHeight,0])
 
 
@@ -349,19 +351,15 @@ function populateScatterPlot() {
  
 
   let scaleSX = d3.scaleSymlog()
-  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+  // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+  .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
   .range([0,hWidth]);
 
 
   let scaleSY = d3.scaleLinear()
-  .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  .range([hHeight,0]);
-
-  // let scaleSY = d3.scaleSymlog()
-  // .domain([0,d3.max(props.current, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
-  // .range([hHeight,0])
-
-  
+  // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+  .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
+  .range([hHeight,0]);  
 
 
   // Diagnostic info: Sorted values in place of histogram
@@ -480,14 +478,16 @@ function resetScatterAxes() {
   if(props.scatterX === "Log") {
 
     scaleSX = d3.scaleSymlog()
-    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
     .range([0,hWidth]);
   
 
   } else {
 
     scaleSX = d3.scaleLinear()
-    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1]))])
+    .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? 0 : parseFloat(d[props.variable1])))
     .range([0,hWidth]);
 
   }
@@ -495,14 +495,16 @@ function resetScatterAxes() {
   if(props.scatterY === "Log") {
 
     scaleSY = d3.scaleSymlog()
-    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
     .range([hHeight,0]);
 
 
   } else {
 
     scaleSY = d3.scaleLinear()
-    .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
+    .domain(d3.extent(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])))
     .range([hHeight,0]);
 
   }
