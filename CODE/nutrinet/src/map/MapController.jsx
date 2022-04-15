@@ -3,7 +3,7 @@ import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import MapGraphs from './MapGraphs.jsx';
 
-import { Grid, Stack, Switch, Paper, Box, FormControl } from '@mui/material';
+import { Grid, Stack, Switch, Paper, List, ListItem, FormControl } from '@mui/material';
 
 import * as d3 from "d3";
 
@@ -47,7 +47,7 @@ function MapController(props) {
 
   // Set scatterplot scale
   const [scatterX, setScatterX] = useState("Log");
-  const [scatterY, setScatterY] = useState("Linear");
+  const [scatterY, setScatterY] = useState("Log");
 
   // What color to show for unavailable data
   var nullclr = "black";
@@ -57,9 +57,6 @@ function MapController(props) {
 
   // What line thickness should highlighted rectangles be in the legend
   var highlightLegendWidth = 4;
-
-  // What elevation each tile should have from the webpage
-  const paperElevation = 6;
 
   // Categorical string descriptors meant for our color scale
   // This should be equal to colors2d.length, i.e. one strip of our 2d color scale
@@ -218,24 +215,33 @@ function MapController(props) {
     <>
 
 
-  <Grid mb={3} item xs={12} sx={{ width: 1 }}>
 
+      <Grid item mb={2}>
+        <Paper sx={{p:2}} elevation={props.paperElevation} style={{"fontSize": "1em", "fontWeight": "lighter"}}>
+          <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
+          
+          <Typography variant={"p"}>
 
-      <Paper elevation={paperElevation} sx={{ p:2 }}>
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
-        <br/>
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a country to highlight it in the scatterplot</Typography>
-        <br/>
-        <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
-        <br/>
+              In this interactive choropleth, bivariate relationships can be viewed in a global context. The legend on the right shows coloring from low to high in a 2-d grid, where 
+              higher values become a stronger color, and stronger relationships become a stronger blend of colors. Clicking on any square from the legend will highlight all countries
+              on the map with that color. Clicking anywhere on the map or graphs will deselect a country. You can also select a country on the map to highlight it in the scatterplot.
+              Hovering over any country will show a tooltip with information about the selected variables.
+              <br/>
+              <br/>
+              While selecting variabes to display, it should be noted that the Quantile/Log switch will only affect the coloring of countries. Whe
+
+          </Typography>
+
       </Paper>
-
-  </Grid>
-
+      </Grid>
 
 
 
-      <Grid mb={4} container spacing={2} sx={{ height: "70%" }}>
+
+
+
+
+      <Grid mb={1} container spacing={2} sx={{ height: "70%" }}>
 
 
         <Grid item xs={9}>
@@ -243,7 +249,6 @@ function MapController(props) {
           <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
             <NutriSelect
             //methods={props.methods} // Many .csv files
-            paperElevation={paperElevation}
             setHighlight={setHighlight}
             selected={selected}
             setSelected={setSelected}
@@ -273,7 +278,7 @@ function MapController(props) {
 
 
 
-          <Paper elevation={paperElevation}>
+          <Paper elevation={props.paperElevation}>
             <Map
             className="viz"
             variable1={variable1} 
@@ -300,7 +305,7 @@ function MapController(props) {
           
         <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
 
-        <Paper sx={{ mb: 2, background: 'primary.main', width: 1 }} elevation={paperElevation}>
+        <Paper sx={{ mb: 2, background: 'primary.main', width: 1 }} elevation={props.paperElevation}>
           <FormControl sx={{ width: 1 }}>
 
           {/* <Typography sx={{ ml: 3, width: 1, mt: 1 }}>Scatterplot X Scale</Typography> */}
@@ -325,7 +330,7 @@ function MapController(props) {
 
 
 
-          <Paper elevation={paperElevation}>
+          <Paper elevation={props.paperElevation}>
             <MapGraphs
             highlightLegendWidth={highlightLegendWidth}
             selected={selected}

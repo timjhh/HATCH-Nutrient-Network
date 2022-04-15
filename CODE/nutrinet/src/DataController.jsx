@@ -19,6 +19,9 @@ function DataController() {
   const [selected, setSelected] = useState(null);
   const [bipartite, setBipartite] = useState(false);
 
+  // What elevation each tile should have from the webpage
+  const paperElevation = 6;
+
 
   var countries = [];
   var years = [];
@@ -56,6 +59,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
         <Route path='/'
          element={<GraphController
          nutrients={nutrients}
+         paperElevation={paperElevation}
          files={files} selected={selected} setSelected={setSelected}
          // country={country} setCountry={setCountry}
          // method={method} setMethod={setMethod}
@@ -66,6 +70,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
           element={<MapController
           files={files}
           nutrients={nutrients}
+          paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
           // country={country} setCountry={setCountry}
           // method={method} setMethod={setMethod}
@@ -73,6 +78,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
           countries={countries} methods={methods} years={years}/>}/>
 
     </Routes>
+
 
 
 

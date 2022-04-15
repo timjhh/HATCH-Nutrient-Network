@@ -34,11 +34,11 @@ function Footer() {
 
     <Grid item xs={12} md={8} sx={{ p:2 }}>
   
-      <Paper sx={{ width: 1, py:1 }} elevation={6} gutterBottom component="div">
+      <Paper sx={{ width: 1, py:1 }} elevation={6} component="div">
           
-        <Box sx={{p:1}}>
+        <Box sx={{p:2}}>
 
-        <Typography variant={"h5"} style={{"textAlign": "center"}}>About the Project</Typography>
+        <Typography mb={2} variant={"h5"} style={{"textAlign": "center"}}>About the Project</Typography>
         
         <Typography variant={"p"}>
           <b>Nutritional stability</b> is defined as a food system's capability to provide sufficient nutrients despite disturbance. Our research has shown that despite a possible increase in

@@ -144,22 +144,23 @@ useEffect(() => {
           //.attr("transform", "rotate(45)")
           .text("Low");
 
+          // Left label
           legend.append("text")
-          .attr("x", ((props.colors2d.length*legendSize)))
-          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
+          .attr("x", -((props.colors2d.length*legendSize))+15)
+          .attr("y", ((props.colors2d.length*legendSize)/2)-42)
           .attr("class", "label")
           .attr("font-weight", "lighter")
           //.attr("transform", "rotate(45)")
           .text("High");
 
+          // Right label
           legend.append("text")
-          .attr("x", -((props.colors2d.length*legendSize))+15)
-          .attr("y", ((props.colors2d.length*legendSize)/2)-20)
+          .attr("x", ((props.colors2d.length*legendSize)))
+          .attr("y", ((props.colors2d.length*legendSize)/2)-40)
           .attr("class", "label")
           .attr("font-weight", "lighter")
           //.attr("transform", "rotate(45)")
           .text("High");
-          
 
           // Variable 1 label
           legend.append("text")

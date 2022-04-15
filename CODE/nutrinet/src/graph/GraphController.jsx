@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
-//import Grid from '@mui/material/Grid';
-import { Grid, Paper, Typography } from '@mui/material/'
+import { Grid, Paper, Typography, Box } from '@mui/material/'
 
 
 import * as d3 from "d3";
@@ -21,7 +20,7 @@ function GraphController(props) {
     links: 0,
     density: 0,
     avgWeight: 0,
-    significant: []
+    maxes: []
   }
 
   // Metadata about graph such as node/link count, density, etc.
@@ -76,7 +75,7 @@ useEffect(() => {
       // yee haw!!
       async function wrangle(d) {
 
-      let maxes = {};
+      let maxes = [];
       let sums = {};
 
       let nds = [];
@@ -88,10 +87,33 @@ useEffect(() => {
         nds.push({id: e, group: 2, degree: 0 });
         nodes.push(e);
 
-        // maxes[e] = d3.max(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
-        sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] != "NA" ? parseFloat(item[e]) : 0);
+        // Find the cumulative sum of each nutrient's contents
+        sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0);
+
+        // Find the crop which contributes the most to each nutrient
+        let max = d[d3.maxIndex(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0)]
+
+        // If there is an entry for this crop, save its name, % contribution and # of occurrences as the max contributor
+        // The final state of this object should be:
+        // max[Crop] = [
+        //  [list of % contributions to nutrients],
+        //  Avg % contributed -> this is a derived value after dictionary generation, of % contribution to nutrients it is the largest contributor to
+        //  Avg % contributed total -> this is a derived value after dictionary generation
+        //  # of links -> this is a derived value after dictionary generation
+        // ]
+        ///
+        /// NOTE: The rest of maxes should be filled after links are calculated, for the quickest implementation of # connections by crop
+        ///
+        if(max["FAO_CropName"] && maxes[max["FAO_CropName"]]) {
+          maxes[max["FAO_CropName"]][0].push(max[e]/sums[e]);
+
+        } else {
+          maxes[max["FAO_CropName"]] = [[max[e]/sums[e]], 0, 0, 0]; 
+        }
+
 
       })
+
 
 
       d.forEach(e => {
@@ -116,18 +138,32 @@ useEffect(() => {
 
       })
 
+      // For all max-contributing crops, ascertain the # of connections and avg % contributed
+      Object.entries(maxes).forEach(f => {
+
+        let cropLinks = lnks.filter(lnk => lnk.source === f[0]);
+
+        maxes[f[0]][1] = d3.mean(maxes[f[0]][0]);
+        maxes[f[0]][2] = d3.mean(cropLinks, d => d.width/maxWidth)
+        maxes[f[0]][3] = cropLinks.length;
+      })
+
+
+
       lnks.forEach(function(d){
 
         nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
-        
 
       });
+
+
 
       // Maximum amount of links is p*q where p = crop count, q = nutrient count
       metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
       metadata["crops"] = (nds.length)-props.nutrients.length;
       metadata["links"] = lnks.length;
       metadata["avgWeight"] = d3.mean(lnks, d => d.width);
+      metadata["maxes"] = maxes;
 
       setMetaData(metadata);
 
@@ -207,10 +243,10 @@ useEffect(() => {
 
 
 
-    <Grid container spacing={2}>
+    <Grid container mb={2} spacing={2}>
 
       <Grid item>
-        <Paper sx={{width: 1, p:2}} elevation={props.paperElevation} style={{"fontSize": "1em", "fontWeight": "lighter"}}>
+        <Paper sx={{p:2}} elevation={props.paperElevation} style={{"fontSize": "1em", "fontWeight": "lighter"}}>
           <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
           
           <Typography variant={"p"}>
@@ -218,7 +254,7 @@ useEffect(() => {
             Each edge weight represents the percent contribution each crop gives to a nutrient. For example, Iron may be provided equally by three crops.
             Their thicknesses will all be equally one third of the maximum width. The Density of a graph is defined by the number of links, divided by the total amount possible.
              In a bipartite graph, this is equal to (|Crops| * |Nutrients|)<sup>1</sup>. Use the drop-down selections to change the country, food source, and year displayed. Or,
-            use the "Highlight" dropdown to select a nutrient or crop specifically. Finally, try the bottom toggle to change graph views.
+            use the "Highlight" dropdown to select a nutrient or crop specifically. You can zoom into the graph and drag nodes around, or click on a node to see its connections. Finally, try the bottom toggle to change graph views.
             <br/>
             <br/>
             <b>Bipartite </b> graphs align two distinct categories to separate sides. Beacuse no link can exist between two crops or two nutrients, this classic view makes the
@@ -234,40 +270,30 @@ useEffect(() => {
       </Paper>
       </Grid>
 
-      <Grid item xs={12} lg={9} mb={1}>
-        <Paper elevation={props.paperElevation} sx={{ p:2 }}>
-          <Grid container>
-          <Grid item xs={3}>
-            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Crops</Typography>
-            <p>{metaData["crops"]}</p>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Links</Typography>
- 
-            <p>{metaData["links"]}</p>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Density</Typography>
-         
-            <p>{metaData["density"]}%</p>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography mb={1} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>Avg. Weight</Typography>
-       
-            <p>{metaData["avgWeight"]} (Max {maxWidth})</p>
-          </Grid>
-          </Grid>
-        </Paper>
-      </Grid>
+
+
+
+
+
+
+
+
+
+
     </Grid>
+
     <Grid container spacing={2}>
 
       <Grid item xs={12} lg={9}>
-        <Paper  sx={{ elevation: 24 }}>
+        <Paper elevation={props.paperElevation} sx={{height: '100%'}}>
           <Graph nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
         </Paper>
       </Grid>
+
+
       <Grid item xs={12} lg={3} sx={{height:'100%'}}>
+
+
         <FileSelect 
         nutrients={props.nutrients}
         country={country} setCountry={setCountry}
@@ -277,7 +303,67 @@ useEffect(() => {
         highlightOptions={nodes}
         highlighted={highlighted} setHighlighted={setHighlighted}
         {...props} />
+
+
+
+        <Paper elevation={props.paperElevation} sx={{ mt:2, p:2, height: '100%' }}>
+          <Grid container>
+          <Grid item xs={6}>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Crops</Typography>
+            <p>{metaData["crops"]}</p>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Links</Typography>
+            <p>{metaData["links"]}</p>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Density</Typography>
+            <p>{metaData["density"]}%</p>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Avg. Weight</Typography>
+            <p className='text-wrap'>{metaData["avgWeight"].toFixed(4)} (Max {maxWidth})</p>
+          </Grid>
+          </Grid>
+        </Paper>
+
+
+
       </Grid>
+
+
+
+
+      </Grid>
+
+      <Grid container mt={1} spacing={2}>
+
+      <Grid item xs={12}>
+        <Paper elevation={props.paperElevation} sx={{ p:2 }}>
+          <Typography variant={"p"}>
+            * LCt is defined as the Largest Contributor to n nutrients. The summation of all LCt's below should equal the total number of nutrients. Thus, Avg. LCt Weight is the contribution
+            each crop makes on average to nutrients where it is the largest contributor. This is compared to the Avg. Weight of this crop to all of its connected nutrients
+            <br/>
+          </Typography>
+          <Grid container>
+            {Object.entries(metaData["maxes"]).map(z => (
+
+              <Grid sx={{border:1, p:1}} key={z[0]} item xs={3}>
+
+                {z[0]}
+                <p>LCt: {z[1][0].length}</p>
+                <p>Avg. LCt Weight(%): {(z[1][1]*100).toFixed(3)}%</p>
+                <p>Avg. Weight(%): {(z[1][2]*100).toFixed(3)}%</p>
+                <p>Connections: {z[1][3]}</p>
+
+              </Grid>
+
+            ))}
+
+          </Grid>
+        </Paper>
+      </Grid>
+
 
 
       </Grid>
