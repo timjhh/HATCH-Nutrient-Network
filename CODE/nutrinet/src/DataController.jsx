@@ -56,10 +56,10 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
     <Grid container spacing={2}>
 
       <Paper sx={{width: 1, p:1}} elevation={6} style={{"fontSize": "1.2em", "fontWeight": "lighter"}}>
-        <Typography variant={"h4"} style={{"textAlign": "center"}}>About the Project</Typography>
+        <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
         
         <Typography variant={"p"}>
-          This site was developed starting in Fall 2021 to visualize global relationships between crop diversity and nutritional stability across the world.
+          sdfadf
 
         </Typography>
       </Paper>

@@ -11,16 +11,11 @@ const Navigation = () => {
 
     return (
 
-        <Grid container spacing={2}  sx={{ py:2, mb: 4, bgcolor: '#c5cae9', display: 'block' }}>
+        <Grid container spacing={2}  sx={{ mb: 4, bgcolor: '#c5cae9', display: 'inline-block' }}>
         <Grid item sx={{ display: 'inline-flex' }} xs={6}>
   
             <Typography sx={{ fontWeight: 'light', ml:5, fontSize: "4em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
 
-        </Grid>
-        <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-            <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
-                <img src={gh} />
-            </a>
         </Grid>
 
         <Grid item xs={2} sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
@@ -35,7 +30,11 @@ const Navigation = () => {
         <Button sx={{mx: 2}} href="/maps" variant="outlined">Maps</Button>    
 
         </Grid>
-          
+        <Grid item sx={{ display: "inline-flex", justifyContent: "flex-end" }}>
+            <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
+                <img src={gh} />
+            </a>
+        </Grid>
 
           
 

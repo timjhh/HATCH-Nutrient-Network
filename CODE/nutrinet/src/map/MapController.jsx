@@ -12,21 +12,25 @@ import Typography from '@mui/material/Typography';
 
 function MapController(props) {
 
+  // NOTE : variable1, variable2, and year all used an assumed default value.
+  // If variable 'Population' or year '2019' are ever removed, be sure to update these
   const [variable1, setVariable1] = useState("Population");
 
   const [variable2, setVariable2] = useState("Population");
 
-  const [current, setCurrent] = useState([]);
+  const [year, setYear] = useState(2019);
+
+  const [current, setCurrent] = useState([]); // Current data selected with color attribute attached
   
   const [currentSNA, setCurrentSNA] = useState([]); // Current Sans-NA values
  
-  const [distribution, setDistribution] = useState([]);
+  const [distribution, setDistribution] = useState([]); // Distribution of colors from 2-d legend, used to create histogram
 
-  const [source, setSource] = useState("Import_kg");
+  const [source, setSource] = useState("Import_kg"); // What method of food intake? Import, Production, etc.
+
+  const [sources, setSources] = useState(["Import_kg"]); // List containing all methods of food intake
 
   const [variables, setVariables] = useState([]);
-
-  const [sources, setSources] = useState(["Import_kg"]);
 
   // Selected color will highlight all affected countries
   // This should be in the form of a hexidecimal color, or the nullclr attribute
@@ -94,9 +98,6 @@ function MapController(props) {
 
     d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
-
-
-
       let data = res.filter(d => d.Source === source);
 
       let m1 = d3.max(data, d => parseFloat(d[variable1]));
@@ -126,7 +127,7 @@ function MapController(props) {
         // .rangeRound(d3.range(0, colors2d.length));
 
       }
-      //console.log(scaleVar1.quantiles())
+
       if(scaleType2 === "Quantile") {
 
         scaleVar2 = d3.scaleQuantile()
@@ -172,16 +173,14 @@ function MapController(props) {
           v2 = Math.round(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
           v2 = v2 < 0 ? 0 : v2;
         }
+        
 
-        //console.log(v1)
-        // Apply a color if it's found, else apply our default null coloring(defined above)
         try {
-
+          // Apply a color if it's found, else apply our default null coloring(defined above)
           d.color = ((v1 === undefined || v2 === undefined) || (isNaN(v1) || isNaN(v2))) ? nullclr : colors2d[v2][v1];
           
         } catch(e) {
-          //console.log(v2)
-          // console.log(scaleVar2(parseFloat(d[variable2])) * colors2d.length);
+          console.error("Error: Cannot map variables " + v1 + " " + v2 + " to map color");
         }
         
 
@@ -191,10 +190,12 @@ function MapController(props) {
       // Create color distribution for later use in histogram
       let colorDist = d3.rollups(data, v => v.length-1, d => d.color);
 
+      // If a color has not been found from our 1d ledger, map it with an occurrence of 0
       colors1d.forEach((d,idx) => {
         if(colorDist.filter(e => e[0] === d).length === 0) colorDist.push([d, 0]);
       })
 
+      // Update global variables for use in child classes
       setVariables(res.columns.filter(d => !unused.includes(d)));
       setCurrent(data);
       setCurrentSNA(data.filter(z => z.color !== nullclr));
@@ -217,12 +218,8 @@ function MapController(props) {
     <>
 
 
-<Grid mb={3} item xs={12} sx={{ width: 1 }}>
-          {/* <Box       
-          sx={{ backgroundColor: 'primary.dark',
-          p: 2,
-          m: 0
-      }}> */}
+  <Grid mb={3} item xs={12} sx={{ width: 1 }}>
+
 
       <Paper elevation={paperElevation} sx={{ p:2 }}>
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- Select a color in the legend to highlight all countries of the same color class</Typography>
@@ -232,20 +229,15 @@ function MapController(props) {
         <Typography mb={2} mt={-2} variant={"p"} style={{"fontSize": "1.2em", "fontWeight": "lighter", "textAlign": "center"}}>- For more information on scores, hover over any country</Typography>
         <br/>
       </Paper>
-          {/* </Box> */}
-        </Grid>
+
+  </Grid>
 
 
 
 
-
-      {/* <Grid container spacing={0} direction="column"
-      alignItems="center"
-      justifyContent="center"> */}
       <Grid mb={4} container spacing={2} sx={{ height: "70%" }}>
 
 
-        {/* <Grid item xs={12} lg={9}> */}
         <Grid item xs={9}>
 
           <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
@@ -255,6 +247,10 @@ function MapController(props) {
             setHighlight={setHighlight}
             selected={selected}
             setSelected={setSelected}
+            year={year}
+            setYear={setYear}
+            source={source}
+            setSource={setSource}
             sources={sources}
             variables={variables} // Single .csv file
             variable1={variable1}
@@ -267,8 +263,6 @@ function MapController(props) {
             scaleType2={scaleType2}
             setScaleType1={setScaleType1}
             setScaleType2={setScaleType2}
-            source={source}
-            setSource={setSource}
             scatterX={scatterX}
             setScatterX={setScatterX}
             scatterY={scatterY}
@@ -279,10 +273,9 @@ function MapController(props) {
 
 
 
-          <Paper  elevation={paperElevation}>
+          <Paper elevation={paperElevation}>
             <Map
             className="viz"
-            
             variable1={variable1} 
             variable2={variable2} 
             current={current} // Current data applied

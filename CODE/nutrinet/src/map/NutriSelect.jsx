@@ -4,9 +4,13 @@ import { Grid, Typography, Stack, Switch, Paper, Box, Select, MenuItem, InputLab
 function NutriSelect(props) {
 
 
+  function sanitize(text) {
+    return text.split("_").join(" ");
+  }
+
   return (
 
-    <Grid sx={{  }} container spacing={1}>
+    <Grid container spacing={1}>
 
 
 
@@ -30,7 +34,7 @@ function NutriSelect(props) {
                 onChange={(e) => { props.setVariable1(e.target.value) }}
               >
                 {props.variables.map(d => (
-                  <MenuItem key={d} value={d}>{d}</MenuItem>
+                  <MenuItem key={d} value={d}>{sanitize(d)}</MenuItem>
                 ))}
               </Select>
               {/* <Typography sx={{m:2, width:1}} style={{"font-size": "2em", "font-weight": "lighter"}}>Scaling</Typography> */}
@@ -58,7 +62,7 @@ function NutriSelect(props) {
                 onChange={(e) => { props.setVariable2(e.target.value) }}
               >
                 {props.variables.map(d => (
-                  <MenuItem key={d} value={d}>{d}</MenuItem>
+                  <MenuItem key={d} value={d}>{sanitize(d)}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -85,29 +89,29 @@ function NutriSelect(props) {
                 onChange={(e) => { props.setSource(e.target.value) }}
               >
                 {props.sources.map(d => (
-                  <MenuItem key={d} value={d}>{d}</MenuItem>
+                  <MenuItem key={d} value={d}>{sanitize(d)}</MenuItem>
                 ))}
               </Select>
 
             </FormControl>
 
 
-            {/*    <FormControl sx={{ m:2 }}>
+            <FormControl sx={{ m:2 }}>
 
-          <InputLabel id="year-select-label">Year</InputLabel>
-          <Select
-            labelId="year-select-label"
-            id="year-select"
-            value={year}
-            label="Year"
-            onChange={(e) => { handleChange(); setYear(e.target.value) }}
-          >
-          {years.map(d => (
-            <MenuItem key={d} value={d}>{d}</MenuItem>
-            ))}
-          </Select>
+              <InputLabel id="year-select-label">Year</InputLabel>
+              <Select
+                labelId="year-select-label"
+                id="year-select"
+                value={props.year}
+                label="Year"
+                onChange={(e) => { props.setYear(e.target.value) }}
+              >
+              {props.years.map(d => (
+                <MenuItem key={d} value={d}>{d}</MenuItem>
+                ))}
+              </Select>
 
-        </FormControl>*/}
+            </FormControl>
 
           </Box>
         </Paper>

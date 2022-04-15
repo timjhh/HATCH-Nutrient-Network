@@ -22,7 +22,7 @@ function Footer() {
 
 
 
-    <Grid container spacing={2} sx={{ mt:2, p:1, bgcolor: '#c5cae9', display: 'block', fontWeight: "lighter", display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
+    <Grid container spacing={2} sx={{ mt:2, p:1, bgcolor: '#c5cae9', display: 'block', display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
 
     <Grid item xs={4} sx={{ display: 'inline-flex' }}>
 
@@ -46,6 +46,12 @@ function Footer() {
           
         <Typography variant={"h5"} style={{"textAlign": "center"}}>About the Project</Typography>
         
+        <Typography variant={"p"} sx={{ mx:1 }}>
+          This site was developed starting in Fall 2021 to visualize global relationships between crop diversity and nutritional stability across the world. Nutritional 
+          stability is defined as a food system's capability to provide sufficient nutrients despite disturbance.
+          In our first paper, bipartite graphs were algorithmically deconstructed to test the robustness of a country's imports and production. In this continuation
+          of research, we can see numerous relationships between variables such as 'Population' and 'Crop Richness', or look at what nutrients may be in danger of destruction.
+        </Typography>
 
       </Paper>
 

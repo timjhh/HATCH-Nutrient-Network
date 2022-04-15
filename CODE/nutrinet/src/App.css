@@ -18,3 +18,12 @@ path {
     color: #fff;
     border-radius: 2px;
   }
+p {
+    font-weight: lighter;
+}
+.MuiTypography-p {
+    font-weight: lighter;
+}
+body {
+    background-color: #F6F6F6;
+}
