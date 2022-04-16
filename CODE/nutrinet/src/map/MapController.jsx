@@ -3,7 +3,7 @@ import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import MapGraphs from './MapGraphs.jsx';
 
-import { Grid, Stack, Switch, Paper, List, ListItem, FormControl } from '@mui/material';
+import { Grid, Stack, Switch, Paper, FormControl } from '@mui/material';
 
 import * as d3 from "d3";
 
@@ -225,10 +225,7 @@ function MapController(props) {
               In this interactive choropleth, bivariate relationships can be viewed in a global context. The legend on the right shows coloring from low to high in a 2-d grid, where 
               higher values become a stronger color, and stronger relationships become a stronger blend of colors. Clicking on any square from the legend will highlight all countries
               on the map with that color. Clicking anywhere on the map or graphs will deselect a country. You can also select a country on the map to highlight it in the scatterplot.
-              Hovering over any country will show a tooltip with information about the selected variables.
-              <br/>
-              <br/>
-              While selecting variabes to display, it should be noted that the Quantile/Log switch will only affect the coloring of countries. Whe
+              Hovering over any country will show a tooltip with information about the selected variables. Some countries that are missing one or both variables will be colored black.
 
           </Typography>
 

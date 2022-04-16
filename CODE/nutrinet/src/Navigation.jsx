@@ -2,7 +2,6 @@ import React from "react";
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 
 import gh from './images/GitHub-Mark-32px.png';
 
@@ -15,7 +14,7 @@ const Navigation = () => {
 
         <Box spacing={0}  sx={{ width: 1, mb: 4, bgcolor: '#8f97cf', display: 'inline-flex', alignItems: 'center' }}>
         
-        <Typography sx={{ fontWeight: 'light', ml:5, fontSize: "2.5em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
+        <Typography sx={{ fontWeight: 'light', ml:2, fontSize: "2.5em" }} variant="p" gutterBottom component="div">NutriNet</Typography>
 
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "flex-start", alignItems: 'flex-center' }}>
@@ -30,7 +29,7 @@ const Navigation = () => {
         
         <Box sx={{ width: 1, display: "inline-flex", justifyContent: "flex-end", px:4 }}>
 
-            <Typography variant="h6" sx={{mx: 1}}>GPL 2.0</Typography>
+            <Typography variant="h6" sx={{mx: 1}}>Code</Typography>
             <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
                 <img src={gh} />
             </a>

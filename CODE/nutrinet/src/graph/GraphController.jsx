@@ -12,6 +12,8 @@ function GraphController(props) {
   // All link widths will be between [0,maxWidth]
   const maxWidth = 3;
 
+  const minOpacity = 0.3;
+
 
 
   // I literally cannot believe I need an object for this
@@ -163,10 +165,16 @@ useEffect(() => {
       metadata["crops"] = (nds.length)-props.nutrients.length;
       metadata["links"] = lnks.length;
       metadata["avgWeight"] = d3.mean(lnks, d => d.width);
-      metadata["maxes"] = maxes;
 
+      // Turn dictionary into key/value pair where key = name of crop
+      // and value = array of crop metadata
+      var statItems = Object.keys(maxes).map((key) => { return [key, maxes[key]] });
+      statItems.sort((a,b) => b[1][0].length-a[1][0].length);
+      metadata["maxes"] = statItems;
+
+
+      // Update all data for graph and webpage
       setMetaData(metadata);
-
       setCurrent([nds,lnks]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
@@ -183,7 +191,6 @@ useEffect(() => {
       async function molloy_reed(data) {
 
         let nodes = data[0];
-        let links = data[1];
 
         let mean = d3.mean(nodes, d => d.degree);
 
@@ -252,7 +259,7 @@ useEffect(() => {
           <Typography variant={"p"}>
             In this interactive graph, the relationship between nutrients(blue) and crops(red) is represented with undirected, weighted edges. 
             Each edge weight represents the percent contribution each crop gives to a nutrient. For example, Iron may be provided equally by three crops.
-            Their thicknesses will all be equally one third of the maximum width. The Density of a graph is defined by the number of links, divided by the total amount possible.
+            Their thicknesses will all be equally one third of the maximum width. The opacity or visibility of each link is also influenced by its strength. The Density of a graph is defined by the number of links, divided by the total amount possible.
              In a bipartite graph, this is equal to (|Crops| * |Nutrients|)<sup>1</sup>. Use the drop-down selections to change the country, food source, and year displayed. Or,
             use the "Highlight" dropdown to select a nutrient or crop specifically. You can zoom into the graph and drag nodes around, or click on a node to see its connections. Finally, try the bottom toggle to change graph views.
             <br/>
@@ -286,7 +293,7 @@ useEffect(() => {
 
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{height: '100%'}}>
-          <Graph nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
+          <Graph maxWidth={maxWidth} minOpacity={minOpacity} nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
         </Paper>
       </Grid>
 
@@ -309,19 +316,19 @@ useEffect(() => {
         <Paper elevation={props.paperElevation} sx={{ mt:2, p:2, height: '100%' }}>
           <Grid container>
           <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Crops</Typography>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
             <p>{metaData["crops"]}</p>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Links</Typography>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Links</b></Typography>
             <p>{metaData["links"]}</p>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Density</Typography>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
             <p>{metaData["density"]}%</p>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}>Avg. Weight</Typography>
+            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
             <p className='text-wrap'>{metaData["avgWeight"].toFixed(4)} (Max {maxWidth})</p>
           </Grid>
           </Grid>
@@ -339,22 +346,31 @@ useEffect(() => {
       <Grid container mt={1} spacing={2}>
 
       <Grid item xs={12}>
-        <Paper elevation={props.paperElevation} sx={{ p:2 }}>
-          <Typography variant={"p"}>
+        <Paper elevation={props.paperElevation} sx={{ px:2, py:3 }}>
+          <Typography variant={"h4"} sx={{"textAlign": "center"}}>Keystone Crops</Typography>
+          <Typography variant={"p"} my={1}>
+            These crops are deemed to be significant to a country's food system as they are the largest contributor to one or more nutrients. Each nutrient has some amount of links with widths equal to that crop's percent contribution
+            to providing said nutrient. It is helpful to note that in many cases, crops may contribute significantly to far fewer nutrients than others.
+            <br/><br/>
+
             * LCt is defined as the Largest Contributor to n nutrients. The summation of all LCt's below should equal the total number of nutrients. Thus, Avg. LCt Weight is the contribution
             each crop makes on average to nutrients where it is the largest contributor. This is compared to the Avg. Weight of this crop to all of its connected nutrients
             <br/>
           </Typography>
           <Grid container>
-            {Object.entries(metaData["maxes"]).map(z => (
+            {metaData["maxes"].map(z => (
 
-              <Grid sx={{border:1, p:1}} key={z[0]} item xs={3}>
+              <Grid item key={z[0]} xs={3}>
+                
+                <Paper sx={{ p:1, m:1 }} elevation={props.paperElevation}>
 
-                {z[0]}
+                <b>{z[0]}</b>
                 <p>LCt: {z[1][0].length}</p>
                 <p>Avg. LCt Weight(%): {(z[1][1]*100).toFixed(3)}%</p>
                 <p>Avg. Weight(%): {(z[1][2]*100).toFixed(3)}%</p>
                 <p>Connections: {z[1][3]}</p>
+
+                </Paper>
 
               </Grid>
 

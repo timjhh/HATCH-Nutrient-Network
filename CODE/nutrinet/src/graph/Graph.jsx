@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import * as d3 from "d3";
-import Papa from 'papaparse';
-import {event as currentEvent} from 'd3-selection';
-
 
 function Graph(props) {
 
+// Radius for all nodes
 const radius = 2;
-
-//const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
-//            "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
-//            "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
-
-const nutrients = ["B12..USDA.only.","B6","Calcium","Calories","Carbohydrates","Choline","Copper","Dietary.Fiber","Fat","Folate","Iron","Magnesium","Manganese","Monounsaturated.FA","Niacin","Omega.3..USDA.only.","Phosphorus","Polyunsaturated.FA","Potassium","Protein","Riboflavin","Saturated.FA","Sodium","Thiamin","Vitamin.A","Vitamin.C","Zinc"];
 
 // Update margin once size ref is created
 const margin = {top: 50, right: 20, bottom: 30, left: 30},
@@ -23,8 +15,6 @@ const linkClr = "rgba(211,211,211, 1)";
 
 
 const [sim, setSim] = useState(null);
-const [parsedData, setParsedData] = useState([]);
-
 
   useEffect(() => {
 
@@ -63,7 +53,7 @@ const [parsedData, setParsedData] = useState([]);
 
 
       node.attr("opacity", 1);
-      link.attr("opacity", 1);
+      link.attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity);
 
     }
 
@@ -87,34 +77,31 @@ const [parsedData, setParsedData] = useState([]);
 
   } else { // Checked if graph is bipartite
 
-    var links = props.current[1];
-
     var forceX = d3.forceX(function(d) {
-
-
-      var bip = d3.select("#bipSwitch").attr("checked");
   
       if(!props.switch) {
-  
+
         return d.group === 2 ? width/5 : (4*width)/5;
   
       }
-        return 0.01;
+      
+      return null;
+
       }).strength((d) => {
-        return 2;
+        return d.group === 2 ? 2 : 1;
       });
   
       
   
     var forceY = d3.forceY(d => {
   
-        if(nutrients.includes(d.id)) {
+        if(props.nutrients.includes(d.id)) {
   
-          let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
+          // let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
   
-          let mean = d3.mean(subset, e => (e.width/3));
+          // let mean = d3.mean(subset, e => (e.width/3));
   
-          return nutrients.indexOf(d.id)*15;
+          return props.nutrients.indexOf(d.id)*15;
   
         }
   
@@ -162,14 +149,14 @@ const [parsedData, setParsedData] = useState([]);
     .attr("preserveAspectRatio", "xMinYMin meet")
     //.style("border", "1px solid black")
     //.style("position", "absolute")
-    .attr("viewBox", "0 0 " + (width) + " " + (height-100))
-    .on("click", (event, item) => {
+    .attr("viewBox", "0 0 " + (width) + " " + height)
+    .on("click", (event) => {
 
         // On any extraneous click, de-select any highlighted node
         if(event.srcElement.tagName === "svg") {
           props.setHighlighted(null);
           node.attr("opacity", 1);
-          link.attr("opacity", 1);
+          link.attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity);
         }
 
     });
@@ -194,8 +181,7 @@ const [parsedData, setParsedData] = useState([]);
 
       sim.force("x", null)
       .force("y", null)
-      .force("repel", d3.forceManyBody().strength(-50))
-      //.force("collision", d3.forceCollide(5));
+      .force("repel", d3.forceManyBody().strength(0))
       sim.alpha(1).restart();
     }
 
@@ -206,14 +192,13 @@ const [parsedData, setParsedData] = useState([]);
 
   var forceX = d3.forceX(function(d) {
 
-
-    var bip = d3.select("#bipSwitch").attr("checked");
-
-    if(!bip) {
+    if(!props.switch) {
 
       return d.group === 2 ? width/5 : (4*width)/5;
 
     }
+
+
       return 0.01;
     }).strength((d) => {
       return 2;
@@ -223,13 +208,13 @@ const [parsedData, setParsedData] = useState([]);
   //var forceY = d3.forceY().strength(0);
   var forceY = d3.forceY(d => {
 
-      if(nutrients.includes(d.id)) {
+      if(props.nutrients.includes(d.id)) {
 
-        let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
+        //let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
 
-        let mean = d3.mean(subset, e => (e.width/3));
+        //let mean = d3.mean(subset, e => (e.width/3));
 
-        return nutrients.indexOf(d.id)*15;
+        return props.nutrients.indexOf(d.id)*15;
 
       }
 
@@ -252,18 +237,14 @@ const [parsedData, setParsedData] = useState([]);
     .force("y", forceY);
 
     setSim(simulation);
-    // console.log(links)
 
   var link = g.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(links)
     .enter().append("line")
-      //.attr("stroke", "lightgray")
       .attr("stroke", "rgba(211,211,211, 1)")
-      //.attr("stroke", d => d3.interpolateYlGn(d.width/3) )
-      //.attr("stroke", d => d3.interpolateYlGnBu(d.width/3))
-      //.attr("opacity", 0.6)
+      .attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity)
       .attr("stroke-width", function(d) { return (d.width+(0.2)); });
 
 
