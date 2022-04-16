@@ -289,51 +289,52 @@ useEffect(() => {
 
     </Grid>
 
-    <Grid container spacing={2}>
+    <Grid container spacing={2} sx={{dispaly: 'flex'}}>
 
       <Grid item xs={12} lg={9}>
-        <Paper elevation={props.paperElevation} sx={{height: '100%'}}>
+        <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
           <Graph maxWidth={maxWidth} minOpacity={minOpacity} nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
         </Paper>
       </Grid>
 
 
-      <Grid item xs={12} lg={3} sx={{height:'100%'}}>
+      <Grid item xs={12} lg={3} sx={{ height:'100%', alignContent: 'space-around', display: 'flex', flexDirection: 'column' }}>
 
+        <Box sx={{ height: '100%' }}>
+          <FileSelect 
+          nutrients={props.nutrients}
+          paperElevation={props.paperElevation}
+          country={country} setCountry={setCountry}
+          method={method} setMethod={setMethod}
+          year={year} setYear={setYear}
+          bipartite={bipartite} setBipartite={setBipartite}
+          highlightOptions={nodes}
+          highlighted={highlighted} setHighlighted={setHighlighted}
+          {...props} />
+        </Box>
 
-        <FileSelect 
-        nutrients={props.nutrients}
-        country={country} setCountry={setCountry}
-        method={method} setMethod={setMethod}
-        year={year} setYear={setYear}
-        bipartite={bipartite} setBipartite={setBipartite}
-        highlightOptions={nodes}
-        highlighted={highlighted} setHighlighted={setHighlighted}
-        {...props} />
-
-
-
-        <Paper elevation={props.paperElevation} sx={{ mt:2, p:2, height: '100%' }}>
-          <Grid container>
-          <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
-            <p>{metaData["crops"]}</p>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Links</b></Typography>
-            <p>{metaData["links"]}</p>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
-            <p>{metaData["density"]}%</p>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
-            <p className='text-wrap'>{metaData["avgWeight"].toFixed(4)} (Max {maxWidth})</p>
-          </Grid>
-          </Grid>
-        </Paper>
-
+        <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex', alignItems: 'stretch' }}>
+          <Paper elevation={props.paperElevation} sx={{ mt:2, p:2 }}>
+            <Grid container>
+            <Grid item xs={6}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
+              <p>{metaData["crops"]}</p>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Links</b></Typography>
+              <p>{metaData["links"]}</p>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
+              <p>{metaData["density"]}%</p>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
+              <p className='text-wrap'>{(parseFloat(metaData["avgWeight"])/maxWidth).toFixed(4)}%</p>
+            </Grid>
+            </Grid>
+          </Paper>
+        </Box>
 
 
       </Grid>
@@ -347,7 +348,7 @@ useEffect(() => {
 
       <Grid item xs={12}>
         <Paper elevation={props.paperElevation} sx={{ px:2, py:3 }}>
-          <Typography variant={"h4"} sx={{"textAlign": "center"}}>Keystone Crops</Typography>
+          <Typography mb={2} variant={"h4"} sx={{"textAlign": "center"}}>Keystone Crops</Typography>
           <Typography variant={"p"} my={1}>
             These crops are deemed to be significant to a country's food system as they are the largest contributor to one or more nutrients. Each nutrient has some amount of links with widths equal to that crop's percent contribution
             to providing said nutrient. It is helpful to note that in many cases, crops may contribute significantly to far fewer nutrients than others.
@@ -357,7 +358,7 @@ useEffect(() => {
             each crop makes on average to nutrients where it is the largest contributor. This is compared to the Avg. Weight of this crop to all of its connected nutrients
             <br/>
           </Typography>
-          <Grid container>
+          <Grid container mt={2}>
             {metaData["maxes"].map(z => (
 
               <Grid item key={z[0]} xs={3}>
@@ -366,8 +367,8 @@ useEffect(() => {
 
                 <b>{z[0]}</b>
                 <p>LCt: {z[1][0].length}</p>
-                <p>Avg. LCt Weight(%): {(z[1][1]*100).toFixed(3)}%</p>
-                <p>Avg. Weight(%): {(z[1][2]*100).toFixed(3)}%</p>
+                <p>Avg. LCt Weight: {(z[1][1]*100).toFixed(3)}%</p>
+                <p>Avg. Weight: {(z[1][2]*100).toFixed(3)}%</p>
                 <p>Connections: {z[1][3]}</p>
 
                 </Paper>

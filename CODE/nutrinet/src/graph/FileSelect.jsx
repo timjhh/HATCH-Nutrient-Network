@@ -21,7 +21,7 @@ function FileSelect(props) {
   return (
 
 
-<Paper sx={{ p: 2, background: 'primary.main', height: '100%'}}>
+<Paper elevation={props.paperElevation} sx={{ p: 2, background: 'primary.main', height: '100%'}}>
 
 <Box>
 
