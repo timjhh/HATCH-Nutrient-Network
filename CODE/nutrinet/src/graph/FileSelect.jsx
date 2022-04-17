@@ -20,9 +20,9 @@ function FileSelect(props) {
   return (
 
 
-<Paper elevation={props.paperElevation} sx={{ p: 2, background: 'primary.main', height: '100%'}}>
+<Paper elevation={props.paperElevation} sx={{ p:2, background: 'primary.main', height: '100%'}}>
 
-<Box>
+<Box sx={{ width: 1 }}>
 
 
     <Grid item>
@@ -94,8 +94,8 @@ function FileSelect(props) {
     />
     </FormControl>
     </Grid>
-    <Grid item >
-      <Stack sx={{ m:2, width: 1 }} direction="row" spacing={1} alignItems="center">
+    <Grid item>
+      <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
           <Typography>Bipartite</Typography>
             <Switch id="bipSwitch" checked={props.bipartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
           <Typography>Force-Directed</Typography>

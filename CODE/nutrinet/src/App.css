@@ -1,6 +1,9 @@
 html {
     min-height: 100vh;
 }
+body {
+    background-color: #F6F6F6;
+}
 path {
     cursor: pointer;
 }
@@ -27,6 +30,10 @@ p {
 .MuiTypography-p {
     font-weight: lighter;
 }
-body {
-    background-color: #F6F6F6;
+.footer-sticky {
+    padding: 20px;
+
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }

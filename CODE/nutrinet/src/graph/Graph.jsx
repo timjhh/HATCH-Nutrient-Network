@@ -13,11 +13,10 @@ height = 600 - (margin.top+margin.bottom);
 
 const linkClr = "rgba(211,211,211, 1)";
 
-
+// React state for the simulation, for easy class access
 const [sim, setSim] = useState(null);
 
   useEffect(() => {
-
 
     genGraph(props.current);
 
@@ -29,31 +28,35 @@ const [sim, setSim] = useState(null);
     let node = d3.select(".content").selectAll(".nodes").selectAll("circle");
     let link = d3.select(".content").selectAll(".links").selectAll("line");
 
-    link.attr("stroke", linkClr)
+    link.attr("stroke", linkClr);
 
     let sel = props.highlighted;
 
     if(sel) {
 
       let connected = link.filter(g => g.source.id === sel || g.target.id === sel);
-      let cnodes = [];
-      
-      connected.each(d => {
-        if(!cnodes.includes(d.source.id)) cnodes.push(d.source.id);
-        if(!cnodes.includes(d.target.id)) cnodes.push(d.target.id); 
-      });
-
-      link.attr("opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
+  
+      link.attr("stroke-opacity", d => d.source.id === sel || d.target.id === sel ? 1 : 0.1);
 
       connected.attr("stroke", d => props.nutrients.includes(sel) ? "steelblue" : "red");
 
-      node.attr("opacity", d => cnodes.includes(d.id) ? 1 : 0.1);
+      node.attr("fill-opacity", d => {
+        let key;
+        console.log(sel)
+        if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
+          key = d.id+","+sel;
+        } else {
+          key = sel+","+d.id;
+        }
+
+        return props.linkMatrix[key] || d.id === sel ? 1 : 0.1
+      })
 
     } else {
 
 
-      node.attr("opacity", 1);
-      link.attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity);
+      node.attr("fill-opacity", 1);
+      link.attr("stroke-opacity", d => (d.width/props.maxWidth)+props.minOpacity);
 
     }
 
@@ -155,8 +158,8 @@ const [sim, setSim] = useState(null);
         // On any extraneous click, de-select any highlighted node
         if(event.srcElement.tagName === "svg") {
           props.setHighlighted(null);
-          node.attr("opacity", 1);
-          link.attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity);
+          node.attr("fill-opacity", 1);
+          link.attr("stroke-opacity", d => (d.width/props.maxWidth)+props.minOpacity);
         }
 
     });
@@ -242,9 +245,9 @@ const [sim, setSim] = useState(null);
       .attr("class", "links")
     .selectAll("line")
     .data(links)
-    .enter().append("line")
+    .join("line")
       .attr("stroke", "rgba(211,211,211, 1)")
-      .attr("opacity", d => (d.width/props.maxWidth)+props.minOpacity)
+      .attr("stroke-opacity", d => (d.width/props.maxWidth)+props.minOpacity)
       .attr("stroke-width", function(d) { return (d.width+(0.2)); });
 
 

@@ -34,10 +34,8 @@ function App() {
       </Grid>
     </Grid>
 
+
     <Footer/>
-
-
-
 
     </div>
   );

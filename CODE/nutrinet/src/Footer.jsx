@@ -14,7 +14,7 @@ function Footer() {
 
 
 
-    <Grid container spacing={2} sx={{ mt:2, p:1, bgcolor: '#8f97cf', display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
+    <Grid className='footer-sticky' container spacing={2} sx={{ mt:2, p:1, bgcolor: '#8f97cf', display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
 
     {/* <Grid item xs={4} sx={{ display: 'inline-flex' }}>
 

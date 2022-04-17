@@ -14,7 +14,11 @@ function GraphController(props) {
 
   const minOpacity = 0.5;
 
-
+  // Memoized object holding all connected nodes / links
+  // Because links are constructed from a crop to a nutrient, the hashtable's keys will be
+  // [crop.id,nutrient.id]
+  // Entries are 1 if the link exists, 0 otherwise
+  const [linkMatrix, setLinkMatrix] = useState({});
 
   // I literally cannot believe I need an object for this
   var metadata = {
@@ -79,6 +83,7 @@ useEffect(() => {
 
       let maxes = [];
       let sums = {};
+      let linkedMatrix = {};
 
       let nds = [];
       let lnks = [];
@@ -132,6 +137,10 @@ useEffect(() => {
             if(!Number.isNaN(f[1]) && f[1] > 0) {
               // if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
               if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
+              
+              // There is a link between this crop/nutrient
+              linkedMatrix[e.FAO_CropName + "," + f[0]] = 1;
+
             }
             
 
@@ -178,6 +187,7 @@ useEffect(() => {
       setCurrent([nds,lnks]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
+      setLinkMatrix(linkedMatrix);
 
       }
 
@@ -293,7 +303,15 @@ useEffect(() => {
 
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
-          <Graph maxWidth={maxWidth} minOpacity={minOpacity} nutrients={props.nutrients} current={current} switch={bipartite} highlighted={highlighted} setHighlighted={setHighlighted} />
+          <Graph 
+          maxWidth={maxWidth} 
+          minOpacity={minOpacity} 
+          nutrients={props.nutrients} 
+          current={current} 
+          linkMatrix={linkMatrix}
+          switch={bipartite} 
+          highlighted={highlighted} 
+          setHighlighted={setHighlighted} />
         </Paper>
       </Grid>
 
