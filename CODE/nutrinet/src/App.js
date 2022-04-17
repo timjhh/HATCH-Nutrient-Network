@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 import Grid from '@mui/material/Grid';
@@ -8,10 +8,7 @@ import DataController from './DataController.jsx'
 import Footer from 'Footer';
 
 function App() {
-
-  const [selected, setSelected] = useState(null);
-  const [bipartite, setBipartite] = useState(false);
-
+  
   return (
 
     <div className="App">

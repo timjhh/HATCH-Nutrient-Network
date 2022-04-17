@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import Graph from './graph/Graph.jsx';
-import FileSelect from './graph/FileSelect.jsx';
-import { Grid, Paper } from '@mui/material/';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-// import AntSwitch from '@mui/material/AntSwitch';
-import { Route, Routes, Router, Link, BrowserRouter } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
@@ -17,7 +9,6 @@ import MapController from './map/MapController.jsx'
 function DataController() {
 
   const [selected, setSelected] = useState(null);
-  const [bipartite, setBipartite] = useState(false);
 
   // What elevation each tile should have from the webpage
   const paperElevation = 6;

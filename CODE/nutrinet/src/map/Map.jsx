@@ -174,17 +174,17 @@ useEffect(() => {
           
           g.call(tip);
 
-          function slided(d) {
+          // function slided(d) {
 
 
-            let transform = d3.zoomTransform(g.node());
-            transform.k = d.target.value;
+          //   let transform = d3.zoomTransform(g.node());
+          //   transform.k = d.target.value;
 
-            g.attr("transform", transform);
-            d3.select("#sliderP").select("input").attr("value", transform.k)
+          //   g.attr("transform", transform);
+          //   d3.select("#sliderP").select("input").attr("value", transform.k)
 
 
-          }
+          // }
           
           const zoom = d3.zoom()
           .scaleExtent([1, 8])
@@ -202,7 +202,7 @@ useEffect(() => {
 
           });
           
-          let zoomSlider = d3.select("#sliderP")
+          d3.select("#sliderP")
           //.attr("className", "position-absolute")
           //.append("input")
           .datum({})

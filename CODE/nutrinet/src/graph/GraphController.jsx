@@ -12,7 +12,7 @@ function GraphController(props) {
   // All link widths will be between [0,maxWidth]
   const maxWidth = 3;
 
-  const minOpacity = 0.3;
+  const minOpacity = 0.5;
 
 
 
@@ -62,7 +62,7 @@ useEffect(() => {
         const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
 
         const w = await wrangle(d);
-          
+
         // await setCurrent({nodes: w[0], links: w[1]});
         //const g = await genGraph(w);
 

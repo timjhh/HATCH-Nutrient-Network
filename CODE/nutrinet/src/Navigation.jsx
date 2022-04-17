@@ -31,7 +31,7 @@ const Navigation = () => {
 
             <Typography variant="h6" sx={{mx: 1}}>Code</Typography>
             <a href="https://github.com/timjhh/HATCH-Nutrient-Network" rel="noopener noreferrer" target="_blank">
-                <img src={gh} />
+                <img src={gh} alt="Github Logo" />
             </a>
        
         </Box >

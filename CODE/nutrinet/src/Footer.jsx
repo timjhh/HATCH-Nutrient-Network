@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 
 import { Grid, Paper, List, ListItem, Box } from '@mui/material/';
@@ -14,7 +14,7 @@ function Footer() {
 
 
 
-    <Grid container spacing={2} sx={{ mt:2, p:1, bgcolor: '#8f97cf', display: 'block', display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
+    <Grid container spacing={2} sx={{ mt:2, p:1, bgcolor: '#8f97cf', display: "inline-flex", flexDirection: 'row', alignItems: 'center' }}>
 
     {/* <Grid item xs={4} sx={{ display: 'inline-flex' }}>
 

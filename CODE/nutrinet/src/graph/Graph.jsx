@@ -255,7 +255,8 @@ const [sim, setSim] = useState(null);
     .data(nodes)
     .enter().append("g");
 
-    var labels = node.append("text")
+    // Labels
+    node.append("text")
     .text((d) => d.id)
         //.attr('x', -radius) // Optional styling for large circles
         //.style("font-size", "10px")
@@ -268,8 +269,8 @@ const [sim, setSim] = useState(null);
 
 
 
-
-    var circles = node.append("circle")
+    // Circles
+    node.append("circle")
     .attr("r", radius)
     .on("click", (e, d) => {
 
