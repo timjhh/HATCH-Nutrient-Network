@@ -40,7 +40,6 @@ function MapController(props) {
   // This should either be an ISO_A3 Code for a country, or null.
   const [selected, setSelected] = useState(null);
 
-  const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income"];
 
   const [scaleType1, setScaleType1] = useState("Quantile");
   const [scaleType2, setScaleType2] = useState("Quantile");
@@ -193,7 +192,7 @@ function MapController(props) {
       })
 
       // Update global variables for use in child classes
-      setVariables(res.columns.filter(d => !unused.includes(d)));
+      setVariables(res.columns.filter(d => !props.unused.includes(d)));
       setCurrent(data);
       setCurrentSNA(data.filter(z => z.color !== nullclr));
       setSources(Array.from(d3.group(res, d => d.Source).keys()));

@@ -49,31 +49,6 @@ const legendSize = 30;
 
 
 
-
-
-function multiplyColors(c1, c2) {
-  
-  let rgb1 = d3.color(c1);
-  let rgb2 = d3.color(c2);
-
-  let r = Math.floor((rgb1['r'] * rgb2['r']) / 255);
-  let g = Math.floor((rgb1['g'] * rgb2['g']) / 255);
-  let b = Math.floor((rgb1['b'] * rgb2['b']) / 255);
-
-
-  return rgbToHex(r,g,b);
-
-}
-function rgbToHex(r, g, b) {
-  const componentToHex = c => {
-    const hex = c.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  };
-  return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
-}
-
-
-
 useEffect(() => {
        
             
@@ -218,7 +193,7 @@ useEffect(() => {
 
   let nf = [];
 
-  if(props.current.length != 0) { 
+  if(props.current.length !== 0) { 
 
     let paths = g.selectAll("path");
 
@@ -580,19 +555,7 @@ function populateHistogram() {
     .transition()
     .call(d3.axisLeft(scaleY))
 
-  // let rects = svg.selectAll("rect")
-  //   // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
-  //   .data(props.distribution)
-  // .enter().append("rect")
-  //   .attr("class", "bar")
-  //   .attr("fill", d => d.color)
-  //   .attr("x", d => scaleX(d.place)+(itemWidth/2))
-  //   .attr("height", 0)
-  //   .attr("y", hHeight)
-  //   .attr("width", itemWidth)
-
-
-  let rects = svg.selectAll("rect")
+  svg.selectAll("rect")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
     .data(props.distribution)
     .join("rect")
@@ -645,7 +608,7 @@ useEffect(() => {
   //.call(d => d3.select(this).moveToFront())
 
 
-}, [props.selected])
+}, [props.selected, props.highlightClr])
 
 
 useEffect(() => {
@@ -662,7 +625,7 @@ useEffect(() => {
   //.attr("stroke-width", d => d === props.highlight)
   //.filter(d => d === props.highlight).attr("fill", "black")
 
-}, [props.highlight])
+}, [props.highlight, props.highlightClr])
 
   return (
 

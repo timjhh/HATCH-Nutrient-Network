@@ -32,12 +32,15 @@ function DataController() {
   }
 
 
+// NOTE: Removal of more variables in the map object 
 // 4.14 Removed "Omega.3..USDA.only.", "B12..USDA.only."
 const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA"];
 
-
+// Unused variables with names verbatim from the provided .csv file
+// This is passed to MapController to control which variables are selectable in the Map element
+const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
   //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
   // Old regex /\.(csv)$/
@@ -68,6 +71,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
         <Route path='/maps'
           element={<MapController
+          unused={unused}
           files={files}
           nutrients={nutrients}
           paperElevation={paperElevation}
