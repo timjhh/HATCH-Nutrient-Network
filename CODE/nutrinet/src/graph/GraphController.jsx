@@ -344,7 +344,7 @@ useEffect(() => {
             </Grid>
             <Grid item xs={6}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
-              <p>{metaData["density"]}%</p>
+              <p>{(metaData["density"]).toFixed(2)}%</p>
             </Grid>
             <Grid item xs={6}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
@@ -372,8 +372,8 @@ useEffect(() => {
             to providing said nutrient. It is helpful to note that in many cases, crops may contribute significantly to far fewer nutrients than others.
             <br/><br/>
 
-            * LCt is defined as the Largest Contributor to n nutrients. The summation of all LCt's below should equal the total number of nutrients. Thus, Avg. LCt Weight is the contribution
-            each crop makes on average to nutrients where it is the largest contributor. This is compared to the Avg. Weight of this crop to all of its connected nutrients
+            * LCt is defined as the Largest Contributor to n nutrients. The summation of all LCt's below should equal to <b>{props.nutrients.length}</b>, the total number of nutrients. Thus, Avg. LCt Weight is the contribution
+            each crop makes on average to nutrients where it is the largest contributor. This is compared to the Average Weight of this crop to all of its connected nutrients, regardless of its contributive rank.
             <br/>
           </Typography>
           <Grid container mt={2}>
