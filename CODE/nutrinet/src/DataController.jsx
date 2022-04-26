@@ -13,7 +13,6 @@ function DataController() {
   // What elevation each tile should have from the webpage
   const paperElevation = 6;
 
-
   var countries = [];
   var years = [];
   var methods = [];

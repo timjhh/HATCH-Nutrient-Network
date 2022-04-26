@@ -42,7 +42,7 @@ const [sim, setSim] = useState(null);
 
       node.attr("fill-opacity", d => {
         let key;
-        console.log(sel)
+
         if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
           key = d.id+","+sel;
         } else {
@@ -131,6 +131,7 @@ const [sim, setSim] = useState(null);
 
   }, [props.switch])
 
+  
 
 
     // Consider adding async back

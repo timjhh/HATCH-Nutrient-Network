@@ -94,6 +94,9 @@ function FileSelect(props) {
     />
     </FormControl>
     </Grid>
+
+
+    
     <Grid item>
       <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
           <Typography>Bipartite</Typography>
@@ -101,6 +104,15 @@ function FileSelect(props) {
           <Typography>Force-Directed</Typography>
       </Stack>
     </Grid>
+
+    <Grid item>
+      <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
+          <Typography>Bipartite</Typography>
+            <Switch id="monSwitch" checked={props.monopartite} onChange={() => { props.setMonopartite(!props.monopartite) }} name="monopartite" />
+          <Typography>Monopartite</Typography>
+      </Stack>
+    </Grid>
+
 
 </Box>
 </Paper>

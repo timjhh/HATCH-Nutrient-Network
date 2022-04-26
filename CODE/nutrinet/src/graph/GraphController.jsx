@@ -33,7 +33,9 @@ function GraphController(props) {
   const [metaData, setMetaData] = useState(metadata);
 
   const [bipartite, setBipartite] = useState(false);
+  const [monopartite, setMonopartite] = useState(false);
   const [current, setCurrent] = useState([]);
+  const [monoData, setMonoData] = useState([]);
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
   //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
@@ -89,6 +91,9 @@ useEffect(() => {
       let lnks = [];
       let nodes = [];
 
+      let monoLnks = [];
+      let monoLinkMatrix = {};
+
       props.nutrients.forEach(e => {
 
         nds.push({id: e, group: 2, degree: 0 });
@@ -122,12 +127,11 @@ useEffect(() => {
       })
 
 
-
       d.forEach(e => {
 
         nds.push({id: e.FAO_CropName, group: 1, degree: 0 })
         nodes.push(e.FAO_CropName);
-        
+
         Object.entries(e).forEach(f => {
 
 
@@ -149,6 +153,39 @@ useEffect(() => {
 
       })
 
+
+      props.nutrients.forEach(e => {
+
+        // Create regular expression to capture all keys containing this nutrient
+        const regex = new RegExp(`,${e}`);
+
+        // This should be the group of all crops connected to a nutrient
+        let group = Object.keys(linkedMatrix).filter(e => e.match(regex));
+
+        // Connect each group completely :( pretty computationally costly tbqh
+
+        group.forEach(f => {
+
+          let fN = f.split(",")[0];
+
+          group.forEach(g => {
+
+              let gN = g.split(",")[0];
+
+              if(fN !== gN && !monoLinkMatrix[gN+","+fN]) {
+                monoLinkMatrix[fN+","+gN] = 1;
+              }
+
+              // if(fN !== gN && (monoLnks.find(z => z.target === fN && z.source === gN) === undefined && (monoLnks.find(z => z.source === fN && z.target === gN) === undefined))) {
+              //   monoLnks.push({ source: fN, target: gN, value: 10, width: 1 });
+              // }
+
+          })
+
+        })
+
+      })
+
       // For all max-contributing crops, ascertain the # of connections and avg % contributed
       Object.entries(maxes).forEach(f => {
 
@@ -164,6 +201,7 @@ useEffect(() => {
       lnks.forEach(function(d){
 
         nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
+        
 
       });
 
@@ -188,6 +226,7 @@ useEffect(() => {
       setNodes(nodes);
       molloy_reed([nds,lnks]);
       setLinkMatrix(linkedMatrix);
+      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
 
       }
 
@@ -247,9 +286,15 @@ useEffect(() => {
 
 
 
-}, [country, method, year])
+}, [country, method, year, monopartite])
 
 
+useEffect(() => {
+
+  setBipartite(monopartite);
+  setCurrent(monoData);
+
+}, [monopartite])
 
 
 
@@ -310,6 +355,7 @@ useEffect(() => {
           current={current} 
           linkMatrix={linkMatrix}
           switch={bipartite} 
+          monopartite={monopartite}
           highlighted={highlighted} 
           setHighlighted={setHighlighted} />
         </Paper>
@@ -326,6 +372,7 @@ useEffect(() => {
           method={method} setMethod={setMethod}
           year={year} setYear={setYear}
           bipartite={bipartite} setBipartite={setBipartite}
+          monopartite={monopartite} setMonopartite={setMonopartite}
           highlightOptions={nodes}
           highlighted={highlighted} setHighlighted={setHighlighted}
           {...props} />
