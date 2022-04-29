@@ -35,6 +35,7 @@ function GraphController(props) {
   const [bipartite, setBipartite] = useState(false);
   const [monopartite, setMonopartite] = useState(false);
   const [current, setCurrent] = useState([]);
+  const [bipData, setBipData] = useState([]);
   const [monoData, setMonoData] = useState([]);
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
@@ -153,7 +154,6 @@ useEffect(() => {
 
       })
 
-
       props.nutrients.forEach(e => {
 
         // Create regular expression to capture all keys containing this nutrient
@@ -166,25 +166,45 @@ useEffect(() => {
 
         group.forEach(f => {
 
-          let fN = f.split(",")[0];
+          // let fN = f.split(",")[0];
+          let fN = f.split(",").slice(0,-1).join(",");
 
           group.forEach(g => {
 
-              let gN = g.split(",")[0];
+              //let gN = g.split(",")[0];
+              let gN = g.split(",").slice(0,-1).join(",");
 
-              if(fN !== gN && !monoLinkMatrix[gN+","+fN]) {
-                monoLinkMatrix[fN+","+gN] = 1;
+              if((fN !== gN) && !monoLinkMatrix[gN+"/"+fN]) {
+                monoLinkMatrix[fN+"/"+gN] = 1;
               }
-
-              // if(fN !== gN && (monoLnks.find(z => z.target === fN && z.source === gN) === undefined && (monoLnks.find(z => z.source === fN && z.target === gN) === undefined))) {
-              //   monoLnks.push({ source: fN, target: gN, value: 10, width: 1 });
-              // }
 
           })
 
         })
 
       })
+    
+      console.log(monoLinkMatrix)
+      Object.keys(monoLinkMatrix).forEach(e => {
+        let pair = e.split("/");
+        let first = nds.find(f => f.id === pair[0]);
+        let second = nds.find(f => f.id === pair[1]);
+
+        let fV = Object.entries(lnks).find(f => f.source === first);
+        let sV = Object.entries(lnks).find(f => f.source === second);
+        
+        let val = fV && sV
+        ? fV[1].value + sV[1].value
+        : 0;
+
+        if(first && second) {
+          monoLnks.push({ source: first, target: second, value: val, width: 0.01 });  
+        }
+  
+      })
+
+
+
 
       // For all max-contributing crops, ascertain the # of connections and avg % contributed
       Object.entries(maxes).forEach(f => {
@@ -194,6 +214,7 @@ useEffect(() => {
         maxes[f[0]][1] = d3.mean(maxes[f[0]][0]);
         maxes[f[0]][2] = d3.mean(cropLinks, d => d.width/maxWidth)
         maxes[f[0]][3] = cropLinks.length;
+
       })
 
 
@@ -220,13 +241,28 @@ useEffect(() => {
       metadata["maxes"] = statItems;
 
 
+
       // Update all data for graph and webpage
       setMetaData(metadata);
-      setCurrent([nds,lnks]);
+      setBipData([nds,lnks]);
+      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
-      setLinkMatrix(linkedMatrix);
-      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
+      
+
+      console.log("monoLinks " + Object.keys(monoLinkMatrix).length + " reg " + Object.keys(linkedMatrix).length)
+
+      if(props.monopartite) {
+        setLinkMatrix(monoLinkMatrix);
+        setCurrent([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
+      } else {
+        setLinkMatrix(linkedMatrix);
+        setCurrent([nds,lnks]);
+      }
+
+      
+      
+
 
       }
 
@@ -286,13 +322,22 @@ useEffect(() => {
 
 
 
-}, [country, method, year, monopartite])
+}, [country, method, year])
 
 
 useEffect(() => {
 
   setBipartite(monopartite);
-  setCurrent(monoData);
+
+  if(monopartite) {
+    setCurrent(monoData);
+    //setLinkMatrix(monoLinkMatrix);
+  } else {
+    setCurrent(bipData);
+    //setLinkMatrix(linkMatrix);
+  }
+
+
 
 }, [monopartite])
 
@@ -312,6 +357,14 @@ useEffect(() => {
           <Typography variant={"h4"} style={{"textAlign": "center"}}>Using This Tool</Typography>
           
           <Typography variant={"p"}>
+
+            <br/>
+            <b>* Monopartite selection is an experimental setting as of now. It creates a new graph by connecting each crop with a mutual nutrient. Currently there is no weight applied
+              to each pair, but it should be the addition of each crop's link to all mutual nutrients. With this new graph, traditional graph theory approaches like&nbsp; 
+              <a href="https://en.wikipedia.org/wiki/Closeness_centrality" target="_blank" rel="noreferrer">Closeness Centrality</a> can be applied to find the centrality of each node.
+            </b>
+            <br/><br/>
+          
             In this interactive graph, the relationship between nutrients(blue) and crops(red) is represented with undirected, weighted edges. 
             Each edge weight represents the percent contribution each crop gives to a nutrient. For example, Iron may be provided equally by three crops.
             Their thicknesses will all be equally one third of the maximum width. The opacity or visibility of each link is also influenced by its strength. The Density of a graph is defined by the number of links, divided by the total amount possible.

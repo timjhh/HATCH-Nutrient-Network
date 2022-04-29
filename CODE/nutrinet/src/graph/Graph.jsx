@@ -82,7 +82,7 @@ const [sim, setSim] = useState(null);
 
     var forceX = d3.forceX(function(d) {
   
-      if(!props.switch) {
+      if(!props.switch && !props.monopartite) {
 
         return d.group === 2 ? width/5 : (4*width)/5;
   
@@ -187,16 +187,14 @@ const [sim, setSim] = useState(null);
       .force("y", null)
       .force("repel", d3.forceManyBody().strength(0))
       sim.alpha(1).restart();
+
     }
-
-
-
 
   } else {
 
   var forceX = d3.forceX(function(d) {
 
-    if(!props.switch) {
+    if(!props.switch && !props.monopartite) {
 
       return d.group === 2 ? width/5 : (4*width)/5;
 
