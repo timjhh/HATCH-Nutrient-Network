@@ -17,7 +17,7 @@ function GraphController(props) {
   // Memoized object holding all connected nodes / links
   // Because links are constructed from a crop to a nutrient, the hashtable's keys will be
   // [crop.id,nutrient.id]
-  // Entries are 1 if the link exists, 0 otherwise
+  // Entries are (weight) if the link exists, null otherwise
   const [linkMatrix, setLinkMatrix] = useState({});
 
   // I literally cannot believe I need an object for this
@@ -144,7 +144,7 @@ useEffect(() => {
               if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
               
               // There is a link between this crop/nutrient
-              linkedMatrix[e.FAO_CropName + "," + f[0]] = 1;
+              linkedMatrix[e.FAO_CropName + "," + f[0]] = ((f[1]/sums[f[0]])*maxWidth);
 
             }
             
@@ -168,11 +168,17 @@ useEffect(() => {
 
           // let fN = f.split(",")[0];
           let fN = f.split(",").slice(0,-1).join(",");
+          let rF = new RegExp(`${fN},`);
 
           group.forEach(g => {
 
               //let gN = g.split(",")[0];
               let gN = g.split(",").slice(0,-1).join(",");
+
+              let rG = new RegExp(`${gN},`);
+              
+              //let sum = Object.keys(linkedMatrix).filter(h => h.match(rF) || h.match(rG));
+              //console.log(sum);
 
               if((fN !== gN) && !monoLinkMatrix[gN+"/"+fN]) {
                 monoLinkMatrix[fN+"/"+gN] = 1;
