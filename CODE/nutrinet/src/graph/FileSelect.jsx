@@ -99,8 +99,8 @@ function FileSelect(props) {
     
     <Grid item>
       <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
-          <Typography>Bipartite</Typography>
-            <Switch id="bipSwitch" checked={props.bipartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
+          <Typography>Railway</Typography>
+            <Switch id="bipSwitch" checked={props.bipartite} disabled={props.monopartite} onChange={() => { props.setBipartite(!props.bipartite) }} name="bipartite" />
           <Typography>Force-Directed</Typography>
       </Stack>
     </Grid>

@@ -41,15 +41,29 @@ const [sim, setSim] = useState(null);
       connected.attr("stroke", d => props.nutrients.includes(sel) ? "steelblue" : "red");
 
       node.attr("fill-opacity", d => {
+
         let key;
 
-        if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
-          key = d.id+","+sel;
+
+
+        if(props.monopartite) {
+
+          return d.id === sel || props.linkMatrix[d.id+"/"+sel] || props.linkMatrix[sel+"/"+d.id]
+          
         } else {
-          key = sel+","+d.id;
+
+
+          if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
+            key = d.id+"/"+sel;
+          } else {
+            key = sel+"/"+d.id;
+          }
+
+
         }
 
         return props.linkMatrix[key] || d.id === sel ? 1 : 0.1
+
       })
 
     } else {
@@ -64,72 +78,63 @@ const [sim, setSim] = useState(null);
 
   useEffect(() => {
 
-    console.log(props.switch)
-  // Checked if the graph is force directed
-  if(props.switch) {
+    if(!sim) return;
+
+      
+    // Checked if the graph is force directed
+    if(props.switch) {
+
+      //let linkStr = props.monopartite ? (1/(2*props.maxWidth*props.nutrients.length)) : 50
 
 
-    if(sim) {
+
+      let lf = sim.force("link")
+      lf.distance(d => props.monopartite ? d.value*100 : ((props.maxWidth-d.width)*50)).strength(0.1)
+
 
       sim.force("x", null).force("y", null)
-      .force("link", d3.forceLink().id(d => d.id).distance(d => ((props.maxWidth-d.width)*10)).strength(0.8)) //
+      .force("charge", d3.forceManyBody())
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.02))
       .force("repel", d3.forceManyBody().strength(-50))
-      //.force("collision", d3.forceCollide(5));
-      sim.alpha(1).restart();
-    }
+      .force("collision", d3.forceCollide(5));
 
-  } else { // Checked if graph is bipartite
 
-    var forceX = d3.forceX(function(d) {
-  
-      if(!props.switch && !props.monopartite) {
+    } else { // Checked if graph is bipartite
 
+
+      let lf = sim.force("link")
+      lf.distance(null).strength(null)
+
+      var forceX = d3.forceX(function(d) {
         return d.group === 2 ? width/5 : (4*width)/5;
-  
-      }
-      
-      return null;
-
       }).strength((d) => {
-        return d.group === 2 ? 2 : 1;
+        return 1;
       });
-  
-      
-  
-    var forceY = d3.forceY(d => {
-  
-        if(props.nutrients.includes(d.id)) {
-  
-          // let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
-  
-          // let mean = d3.mean(subset, e => (e.width/3));
-  
-          return props.nutrients.indexOf(d.id)*15;
-  
-        }
-  
-        return null; // Crops do not need a force value
-        // return nodes.indexOf(node.sort(e => e.id)) * radius; 
-  
-  
-    }).strength(d => d.group === 2 ? 1 : 0);
+      var forceY = d3.forceY(d => {
+          if(props.nutrients.includes(d.id)) {
+            return (props.nutrients.indexOf(d.id)*15)+50;
+          }
+          return (height/2); // Crops do not need a force value
+      }).strength(d => d.group === 2 ? 1 : 0.3);
 
-    if(sim) {
-      sim.force("x", forceX).force("y", forceY)
-      .force("repel", d3.forceManyBody().strength(-100))
-      .force("collision", d3.forceCollide(10));
-      sim.alpha(1).restart();
+        sim.force("x", forceX).force("y", forceY)
+        //.force("link", d3.forceLink().id(d => d.id))
+        .force("charge", d3.forceManyBody())
+        .force("center", null)
+        .force("repel", d3.forceManyBody().strength(-100))
+        .force("collision", d3.forceCollide(10));
+
     }
 
-  }
+
+    sim.alpha(1).restart();
 
 
 
+    setSim(sim);
 
 
-
-
-  }, [props.switch])
+  }, [props.switch, props.monopartite])
 
   
 
@@ -179,76 +184,42 @@ const [sim, setSim] = useState(null);
     svg.call(zoom);
 
 
-  if(props.switch) {
 
-    if(sim) {
-
-      sim.force("x", null)
-      .force("y", null)
-      .force("link", d3.forceLink().id(d => d.id).distance(d => ((props.maxWidth-d.width)*10)).strength(0.8))
-      .force("repel", d3.forceManyBody().strength(-50))
-      sim.alpha(1).restart();
-
-    }
-
-  } else {
+  // var forceX = d3.forceX(function(d) {
+  //     return d.group === 2 ? width/5 : (4*width)/5;
+  //   }).strength((d) => {
+  //     return 2;
+  //   });
+  // var forceY = d3.forceY(d => {
+  //     if(props.nutrients.includes(d.id)) {
+  //       return props.nutrients.indexOf(d.id)*15;
+  //     }
+  //     return null; // Crops do not need a force value
+  // }).strength(d => d.group === 2 ? 1 : 0);
 
   var forceX = d3.forceX(function(d) {
-
-    if(!props.switch && !props.monopartite) {
-
-      return d.group === 2 ? width/5 : (4*width)/5;
-
-    }
-
-
-      return 0.01;
-    }).strength((d) => {
-      return 2;
-      //return d3.select("#bipSwitch").attr("checked") ? 0.01 : 0.5;
-    });
-
-  //var forceY = d3.forceY().strength(0);
+    return d.group === 2 ? width/5 : (4*width)/5;
+  }).strength((d) => {
+    return 1;
+  });
   var forceY = d3.forceY(d => {
-
       if(props.nutrients.includes(d.id)) {
-
-        //let subset = links.filter(e => e.source.id === d.id || e.target.id === d.id);
-
-        //let mean = d3.mean(subset, e => (e.width/3));
-
-        return props.nutrients.indexOf(d.id)*15;
-
+        return (props.nutrients.indexOf(d.id)*15);
       }
-
-      return null; // Crops do not need a force value
-      // return nodes.indexOf(node.sort(e => e.id)) * radius; 
-
-
-  }).strength(d => d.group === 2 ? 1 : 0);
-
-    // if(sim) {
-    //   sim.force("x", forceX).force("y", forceY)
-    //   .force("repel", d3.forceManyBody().strength(-100))
-    //   .force("collision", d3.forceCollide(10));
-    //   sim.alpha(1).restart();
-    // }
-
-  }
-
-
+      return (height/2); // Crops do not need a force value
+  }).strength(d => d.group === 2 ? 1 : 0.3);
 
 
     const simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(d => d.id))
+    .force("link", d3.forceLink().id(d => d.id).strength(props.switch ? 0.1 : null))
     .force("charge", d3.forceManyBody())
-    .force("repel", d3.forceManyBody().strength(-100))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide(10))
+    .force("repel", d3.forceManyBody().strength(props.switch ? -50 : -100))
+    .force("center", props.switch ? d3.forceCenter(width / 2, height / 2) : null)
+    .force("collision", d3.forceCollide(props.switch ? 5 : 10))
     .force("x", props.switch ? null : forceX)
     .force("y", props.switch ? null : forceY);
 
-    setSim(simulation);
+
 
 
   var link = g.append("g")
@@ -285,13 +256,7 @@ const [sim, setSim] = useState(null);
     // Circles
     node.append("circle")
     .attr("r", radius)
-    .on("click", (e, d) => {
-
-
-          props.setHighlighted(d.id);
-
-
-    })
+    .on("click", (e, d) => { props.setHighlighted(d.id) })
     .attr("fill", d => (d.group === 2 ? "steelblue" : "red"))
     .call(d3.drag()
       .on("start", dragstarted)
@@ -313,7 +278,7 @@ const [sim, setSim] = useState(null);
 
 
   function dragstarted(d) {
-    if (!d.active) sim.alphaTarget(0.3).restart();
+    if (!d.active) simulation.alphaTarget(0.3).restart();
     d.subject.fx = d.x;
     d.subject.fy = d.y;
   }
@@ -324,7 +289,7 @@ const [sim, setSim] = useState(null);
   }
 
   function dragended(d) {
-    if (!d.active) sim.alphaTarget(0);
+    if (!d.active) simulation.alphaTarget(0);
     d.subject.fx = null;
     d.subject.fy = null;
   }
@@ -348,7 +313,7 @@ const [sim, setSim] = useState(null);
   }
 
 
-
+  setSim(simulation);
 
 
 
@@ -356,7 +321,7 @@ const [sim, setSim] = useState(null);
       //simulation.force("y").initialize(nodes);
 
       // Restart simulation
-      sim
+      simulation
       .alpha(0.3)
       .alphaTarget(0)
       .restart();
