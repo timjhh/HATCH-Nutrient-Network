@@ -22,7 +22,9 @@ function DataController() {
   }
 
 
-// NOTE: Removal of more variables in the map object 
+// NOTE: Removal of more variables in the map object
+// NOTE: GraphController creates links using these nutrients and the FAO_CropName - if you wish to do further analysis of matrix variables, change code at start of
+// GraphController to include nutrients, cropname and your desired vars
 // 4.14 Removed "Omega.3..USDA.only.", "B12..USDA.only."
 const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
@@ -52,6 +54,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
         <Route path='/'
          element={<GraphController
          nutrients={nutrients}
+         unused={unused}
          paperElevation={paperElevation}
          files={files} selected={selected} setSelected={setSelected}
          // country={country} setCountry={setCountry}

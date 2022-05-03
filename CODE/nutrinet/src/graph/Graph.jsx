@@ -64,15 +64,15 @@ const [sim, setSim] = useState(null);
 
   useEffect(() => {
 
-
+    console.log(props.switch)
   // Checked if the graph is force directed
   if(props.switch) {
 
 
     if(sim) {
 
-      sim.force("x", null)
-      .force("y", null)
+      sim.force("x", null).force("y", null)
+      .force("link", d3.forceLink().id(d => d.id).distance(d => ((props.maxWidth-d.width)*10)).strength(0.8)) //
       .force("repel", d3.forceManyBody().strength(-50))
       //.force("collision", d3.forceCollide(5));
       sim.alpha(1).restart();
@@ -185,7 +185,8 @@ const [sim, setSim] = useState(null);
 
       sim.force("x", null)
       .force("y", null)
-      .force("repel", d3.forceManyBody().strength(0))
+      .force("link", d3.forceLink().id(d => d.id).distance(d => ((props.maxWidth-d.width)*10)).strength(0.8))
+      .force("repel", d3.forceManyBody().strength(-50))
       sim.alpha(1).restart();
 
     }
@@ -226,8 +227,17 @@ const [sim, setSim] = useState(null);
 
   }).strength(d => d.group === 2 ? 1 : 0);
 
+    // if(sim) {
+    //   sim.force("x", forceX).force("y", forceY)
+    //   .force("repel", d3.forceManyBody().strength(-100))
+    //   .force("collision", d3.forceCollide(10));
+    //   sim.alpha(1).restart();
+    // }
 
   }
+
+
+
 
     const simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(d => d.id))
@@ -235,10 +245,11 @@ const [sim, setSim] = useState(null);
     .force("repel", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collision", d3.forceCollide(10))
-    .force("x", forceX)
-    .force("y", forceY);
+    .force("x", props.switch ? null : forceX)
+    .force("y", props.switch ? null : forceY);
 
     setSim(simulation);
+
 
   var link = g.append("g")
       .attr("class", "links")
@@ -287,6 +298,7 @@ const [sim, setSim] = useState(null);
       .on("drag", dragged)
       .on("end", dragended));
 
+    
 
     simulation
     .nodes(nodes)
@@ -301,7 +313,7 @@ const [sim, setSim] = useState(null);
 
 
   function dragstarted(d) {
-    if (!d.active) simulation.alphaTarget(0.3).restart();
+    if (!d.active) sim.alphaTarget(0.3).restart();
     d.subject.fx = d.x;
     d.subject.fy = d.y;
   }
@@ -312,7 +324,7 @@ const [sim, setSim] = useState(null);
   }
 
   function dragended(d) {
-    if (!d.active) simulation.alphaTarget(0);
+    if (!d.active) sim.alphaTarget(0);
     d.subject.fx = null;
     d.subject.fy = null;
   }
@@ -344,7 +356,7 @@ const [sim, setSim] = useState(null);
       //simulation.force("y").initialize(nodes);
 
       // Restart simulation
-      simulation
+      sim
       .alpha(0.3)
       .alphaTarget(0)
       .restart();

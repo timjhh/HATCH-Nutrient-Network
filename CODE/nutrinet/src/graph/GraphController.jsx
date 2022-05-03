@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
-import { Grid, Paper, Typography, Box } from '@mui/material/'
-
+import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack } from '@mui/material/'
+import InfoIcon from '@mui/icons-material/Info';
 
 import * as d3 from "d3";
+import { group } from 'd3';
 
 
 function GraphController(props) {
@@ -133,7 +134,11 @@ useEffect(() => {
         nds.push({id: e.FAO_CropName, group: 1, degree: 0 })
         nodes.push(e.FAO_CropName);
 
-        Object.entries(e).forEach(f => {
+        // Take subset of actually used variables as specified in DataController, this is all nutrients and the FAO_CropName
+        let subset = Object.entries(e).filter(f => props.nutrients.includes(f[0]) || f[0] === "FAO_CropName")
+
+
+        subset.forEach(f => {
 
 
             // Links are constructed from a crop to a nutrient
@@ -141,10 +146,15 @@ useEffect(() => {
             // Width is the value expressed from [0,maxWidth]
             if(!Number.isNaN(f[1]) && f[1] > 0) {
               // if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
-              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
               
+              // Take 2
+              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
+             
+              // Take 3
+              //if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: (sums[f[0]]*maxWidth)-(f[1]/sums[f[0]])*maxWidth, width: (f[1]/sums[f[0]])*maxWidth })
+
               // There is a link between this crop/nutrient
-              linkedMatrix[e.FAO_CropName + "," + f[0]] = ((f[1]/sums[f[0]])*maxWidth);
+              linkedMatrix[e.FAO_CropName + "/" + f[0]] = ((f[1]/sums[f[0]])*maxWidth);
 
             }
             
@@ -154,41 +164,115 @@ useEffect(() => {
 
       })
 
-      props.nutrients.forEach(e => {
 
-        // Create regular expression to capture all keys containing this nutrient
-        const regex = new RegExp(`,${e}`);
+      let linkKeys = Object.keys(linkedMatrix);
 
-        // This should be the group of all crops connected to a nutrient
-        let group = Object.keys(linkedMatrix).filter(e => e.match(regex));
+  
+      // let t1 = linkKeys.filter(i => i.split("/")[0] === "Anise, badian, fennel, coriander");
+      // let s1 = d3.sum(t1, d => linkedMatrix[d])
 
-        // Connect each group completely :( pretty computationally costly tbqh
+      // let t2 = linkKeys.filter(i => i.split("/")[0] === "Almonds, with shell");
+      // let s2 = d3.sum(t2, d => linkedMatrix[d])
 
-        group.forEach(f => {
+      // console.log(linkKeys)
+      // let gr = linkKeys.filter(i => t2.includes(i) && t1.includes(i));
+      // console.log(gr);
+      
+      // console.log("s1 " + s1);
+      // console.log("s2 " + s2);
+      // console.log("sum " + (s1+s2))
 
-          // let fN = f.split(",")[0];
-          let fN = f.split(",").slice(0,-1).join(",");
-          let rF = new RegExp(`${fN},`);
+      for(let i=0;i<linkKeys.length;i++) {
 
-          group.forEach(g => {
+        let c1 = linkKeys[i].split("/")[0];
+        let n1 = linkKeys[i].split("/")[1];
 
-              //let gN = g.split(",")[0];
-              let gN = g.split(",").slice(0,-1).join(",");
+        for(let j=i;j<linkKeys.length;j++) {
 
-              let rG = new RegExp(`${gN},`);
+          let c2 = linkKeys[j].split("/")[0];
+          let n2 = linkKeys[j].split("/")[1];
+
+          if(n1 === n2 && c1 !== c2) {
+            if(monoLinkMatrix[c1+"/"+c2]) {
+              monoLinkMatrix[c1+"/"+c2] += (linkedMatrix[linkKeys[i]] + linkedMatrix[linkKeys[j]])
+            } else {
+              monoLinkMatrix[c1+"/"+c2] = (linkedMatrix[linkKeys[i]] + linkedMatrix[linkKeys[j]]);
+            }
+          }
+
+
+        }
+
+      }
+
+      // Object.keys(linkedMatrix).forEach((e,idx) => {
+
+      //   let crop = e.split("/")[0];
+      //   const regex = new RegExp(`${crop}/`);
+
+      //   // This should be the group of all nutrients this crop is connected to
+      //   let group = Object.keys(linkedMatrix).filter(f => f.match(regex) && f !== e);
+
+      //   let c1 = e.split("/").slice(0,-1).join("/");
+      //   let n1 = e.split("/")[1];
+
+      //   //group.forEach(f => {
+      //   for(let i=idx;i<group.length;i++) {
+
+      //     const regex = new RegExp(`/${n1}`);
+      //     let g2 = Object.keys(linkedMatrix).filter(f => f.match(regex) && f.split("/")[0] !== c1);
+
+      //     g2.forEach(f => {
+      //       let c2 = f.split("/")[0];
+      //       if(monoLinkMatrix[c1+"/"+c2]) {
+      //         monoLinkMatrix[c1+"/"+c2]
+      //       } else if(monoLinkMatrix[c2+"/"+c1]) {
+  
+      //       } else {
+      //         monoLinkMatrix[c1+"/"+c2] = 0;
+      //       } 
+      //     })
+
+      //   }
+      //   //})
+        
+      // })
+
+      // props.nutrients.forEach(e => {
+
+      //   // Create regular expression to capture all keys containing this nutrient
+      //   const regex = new RegExp(`,${e}`);
+
+      //   // This should be the group of all crops connected to a nutrient
+      //   let group = Object.keys(linkedMatrix).filter(e => e.match(regex));
+
+      //   // Connect each group completely :( pretty computationally costly tbqh
+
+      //   group.forEach(f => {
+
+      //     // let fN = f.split(",")[0];
+      //     let fN = f.split(",").slice(0,-1).join(",");
+      //     let rF = new RegExp(`${fN},`);
+
+      //     group.forEach(g => {
+
+      //         //let gN = g.split(",")[0];
+      //         let gN = g.split(",").slice(0,-1).join(",");
+
+      //         let rG = new RegExp(`${gN},`);
               
-              //let sum = Object.keys(linkedMatrix).filter(h => h.match(rF) || h.match(rG));
-              //console.log(sum);
+      //         //let sum = Object.keys(linkedMatrix).filter(h => h.match(rF) || h.match(rG));
+      //         //console.log(sum);
 
-              if((fN !== gN) && !monoLinkMatrix[gN+"/"+fN]) {
-                monoLinkMatrix[fN+"/"+gN] = 1;
-              }
+      //         if((fN !== gN) && !monoLinkMatrix[gN+"/"+fN]) {
+      //           monoLinkMatrix[fN+"/"+gN] = 1;
+      //         }
 
-          })
+      //     })
 
-        })
+      //   })
 
-      })
+      // })
     
       console.log(monoLinkMatrix)
       Object.keys(monoLinkMatrix).forEach(e => {
@@ -203,8 +287,11 @@ useEffect(() => {
         ? fV[1].value + sV[1].value
         : 0;
 
+        // width = val / (2 * max # of connections a crop and nutrient can have)
+        // val = 1 - width, because we want strongly linked nutrients closer together
         if(first && second) {
-          monoLnks.push({ source: first, target: second, value: val, width: 0.01 });  
+          monoLnks.push({ source: first, target: second, value: (2*(maxWidth*props.nutrients.length))-(val/(2*(maxWidth*props.nutrients.length))), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
+          // monoLnks.push({ source: first, target: second, value: val, width: (val/(2*(maxWidth*props.nutrients.length))) });  
         }
   
       })
@@ -438,7 +525,7 @@ useEffect(() => {
         </Box>
 
         <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex', alignItems: 'stretch' }}>
-          <Paper elevation={props.paperElevation} sx={{ mt:2, p:2 }}>
+          <Paper elevation={props.paperElevation} sx={{ mt:2, p:1, pl:2 }}>
             <Grid container>
             <Grid item xs={6}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
@@ -449,11 +536,21 @@ useEffect(() => {
               <p>{metaData["links"]}</p>
             </Grid>
             <Grid item xs={6}>
+              <Stack direction="row" alignItems={"center"}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
+              <Tooltip title="Total amount of links divided by the largest amount possible">
+                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
+              </Tooltip>
+              </Stack>
               <p>{(metaData["density"]).toFixed(2)}%</p>
             </Grid>
             <Grid item xs={6}>
+              <Stack direction="row" alignItems={"center"}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
+              <Tooltip title="Strength between a node is the amount of a nutrient present in a node, normalized between [0,max]. This is the average strength between all connections.">
+                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
+              </Tooltip>
+              </Stack>
               <p className='text-wrap'>{(parseFloat(metaData["avgWeight"])/maxWidth).toFixed(4)}%</p>
             </Grid>
             </Grid>
