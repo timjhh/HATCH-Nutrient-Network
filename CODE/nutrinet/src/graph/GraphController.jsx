@@ -205,8 +205,7 @@ useEffect(() => {
 
       }
 
-    
-      console.log(monoLinkMatrix)
+  
       Object.keys(monoLinkMatrix).forEach(e => {
         let pair = e.split("/");
         let first = nds.find(f => f.id === pair[0]);
