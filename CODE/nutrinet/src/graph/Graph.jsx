@@ -89,7 +89,7 @@ const [sim, setSim] = useState(null);
 
 
       let lf = sim.force("link")
-      lf.distance(d => props.monopartite ? d.value*100 : ((props.maxWidth-d.width)*50)).strength(0.1)
+      lf.distance(d => props.monopartite ? (props.maxWidth-d.value)*400 : ((props.maxWidth-d.width)*50)).strength(props.monopartite ? 0.001 : 0.1)
 
 
       sim.force("x", null).force("y", null)

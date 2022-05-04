@@ -5,7 +5,6 @@ import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack } from '@mui/m
 import InfoIcon from '@mui/icons-material/Info';
 
 import * as d3 from "d3";
-import { group } from 'd3';
 
 
 function GraphController(props) {
@@ -205,23 +204,36 @@ useEffect(() => {
 
       }
 
+      let maxMono = d3.max(Object.entries(monoLinkMatrix), e => e[1]);
+      console.log(maxMono);
   
       Object.keys(monoLinkMatrix).forEach(e => {
         let pair = e.split("/");
         let first = nds.find(f => f.id === pair[0]);
         let second = nds.find(f => f.id === pair[1]);
 
-        let fV = Object.entries(lnks).find(f => f.source === first);
-        let sV = Object.entries(lnks).find(f => f.source === second);
+        //let fV = Object.entries(lnks).find(f => f.source === first);
+        //let sV = Object.entries(lnks).find(f => f.source === second);
         
-        let val = fV && sV
-        ? fV[1].value + sV[1].value
-        : 0;
+        //let val = fV && sV
+        //? fV[1].value + sV[1].value
+        //: 0;
+
+        let val = monoLinkMatrix[e];
+
 
         // width = val / (2 * max # of connections a crop and nutrient can have)
         // val = 1 - width, because we want strongly linked nutrients closer together
         if(first && second) {
-          monoLnks.push({ source: first, target: second, value: (2*(maxWidth*props.nutrients.length))-(val/(2*(maxWidth*props.nutrients.length))), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
+          
+          // let max = 2*maxWidth*props.nutrients.length; Alternate approach
+          // (max)-(val/(2*(maxWidth*props.nutrients.length)))
+
+
+          monoLnks.push({ source: first, target: second, value: maxWidth*(val/maxMono), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
+
+          //monoLnks.push({ source: first, target: second, value: (2*(maxWidth*props.nutrients.length))-(val/(2*(maxWidth*props.nutrients.length))), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
+          
           // monoLnks.push({ source: first, target: second, value: val, width: (val/(2*(maxWidth*props.nutrients.length))) });  
         }
   
@@ -272,16 +284,23 @@ useEffect(() => {
       setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
-      
 
       console.log("monoLinks " + Object.keys(monoLinkMatrix).length + " reg " + Object.keys(linkedMatrix).length)
 
       if(props.monopartite) {
         setLinkMatrix(monoLinkMatrix);
+
+
         setCurrent([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
+          //setNodes(monoData[0].map(e => e.id));
+
       } else {
+        
         setLinkMatrix(linkedMatrix);
+
         setCurrent([nds,lnks]);
+          //setNodes(bipData[0].map(e => e.id))
+
       }
 
       
@@ -306,7 +325,7 @@ useEffect(() => {
         let MR = (mean**2+1)/mean;
         console.log("Molloy-Reed Number: " + MR)
 
-        let fraction = 1 - (1/(MR-1));
+        // let fraction = 1 - (1/(MR-1));
         
         // console.log(fraction);
 
@@ -354,11 +373,22 @@ useEffect(() => {
   setBipartite(monopartite);
 
   if(monopartite) {
-    setCurrent(monoData);
-    //setLinkMatrix(monoLinkMatrix);
+    if(monoData.length > 0) {
+      setCurrent(monoData);
+      //setLinkMatrix(monoLinkMatrix);
+      setNodes(monoData[0].map(e => e.id));
+    }
   } else {
-    setCurrent(bipData);
-    //setLinkMatrix(linkMatrix);
+    
+    if(bipData && bipData.length > 0) {
+
+      setCurrent(bipData);
+      //setLinkMatrix(linkMatrix);
+      console.log(bipData)
+      setNodes(bipData[0].map(e => e.id));
+      
+    }
+
   }
 
 
@@ -455,7 +485,7 @@ useEffect(() => {
           {...props} />
         </Box>
 
-        <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex', alignItems: 'stretch' }}>
+        <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex' }}>
           <Paper elevation={props.paperElevation} sx={{ mt:2, p:1, pl:2 }}>
             <Grid container>
             <Grid item xs={6}>
