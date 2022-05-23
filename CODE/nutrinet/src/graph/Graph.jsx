@@ -112,7 +112,7 @@ const [sim, setSim] = useState(null);
       });
       var forceY = d3.forceY(d => {
           if(props.nutrients.includes(d.id)) {
-            return (props.nutrients.indexOf(d.id)*15)+50;
+            return (props.nutrients.indexOf(d.id)*15)+80;
           }
           return (height/2); // Crops do not need a force value
       }).strength(d => d.group === 2 ? 1 : 0.3);
@@ -204,7 +204,7 @@ const [sim, setSim] = useState(null);
   });
   var forceY = d3.forceY(d => {
       if(props.nutrients.includes(d.id)) {
-        return (props.nutrients.indexOf(d.id)*15);
+        return (props.nutrients.indexOf(d.id)*15)+80;
       }
       return (height/2); // Crops do not need a force value
   }).strength(d => d.group === 2 ? 1 : 0.3);

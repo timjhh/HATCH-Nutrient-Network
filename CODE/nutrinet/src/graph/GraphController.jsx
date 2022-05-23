@@ -32,8 +32,6 @@ function GraphController(props) {
   // Metadata about graph such as node/link count, density, etc.
   const [metaData, setMetaData] = useState(metadata);
 
-  const [threshold,setThreshold] = useState(true);
-
   const [bipartite, setBipartite] = useState(false);
   const [monopartite, setMonopartite] = useState(false);
   const [current, setCurrent] = useState([]);
@@ -62,22 +60,33 @@ useEffect(() => {
 
       try {
 
-        let regex;
-        if(props.threshold) {
-          regex = new RegExp(`${country}_${method}_${year}`);
-        } else {
-          regex = new RegExp(`${country}_${method}_noThreshold_${year}`);
-        }
+        console.log(props.files)
+
+        let thresh = props.threshold?'threshold':'nothreshold';
+        //let regex = new RegExp(`${country}|${method}|${year}`);
+        // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
+        //let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
+        let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
+
+        //let regex;
+        // if(props.threshold) {
+        //   regex = new RegExp(`${country}_${method}_${year}`);
+        // } else {
+        //   regex = new RegExp(`${country}_${method}_noThreshold_${year}`);
+        // }
 
         var filtered = props.files.filter(f => f.match(regex)).join();
 
+        // console.log("./DATA_INPUTS/Tabular_data_inputs/"+(props.threshold ? "threshold":"nothreshold")+"/"+filtered)
+        // console.log(filtered)
+        // console.log("./DATA_INPUTS/Tabular_data_inputs/"+filtered)
+
+        console.log("./DATA_INPUTS/Tabular_data_inputs/"+filtered)
         console.log(filtered)
-
-
 
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
-        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+(threshold ? "threshold":"nothreshold")+"/"+filtered);
+        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+filtered);
 
         const w = await wrangle(d);
 
@@ -352,7 +361,7 @@ useEffect(() => {
 
 
           return d3.csv(link).then((res, idz) => {
-
+            console.log(res)
             return res;
 
           });
@@ -376,7 +385,7 @@ useEffect(() => {
 
 
 
-}, [country, method, year])
+}, [country, method, year, props.threshold])
 
 
 useEffect(() => {
@@ -493,7 +502,6 @@ useEffect(() => {
           monopartite={monopartite} setMonopartite={setMonopartite}
           highlightOptions={nodes}
           highlighted={highlighted} setHighlighted={setHighlighted}
-          threshold={threshold} setThreshold={setThreshold}
           {...props} />
         </Box>
 

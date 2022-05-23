@@ -9,6 +9,7 @@ import MapController from './map/MapController.jsx'
 function DataController() {
 
   const [selected, setSelected] = useState(null);
+  const [threshold,setThreshold] = useState(true);
 
   // What elevation each tile should have from the webpage
   const paperElevation = 6;
@@ -36,15 +37,18 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
   //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
   // Old regex /\.(csv)$/
-  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs/threshold', false, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
 
-  
+
+  const files = importAll(require.context(`./DATA_INPUTS/Tabular_data_inputs/`, true, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
+
   files.forEach(d => {
     let arr = d.substring(2).split("_");
+    console.log(arr)
     arr[2] = arr[2].split(".")[0];
+    arr[0] = arr[0].split("/")[1];
     if(!countries.includes(arr[0])) countries.push(arr[0]);
     if(!methods.includes(arr[1])) methods.push(arr[1]);
-    if(!years.includes(arr[2])) years.push(arr[2]);
+    if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
   })
 
   return (
@@ -57,6 +61,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
          unused={unused}
          paperElevation={paperElevation}
          files={files} selected={selected} setSelected={setSelected}
+         threshold={threshold} setThreshold={setThreshold}
          // country={country} setCountry={setCountry}
          // method={method} setMethod={setMethod}
          // year={year} setYear={setYear}
