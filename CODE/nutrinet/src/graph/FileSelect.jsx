@@ -113,6 +113,16 @@ function FileSelect(props) {
       </Stack>
     </Grid>
 
+    <Grid item>
+      <Typography sx={{textAlign: "center", width:1}}>Thresholded?</Typography>
+      <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
+          <Typography>N</Typography>
+            <Switch id="thrSwitch" checked={props.threshold} disabled={props.threshold} onChange={() => { props.setThreshold(!props.threshold) }} name="threshold" />
+          <Typography>Y</Typography>
+      </Stack>
+    </Grid>
+
+
 
 </Box>
 </Paper>

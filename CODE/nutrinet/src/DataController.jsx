@@ -36,7 +36,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
   //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
   // Old regex /\.(csv)$/
-  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs', false, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
+  const files = importAll(require.context('./DATA_INPUTS/Tabular_data_inputs/threshold', false, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
 
   
   files.forEach(d => {

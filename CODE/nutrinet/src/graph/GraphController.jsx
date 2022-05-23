@@ -32,6 +32,8 @@ function GraphController(props) {
   // Metadata about graph such as node/link count, density, etc.
   const [metaData, setMetaData] = useState(metadata);
 
+  const [threshold,setThreshold] = useState(true);
+
   const [bipartite, setBipartite] = useState(false);
   const [monopartite, setMonopartite] = useState(false);
   const [current, setCurrent] = useState([]);
@@ -60,13 +62,22 @@ useEffect(() => {
 
       try {
 
-        let regex = new RegExp(`${country}_${method}_${year}`);
+        let regex;
+        if(props.threshold) {
+          regex = new RegExp(`${country}_${method}_${year}`);
+        } else {
+          regex = new RegExp(`${country}_${method}_noThreshold_${year}`);
+        }
 
-        var filtered = props.files.filter(f => f.match(regex));
+        var filtered = props.files.filter(f => f.match(regex)).join();
+
+        console.log(filtered)
+
+
 
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
-        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+filtered[0]);
+        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+(threshold ? "threshold":"nothreshold")+"/"+filtered);
 
         const w = await wrangle(d);
 
@@ -482,6 +493,7 @@ useEffect(() => {
           monopartite={monopartite} setMonopartite={setMonopartite}
           highlightOptions={nodes}
           highlighted={highlighted} setHighlighted={setHighlighted}
+          threshold={threshold} setThreshold={setThreshold}
           {...props} />
         </Box>
 
