@@ -60,8 +60,6 @@ useEffect(() => {
 
       try {
 
-        console.log(props.files)
-
         let thresh = props.threshold?'threshold':'nothreshold';
         //let regex = new RegExp(`${country}|${method}|${year}`);
         // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
@@ -76,13 +74,6 @@ useEffect(() => {
         // }
 
         var filtered = props.files.filter(f => f.match(regex)).join();
-
-        // console.log("./DATA_INPUTS/Tabular_data_inputs/"+(props.threshold ? "threshold":"nothreshold")+"/"+filtered)
-        // console.log(filtered)
-        // console.log("./DATA_INPUTS/Tabular_data_inputs/"+filtered)
-
-        console.log("./DATA_INPUTS/Tabular_data_inputs/"+filtered)
-        console.log(filtered)
 
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
@@ -361,7 +352,6 @@ useEffect(() => {
 
 
           return d3.csv(link).then((res, idz) => {
-            console.log(res)
             return res;
 
           });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import * as d3 from "d3";
 
 import { Route, Routes } from 'react-router-dom';
 
@@ -39,17 +40,45 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
   // Old regex /\.(csv)$/
 
 
-  const files = importAll(require.context(`./DATA_INPUTS/Tabular_data_inputs/`, true, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
 
-  files.forEach(d => {
-    let arr = d.substring(2).split("_");
-    console.log(arr)
-    arr[2] = arr[2].split(".")[0];
-    arr[0] = arr[0].split("/")[1];
-    if(!countries.includes(arr[0])) countries.push(arr[0]);
-    if(!methods.includes(arr[1])) methods.push(arr[1]);
-    if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+  // const fls = d3.text(`./DATA_INPUTS/files.csv`).then(data => {
+  //   console.log(data.split(",\r\n"))
+  //   return data.split("");
+  // })
+
+  var files = []
+
+  d3.text(`./DATA_INPUTS/files.csv`).then(data => {
+
+    files = data.split(",\r\n");
+
+    console.log(files)
+
+    files.forEach(d => {
+      let arr = d.substring(2).split("_");
+      arr[2] = arr[2].split(".")[0];
+      arr[0] = arr[0].split("/")[1];
+      if(!countries.includes(arr[0])) countries.push(arr[0]);
+      if(!methods.includes(arr[1])) methods.push(arr[1]);
+      if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+    })
+
+    console.log(files)
+
   })
+
+  console.log(files)
+
+  //const files = importAll(require.context(`./DATA_INPUTS/Tabular_data_inputs/`, true, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
+
+  // files.forEach(d => {
+  //   let arr = d.substring(2).split("_");
+  //   arr[2] = arr[2].split(".")[0];
+  //   arr[0] = arr[0].split("/")[1];
+  //   if(!countries.includes(arr[0])) countries.push(arr[0]);
+  //   if(!methods.includes(arr[1])) methods.push(arr[1]);
+  //   if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+  // })
 
   return (
 
