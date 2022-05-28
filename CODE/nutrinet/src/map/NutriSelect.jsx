@@ -3,10 +3,7 @@ import { Grid, Typography, Stack, Switch, Paper, Box, Select, MenuItem, InputLab
 
 function NutriSelect(props) {
 
-  console.log(props.variables)
-
   function sanitize(text) {
-    console.log(text)
     return text.split("_").join(" ");
   }
 

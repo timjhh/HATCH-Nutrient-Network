@@ -80,12 +80,21 @@ const [sim, setSim] = useState(null);
 
     if(!sim) return;
 
+    let nds = d3.selectAll(".circle");
+
+    console.log(props.monoNodes)
+
+    if(props.monopartite) {  
+      nds.attr("r", d=> props.monoNodes[d.id])
+    } else {
+      nds.attr("r", radius)
+    }
+
       
     // Checked if the graph is force directed
     if(props.switch) {
 
       //let linkStr = props.monopartite ? (1/(2*props.maxWidth*props.nutrients.length)) : 50
-
 
 
       let lf = sim.force("link")
@@ -255,6 +264,7 @@ const [sim, setSim] = useState(null);
 
     // Circles
     node.append("circle")
+    .attr("class", "circle")
     .attr("r", radius)
     .on("click", (e, d) => { props.setHighlighted(d.id) })
     .attr("fill", d => (d.group === 2 ? "steelblue" : "red"))

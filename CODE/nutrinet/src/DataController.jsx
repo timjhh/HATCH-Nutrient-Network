@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import * as d3 from "d3";
 
@@ -15,9 +15,14 @@ function DataController() {
   // What elevation each tile should have from the webpage
   const paperElevation = 6;
 
-  var countries = [];
-  var years = [];
-  var methods = [];
+  const [countries, setCountries] = useState([]);
+  const [years, setYears] = useState([]);
+  const [methods, setMethods] = useState([]);
+
+  const [files, setFiles] = useState([]);
+
+
+
 
   function importAll(r) {
     return r.keys();
@@ -46,28 +51,45 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
   //   return data.split("");
   // })
 
-  var files = []
+  var filesTmp = [];
 
-  d3.text(`./DATA_INPUTS/files.csv`).then(data => {
+  var countriesTmp = [];
+  var yearsTmp = [];
+  var methodsTmp = [];
 
-    files = data.split(",\r\n");
+  useEffect(() => {
 
-    console.log(files)
+    d3.text(`./DATA_INPUTS/files.csv`).then(data => {
 
-    files.forEach(d => {
-      let arr = d.substring(2).split("_");
-      arr[2] = arr[2].split(".")[0];
-      arr[0] = arr[0].split("/")[1];
-      if(!countries.includes(arr[0])) countries.push(arr[0]);
-      if(!methods.includes(arr[1])) methods.push(arr[1]);
-      if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+      filesTmp = data.split(",\r\n");
+      setFiles(data.split(",\r\n"));
+  
+      filesTmp.forEach(d => {
+        let arr = d.split("_");
+        //arr[2] = arr[2].split(".")[0];
+        //arr[0] = arr[0].split("/")[1];
+        if(!countriesTmp.includes(arr[0])) countriesTmp.push(arr[0]);
+        if(!methodsTmp.includes(arr[1])) methodsTmp.push(arr[1]);
+  
+        let offset = arr.length === 3 ? 2 : 3;
+  
+        if(!yearsTmp.includes(arr[offset]) && (arr[offset].length === 4)) yearsTmp.push(arr[offset])
+        //if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+  
+      })
+  
+      console.log(countriesTmp.sort((a,b) => b-a))
+      setCountries(countriesTmp);
+      setMethods(methodsTmp);
+      setYears(yearsTmp);
+  
     })
 
-    console.log(files)
+  }, [])
 
-  })
 
-  console.log(files)
+
+
 
   //const files = importAll(require.context(`./DATA_INPUTS/Tabular_data_inputs/`, true, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
 

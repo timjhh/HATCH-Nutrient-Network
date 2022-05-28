@@ -37,6 +37,7 @@ function GraphController(props) {
   const [current, setCurrent] = useState([]);
   const [bipData, setBipData] = useState([]);
   const [monoData, setMonoData] = useState([]);
+  const [monoNodes, setMonoNodes] = useState({})
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
   //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
@@ -45,15 +46,21 @@ function GraphController(props) {
 //             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
 //             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
-const [country, setCountry] = useState(props.countries[0]);
-const [method, setMethod] = useState(props.methods[0]);
-const [year, setYear] = useState(props.years[0]);
+// const [country, setCountry] = useState(props.countries[0]);
+// const [method, setMethod] = useState(props.methods[0]);
+// const [year, setYear] = useState(props.years[0]);
+
+const [country, setCountry] = useState("Angola");
+const [method, setMethod] = useState("Production");
+const [year, setYear] = useState("2019");
+
 const [highlighted, setHighlighted] = useState(null);
 
 useEffect(() => {
 
   console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
 
+    if(!props.files) return;
 
     (async () => {
 
@@ -61,28 +68,45 @@ useEffect(() => {
       try {
 
         let thresh = props.threshold?'threshold':'nothreshold';
+        
+        /**
+         * Alternative approach using Regex to search through parent array of indexed files
+         */
         //let regex = new RegExp(`${country}|${method}|${year}`);
         // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
         //let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
-        let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
+        // let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
+        // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
 
-        //let regex;
-        // if(props.threshold) {
-        //   regex = new RegExp(`${country}_${method}_${year}`);
+        // var filtered = props.files.filter(f => f.match(regex));
+        // var file = "";
+        // console.log(filtered)
+        // // Thresholded and nonthresholded are found
+        // if(filtered.length > 1) {
+
+        //   let thridx = filtered.indexOf(filtered.filter(d => d.includes("noThreshold")));
+        //   let nonThrIdx = 1-thridx;
+          
+        //   file = (props.threshold ? filtered[thridx] : filtered[nonThrIdx]) + ".csv";
+
         // } else {
-        //   regex = new RegExp(`${country}_${method}_noThreshold_${year}`);
+        //   file = filtered.join() + ".csv";
         // }
 
-        var filtered = props.files.filter(f => f.match(regex)).join();
+
+        /**
+         * Opted-for approach that builds filename from user selected values
+         */
+        var file = country+"_"+method+(props.threshold?"_":"_noThreshold_")+year+".csv"
 
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
-        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+filtered);
+
+        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+thresh+"/"+file);
 
         const w = await wrangle(d);
 
-        // await setCurrent({nodes: w[0], links: w[1]});
-        //const g = await genGraph(w);
+   
 
       } catch(err) {
         console.log(err);
@@ -105,6 +129,8 @@ useEffect(() => {
 
       let monoLnks = [];
       let monoLinkMatrix = {};
+
+      let monoNds = {};
 
       props.nutrients.forEach(e => {
 
@@ -216,8 +242,9 @@ useEffect(() => {
       }
 
       let maxMono = d3.max(Object.entries(monoLinkMatrix), e => e[1]);
-      console.log(maxMono);
-  
+
+
+
       Object.keys(monoLinkMatrix).forEach(e => {
         let pair = e.split("/");
         let first = nds.find(f => f.id === pair[0]);
@@ -232,6 +259,18 @@ useEffect(() => {
 
         let val = monoLinkMatrix[e];
 
+
+        if(first && monoNds[first.id]) {
+          monoNds[first.id] += maxWidth*(val/maxMono);
+        } else {
+          monoNds[first.id] = maxWidth*(val/maxMono);
+        }
+
+        if(second && monoNds[second.id]) {
+          monoNds[second.id] += maxWidth*(val/maxMono);
+        } else {
+          monoNds[second.id] = maxWidth*(val/maxMono);
+        }
 
         // width = val / (2 * max # of connections a crop and nutrient can have)
         // val = 1 - width, because we want strongly linked nutrients closer together
@@ -252,6 +291,7 @@ useEffect(() => {
 
 
 
+      setMonoNodes(monoNds);
 
       // For all max-contributing crops, ascertain the # of connections and avg % contributed
       Object.entries(maxes).forEach(f => {
@@ -292,13 +332,14 @@ useEffect(() => {
       // Update all data for graph and webpage
       setMetaData(metadata);
       setBipData([nds,lnks]);
-      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
+      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),[]]);
       setNodes(nodes);
       molloy_reed([nds,lnks]);
 
       console.log("monoLinks " + Object.keys(monoLinkMatrix).length + " reg " + Object.keys(linkedMatrix).length)
 
       if(props.monopartite) {
+
         setLinkMatrix(monoLinkMatrix);
 
 
@@ -353,7 +394,6 @@ useEffect(() => {
 
           return d3.csv(link).then((res, idz) => {
             return res;
-
           });
 
           // return new Promise(function(resolve, error) {
@@ -375,7 +415,7 @@ useEffect(() => {
 
 
 
-}, [country, method, year, props.threshold])
+}, [props.files, country, method, year, props.threshold])
 
 
 useEffect(() => {
@@ -466,6 +506,7 @@ useEffect(() => {
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
           <Graph 
+          monoNodes={monoNodes}
           maxWidth={maxWidth} 
           minOpacity={minOpacity} 
           nutrients={props.nutrients} 
