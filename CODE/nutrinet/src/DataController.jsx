@@ -78,7 +78,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
   
       })
   
-      console.log(countriesTmp.sort((a,b) => b-a))
+
       setCountries(countriesTmp);
       setMethods(methodsTmp);
       setYears(yearsTmp);
