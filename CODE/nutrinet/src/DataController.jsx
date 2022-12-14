@@ -21,13 +21,7 @@ function DataController() {
 
   const [files, setFiles] = useState([]);
 
-
-
-
-  function importAll(r) {
-    return r.keys();
-  }
-
+  const [bigData, setBigData] = useState([])
 
 // NOTE: Removal of more variables in the map object
 // NOTE: GraphController creates links using these nutrients and the FAO_CropName - if you wish to do further analysis of matrix variables, change code at start of
@@ -41,66 +35,58 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 // This is passed to MapController to control which variables are selectable in the Map element
 const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
-  //const files = importAll(require.context(`${process.env.PUBLIC_URL}`+'./DATA_INPUTS_T/Tabular_data_inputs', false, /\.(csv)$/));
-  // Old regex /\.(csv)$/
-
-
-
-  // const fls = d3.text(`./DATA_INPUTS/files.csv`).then(data => {
-  //   console.log(data.split(",\r\n"))
-  //   return data.split("");
-  // })
 
   var filesTmp = [];
 
-  var countriesTmp = [];
-  var yearsTmp = [];
-  var methodsTmp = [];
+  // var countriesTmp = [];
+  // var yearsTmp = [];
+  // var methodsTmp = [];
 
   useEffect(() => {
 
-    d3.text(`./DATA_INPUTS/files.csv`).then(data => {
+    // d3.text(`./DATA_INPUTS/files.csv`).then(data => {
 
-      filesTmp = data.split(",\r\n");
-      setFiles(data.split(",\r\n"));
+    //   filesTmp = data.split(",\r\n");
+    //   setFiles(data.split(",\r\n"));
   
-      filesTmp.forEach(d => {
-        let arr = d.split("_");
-        //arr[2] = arr[2].split(".")[0];
-        //arr[0] = arr[0].split("/")[1];
-        if(!countriesTmp.includes(arr[0])) countriesTmp.push(arr[0]);
-        if(!methodsTmp.includes(arr[1])) methodsTmp.push(arr[1]);
+    //   filesTmp.forEach(d => {
+    //     let arr = d.split("_");
+    //     //arr[2] = arr[2].split(".")[0];
+    //     //arr[0] = arr[0].split("/")[1];
+    //     if(!countriesTmp.includes(arr[0])) countriesTmp.push(arr[0]);
+    //     if(!methodsTmp.includes(arr[1])) methodsTmp.push(arr[1]);
   
-        let offset = arr.length === 3 ? 2 : 3;
+    //     let offset = arr.length === 3 ? 2 : 3;
   
-        if(!yearsTmp.includes(arr[offset]) && (arr[offset].length === 4)) yearsTmp.push(arr[offset])
-        //if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
+    //     if(!yearsTmp.includes(arr[offset]) && (arr[offset].length === 4)) yearsTmp.push(arr[offset])
+    //     //if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
   
-      })
+    //   })
   
 
-      setCountries(countriesTmp);
-      setMethods(methodsTmp);
-      setYears(yearsTmp);
+    //   setCountries(countriesTmp);
+    //   setMethods(methodsTmp);
+    //   setYears(yearsTmp);
+  
+    // })
+
+
+    d3.csv("./DATA_INPUTS/Nutri_2019.csv").then(data => {
+
+      // Year,Source,Country
+
+      setBigData(data)
+      setCountries([...new Set(data.map(d => d.Country))]);
+      setMethods([...new Set(data.map(d => d.Source))]);
+      setYears([...new Set(data.map(d => d.Year))]);
+
   
     })
+
 
   }, [])
 
 
-
-
-
-  //const files = importAll(require.context(`./DATA_INPUTS/Tabular_data_inputs/`, true, /^((?!.*DATA_INPUTS).)*\.(csv)$/));
-
-  // files.forEach(d => {
-  //   let arr = d.substring(2).split("_");
-  //   arr[2] = arr[2].split(".")[0];
-  //   arr[0] = arr[0].split("/")[1];
-  //   if(!countries.includes(arr[0])) countries.push(arr[0]);
-  //   if(!methods.includes(arr[1])) methods.push(arr[1]);
-  //   if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
-  // })
 
   return (
 
@@ -108,14 +94,12 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
     <Routes>
         <Route path='/'
          element={<GraphController
+         bigData={bigData}
          nutrients={nutrients}
          unused={unused}
          paperElevation={paperElevation}
          files={files} selected={selected} setSelected={setSelected}
          threshold={threshold} setThreshold={setThreshold}
-         // country={country} setCountry={setCountry}
-         // method={method} setMethod={setMethod}
-         // year={year} setYear={setYear}
          countries={countries} methods={methods} years={years}/>}/>
 
         <Route path='/maps'
@@ -125,9 +109,6 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
-          // country={country} setCountry={setCountry}
-          // method={method} setMethod={setMethod}
-          // year={year} setYear={setYear}
           countries={countries} methods={methods} years={years}/>}/>
 
     </Routes>

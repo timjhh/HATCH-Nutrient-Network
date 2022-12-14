@@ -51,7 +51,7 @@ function GraphController(props) {
 // const [year, setYear] = useState(props.years[0]);
 
 const [country, setCountry] = useState("Angola");
-const [method, setMethod] = useState("Production");
+const [method, setMethod] = useState("Production_kg");
 const [year, setYear] = useState("2019");
 
 const [highlighted, setHighlighted] = useState(null);
@@ -60,7 +60,7 @@ useEffect(() => {
 
   console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
 
-    if(!props.files) return;
+    if(props.bigData.length === 0) return;
 
     (async () => {
 
@@ -68,41 +68,22 @@ useEffect(() => {
       try {
 
         let thresh = props.threshold?'threshold':'nothreshold';
-        
-        /**
-         * Alternative approach using Regex to search through parent array of indexed files
-         */
-        //let regex = new RegExp(`${country}|${method}|${year}`);
-        // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
-        //let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*${year}).*`, 'g');
-        // let regex = new RegExp(`^(?=.*/${thresh})(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
-        // let regex = new RegExp(`^(?=.*${country}_)(?=.*_${method}_)(?=.*_${year}).*`, 'g');
+        console.log(props.bigData)
+        const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
 
-        // var filtered = props.files.filter(f => f.match(regex));
-        // var file = "";
-        // console.log(filtered)
-        // // Thresholded and nonthresholded are found
-        // if(filtered.length > 1) {
-
-        //   let thridx = filtered.indexOf(filtered.filter(d => d.includes("noThreshold")));
-        //   let nonThrIdx = 1-thridx;
-          
-        //   file = (props.threshold ? filtered[thridx] : filtered[nonThrIdx]) + ".csv";
-
-        // } else {
-        //   file = filtered.join() + ".csv";
-        // }
-
-
+        console.log(d)
         /**
          * Opted-for approach that builds filename from user selected values
          */
-        var file = country+"_"+method+(props.threshold?"_":"_noThreshold_")+year+".csv"
+        // var file = country+"_"+method+(props.threshold?"_":"_noThreshold_")+year+".csv"
 
         //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
 
-        const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+thresh+"/"+file);
+        //const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+thresh+"/"+file);
+        // const d = await getData("./DATA_INPUTS/Nutri_2019.csv")
+        
+        //console.log(d[100])
 
         const w = await wrangle(d);
 
@@ -203,21 +184,6 @@ useEffect(() => {
 
       let linkKeys = Object.keys(linkedMatrix);
 
-  
-      // let t1 = linkKeys.filter(i => i.split("/")[0] === "Anise, badian, fennel, coriander");
-      // let s1 = d3.sum(t1, d => linkedMatrix[d])
-
-      // let t2 = linkKeys.filter(i => i.split("/")[0] === "Almonds, with shell");
-      // let s2 = d3.sum(t2, d => linkedMatrix[d])
-
-      // console.log(linkKeys)
-      // let gr = linkKeys.filter(i => t2.includes(i) && t1.includes(i));
-      // console.log(gr);
-      
-      // console.log("s1 " + s1);
-      // console.log("s2 " + s2);
-      // console.log("sum " + (s1+s2))
-
       for(let i=0;i<linkKeys.length;i++) {
 
         let c1 = linkKeys[i].split("/")[0];
@@ -249,13 +215,6 @@ useEffect(() => {
         let pair = e.split("/");
         let first = nds.find(f => f.id === pair[0]);
         let second = nds.find(f => f.id === pair[1]);
-
-        //let fV = Object.entries(lnks).find(f => f.source === first);
-        //let sV = Object.entries(lnks).find(f => f.source === second);
-        
-        //let val = fV && sV
-        //? fV[1].value + sV[1].value
-        //: 0;
 
         let val = monoLinkMatrix[e];
 
@@ -334,7 +293,7 @@ useEffect(() => {
       setBipData([nds,lnks]);
       setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),[]]);
       setNodes(nodes);
-      molloy_reed([nds,lnks]);
+
 
       console.log("monoLinks " + Object.keys(monoLinkMatrix).length + " reg " + Object.keys(linkedMatrix).length)
 
@@ -361,55 +320,12 @@ useEffect(() => {
 
       }
 
-      // The mathematical derivation for the threshold at which a complex network will lose its giant component is based on the Molloy–Reed criterion.
-
-      // The Molloy–Reed criterion is derived from the basic principle that in order for a giant component to exist, on average each node in the network
-      // must have at least two links. This is analogous to each person holding two others' hands in order to form a chain.
-
-      // Using this criterion and an involved mathematical proof, one can derive a critical threshold for the fraction of nodes needed to
-      // be removed for the breakdown of the giant component of a complex network.
-      async function molloy_reed(data) {
-
-        let nodes = data[0];
-
-        let mean = d3.mean(nodes, d => d.degree);
-
-        let MR = (mean**2+1)/mean;
-        console.log("Molloy-Reed Number: " + MR)
-
-        // let fraction = 1 - (1/(MR-1));
-        
-        // console.log(fraction);
-
-        // console.log(nodes);
-        
-
-
-      }
-
 
 
       async function getData(link) {
-
-
           return d3.csv(link).then((res, idz) => {
             return res;
           });
-
-          // return new Promise(function(resolve, error) {
-            
-          //   Papa.parse(csvFilePath, {
-          //     header: true,
-          //     download: true,
-          //     skipEmptyLines: true,
-          //     dynamicTyping: true,
-          //     complete: (res) => { resolve(res.data) }
-          //   }); 
-
-          // });
-
-
-
       }
 
 
