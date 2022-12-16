@@ -44,23 +44,12 @@ const [sim, setSim] = useState(null);
 
         let key;
 
-
-
-        if(props.monopartite) {
-
-          return d.id === sel || props.linkMatrix[d.id+"/"+sel] || props.linkMatrix[sel+"/"+d.id]
-          
+        if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
+          key = d.id+"/"+sel;
         } else {
-
-
-          if(props.nutrients.includes(sel)) { // Crops are in group 1, nutrients in group 2
-            key = d.id+"/"+sel;
-          } else {
-            key = sel+"/"+d.id;
-          }
-
-
+          key = sel+"/"+d.id;
         }
+
 
         return props.linkMatrix[key] || d.id === sel ? 1 : 0.1
 
@@ -82,23 +71,13 @@ const [sim, setSim] = useState(null);
 
     let nds = d3.selectAll(".circle");
 
-    console.log(props.monoNodes)
-
-    if(props.monopartite) {  
-      nds.attr("r", d=> props.monoNodes[d.id])
-    } else {
-      nds.attr("r", radius)
-    }
-
+    nds.attr("r", radius)
       
     // Checked if the graph is force directed
     if(props.switch) {
 
-      //let linkStr = props.monopartite ? (1/(2*props.maxWidth*props.nutrients.length)) : 50
-
-
       let lf = sim.force("link")
-      lf.distance(d => props.monopartite ? (props.maxWidth-d.value)*400 : ((props.maxWidth-d.width)*50)).strength(props.monopartite ? 0.001 : 0.1)
+      lf.distance(d => ((props.maxWidth-d.width)*50)).strength(0.1)
 
 
       sim.force("x", null).force("y", null)
@@ -143,7 +122,7 @@ const [sim, setSim] = useState(null);
     setSim(sim);
 
 
-  }, [props.switch, props.monopartite])
+  }, [props.switch])
 
   
 

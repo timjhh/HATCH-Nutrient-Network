@@ -33,14 +33,9 @@ function GraphController(props) {
   const [metaData, setMetaData] = useState(metadata);
 
   const [bipartite, setBipartite] = useState(false);
-  const [monopartite, setMonopartite] = useState(false);
   const [current, setCurrent] = useState([]);
   const [bipData, setBipData] = useState([]);
-  const [monoData, setMonoData] = useState([]);
-  const [monoNodes, setMonoNodes] = useState({})
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
-
-  //`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+d
 
 // const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
 //             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
@@ -68,10 +63,9 @@ useEffect(() => {
       try {
 
         let thresh = props.threshold?'threshold':'nothreshold';
-        console.log(props.bigData)
+
         const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
 
-        console.log(d)
         /**
          * Opted-for approach that builds filename from user selected values
          */
@@ -81,13 +75,8 @@ useEffect(() => {
         // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
 
         //const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+thresh+"/"+file);
-        // const d = await getData("./DATA_INPUTS/Nutri_2019.csv")
-        
-        //console.log(d[100])
 
         const w = await wrangle(d);
-
-   
 
       } catch(err) {
         console.log(err);
@@ -107,11 +96,6 @@ useEffect(() => {
       let nds = [];
       let lnks = [];
       let nodes = [];
-
-      let monoLnks = [];
-      let monoLinkMatrix = {};
-
-      let monoNds = {};
 
       props.nutrients.forEach(e => {
 
@@ -148,7 +132,7 @@ useEffect(() => {
 
       d.forEach(e => {
 
-        nds.push({id: e.FAO_CropName, group: 1, degree: 0 })
+        nds.push({id: e.FAO_CropName, group: 1, degree: 0 });
         nodes.push(e.FAO_CropName);
 
         // Take subset of actually used variables as specified in DataController, this is all nutrients and the FAO_CropName
@@ -181,77 +165,6 @@ useEffect(() => {
 
       })
 
-
-      let linkKeys = Object.keys(linkedMatrix);
-
-      for(let i=0;i<linkKeys.length;i++) {
-
-        let c1 = linkKeys[i].split("/")[0];
-        let n1 = linkKeys[i].split("/")[1];
-
-        for(let j=i;j<linkKeys.length;j++) {
-
-          let c2 = linkKeys[j].split("/")[0];
-          let n2 = linkKeys[j].split("/")[1];
-
-          if(n1 === n2 && c1 !== c2) {
-            if(monoLinkMatrix[c1+"/"+c2]) {
-              monoLinkMatrix[c1+"/"+c2] += (linkedMatrix[linkKeys[i]] + linkedMatrix[linkKeys[j]])
-            } else {
-              monoLinkMatrix[c1+"/"+c2] = (linkedMatrix[linkKeys[i]] + linkedMatrix[linkKeys[j]]);
-            }
-          }
-
-
-        }
-
-      }
-
-      let maxMono = d3.max(Object.entries(monoLinkMatrix), e => e[1]);
-
-
-
-      Object.keys(monoLinkMatrix).forEach(e => {
-        let pair = e.split("/");
-        let first = nds.find(f => f.id === pair[0]);
-        let second = nds.find(f => f.id === pair[1]);
-
-        let val = monoLinkMatrix[e];
-
-
-        if(first && monoNds[first.id]) {
-          monoNds[first.id] += maxWidth*(val/maxMono);
-        } else {
-          monoNds[first.id] = maxWidth*(val/maxMono);
-        }
-
-        if(second && monoNds[second.id]) {
-          monoNds[second.id] += maxWidth*(val/maxMono);
-        } else {
-          monoNds[second.id] = maxWidth*(val/maxMono);
-        }
-
-        // width = val / (2 * max # of connections a crop and nutrient can have)
-        // val = 1 - width, because we want strongly linked nutrients closer together
-        if(first && second) {
-          
-          // let max = 2*maxWidth*props.nutrients.length; Alternate approach
-          // (max)-(val/(2*(maxWidth*props.nutrients.length)))
-
-
-          monoLnks.push({ source: first, target: second, value: maxWidth*(val/maxMono), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
-
-          //monoLnks.push({ source: first, target: second, value: (2*(maxWidth*props.nutrients.length))-(val/(2*(maxWidth*props.nutrients.length))), width: (val/(2*(maxWidth*props.nutrients.length))) }); 
-          
-          // monoLnks.push({ source: first, target: second, value: val, width: (val/(2*(maxWidth*props.nutrients.length))) });  
-        }
-  
-      })
-
-
-
-      setMonoNodes(monoNds);
-
       // For all max-contributing crops, ascertain the # of connections and avg % contributed
       Object.entries(maxes).forEach(f => {
 
@@ -263,16 +176,11 @@ useEffect(() => {
 
       })
 
-
-
       lnks.forEach(function(d){
 
         nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
-        
-
+      
       });
-
-
 
       // Maximum amount of links is p*q where p = crop count, q = nutrient count
       metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
@@ -286,41 +194,16 @@ useEffect(() => {
       statItems.sort((a,b) => b[1][0].length-a[1][0].length);
       metadata["maxes"] = statItems;
 
-
-
       // Update all data for graph and webpage
       setMetaData(metadata);
       setBipData([nds,lnks]);
-      setMonoData([nds.filter(d=>!props.nutrients.includes(d.id)),[]]);
       setNodes(nodes);
 
+      setLinkMatrix(linkedMatrix);
 
-      console.log("monoLinks " + Object.keys(monoLinkMatrix).length + " reg " + Object.keys(linkedMatrix).length)
-
-      if(props.monopartite) {
-
-        setLinkMatrix(monoLinkMatrix);
-
-
-        setCurrent([nds.filter(d=>!props.nutrients.includes(d.id)),monoLnks]);
-          //setNodes(monoData[0].map(e => e.id));
-
-      } else {
-        
-        setLinkMatrix(linkedMatrix);
-
-        setCurrent([nds,lnks]);
-          //setNodes(bipData[0].map(e => e.id))
+      setCurrent([nds,lnks]);
 
       }
-
-      
-      
-
-
-      }
-
-
 
       async function getData(link) {
           return d3.csv(link).then((res, idz) => {
@@ -332,34 +215,6 @@ useEffect(() => {
 
 
 }, [props.files, country, method, year, props.threshold])
-
-
-useEffect(() => {
-
-  setBipartite(monopartite);
-
-  if(monopartite) {
-    if(monoData.length > 0) {
-      setCurrent(monoData);
-      //setLinkMatrix(monoLinkMatrix);
-      setNodes(monoData[0].map(e => e.id));
-    }
-  } else {
-    
-    if(bipData && bipData.length > 0) {
-
-      setCurrent(bipData);
-      //setLinkMatrix(linkMatrix);
-      console.log(bipData)
-      setNodes(bipData[0].map(e => e.id));
-      
-    }
-
-  }
-
-
-
-}, [monopartite])
 
 
 
@@ -379,12 +234,6 @@ useEffect(() => {
           <Typography variant={"p"}>
 
             <br/>
-            <b>* Monopartite selection is an experimental setting as of now. It creates a new graph by connecting each crop with a mutual nutrient. Currently there is no weight applied
-              to each pair, but it should be the addition of each crop's link to all mutual nutrients. With this new graph, traditional graph theory approaches like&nbsp; 
-              <a href="https://en.wikipedia.org/wiki/Closeness_centrality" target="_blank" rel="noreferrer">Closeness Centrality</a> can be applied to find the centrality of each node.
-            </b>
-            <br/><br/>
-          
             In this interactive graph, the relationship between nutrients(blue) and crops(red) is represented with undirected, weighted edges. 
             Each edge weight represents the percent contribution each crop gives to a nutrient. For example, Iron may be provided equally by three crops.
             Their thicknesses will all be equally one third of the maximum width. The opacity or visibility of each link is also influenced by its strength. The Density of a graph is defined by the number of links, divided by the total amount possible.
@@ -422,14 +271,12 @@ useEffect(() => {
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
           <Graph 
-          monoNodes={monoNodes}
           maxWidth={maxWidth} 
           minOpacity={minOpacity} 
           nutrients={props.nutrients} 
           current={current} 
           linkMatrix={linkMatrix}
           switch={bipartite} 
-          monopartite={monopartite}
           highlighted={highlighted} 
           setHighlighted={setHighlighted} />
         </Paper>
@@ -446,7 +293,6 @@ useEffect(() => {
           method={method} setMethod={setMethod}
           year={year} setYear={setYear}
           bipartite={bipartite} setBipartite={setBipartite}
-          monopartite={monopartite} setMonopartite={setMonopartite}
           highlightOptions={nodes}
           highlighted={highlighted} setHighlighted={setHighlighted}
           {...props} />

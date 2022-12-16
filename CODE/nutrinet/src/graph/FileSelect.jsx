@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Button from "@mui/material/Button"
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -106,14 +107,6 @@ function FileSelect(props) {
     </Grid>
 
     <Grid item>
-      <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
-          <Typography>Bipartite</Typography>
-            <Switch id="monSwitch" checked={props.monopartite} onChange={() => { props.setBipartite(false);props.setMonopartite(!props.monopartite) }} name="monopartite" />
-          <Typography>Monopartite</Typography>
-      </Stack>
-    </Grid>
-
-    <Grid item>
       <Typography sx={{textAlign: "center", width:1}}>Thresholded?</Typography>
       <Stack sx={{ width: 1 }} direction="row" spacing={1} alignItems="center" justifyContent={"center"}>
           <Typography>N</Typography>
@@ -122,6 +115,7 @@ function FileSelect(props) {
       </Stack>
     </Grid>
 
+    <a href="./DATA_INPUTS/Nutri_2019.csv" download><Button variant="contained">Download This Data(test)</Button></a>
 
 
 </Box>

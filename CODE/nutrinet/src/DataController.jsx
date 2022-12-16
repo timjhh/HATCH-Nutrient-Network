@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import { Route, Routes } from 'react-router-dom';
 
 import GraphController from './graph/GraphController.jsx'
+import DataDownloader from './DataDownloader.jsx'
 import MapController from './map/MapController.jsx'
 
 function DataController() {
@@ -90,7 +91,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
   return (
 
-
+    <>
     <Routes>
         <Route path='/'
          element={<GraphController
@@ -112,6 +113,14 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
           countries={countries} methods={methods} years={years}/>}/>
 
     </Routes>
+
+
+    <DataDownloader 
+    paperElevation={paperElevation}
+    countries={countries}
+    methods={methods}
+    years={years} />
+    </>
 
 
 
