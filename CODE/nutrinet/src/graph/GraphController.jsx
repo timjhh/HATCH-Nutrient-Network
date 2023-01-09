@@ -256,10 +256,9 @@ useEffect(() => {
 
     <Grid container spacing={2} sx={{dispaly: 'flex'}}>
 
-    {props.loaded?
-      <>
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
+          {dataProcessed ?
           <Graph 
           loaded={dataProcessed}
           maxWidth={maxWidth} 
@@ -270,6 +269,7 @@ useEffect(() => {
           switch={bipartite} 
           highlighted={highlighted} 
           setHighlighted={setHighlighted} />
+          : <LinearProgress />}
         </Paper>
       </Grid>
 
@@ -277,6 +277,7 @@ useEffect(() => {
       <Grid item xs={12} lg={3} sx={{ height:'100%', alignContent: 'space-around', display: 'flex', flexDirection: 'column' }}>
 
         <Box sx={{ height: '100%' }}>
+          {props.loaded?
           <FileSelect 
           nutrients={props.nutrients}
           paperElevation={props.paperElevation}
@@ -287,6 +288,7 @@ useEffect(() => {
           highlightOptions={nodes}
           highlighted={highlighted} setHighlighted={setHighlighted}
           {...props} />
+          : <LinearProgress />}
         </Box>
 
         <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex' }}>
@@ -324,13 +326,6 @@ useEffect(() => {
 
 
       </Grid>
-      </>
-      :
-      <Box sx={{ width: 1, px:3 }}>
-        <LinearProgress />
-      </Box>
-      }
-
 
       </Grid>
 

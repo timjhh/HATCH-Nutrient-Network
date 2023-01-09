@@ -119,6 +119,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
     </Routes>
 
     <DataDownloader 
+    data={bigData}
     paperElevation={paperElevation}
     countries={countries}
     methods={methods}
