@@ -28,7 +28,7 @@ function FileSelect(props) {
 
     <Grid item>
     <FormControl sx={{ my:2, width: 1 }}>
-      <InputLabel id="country-select-label">Country</InputLabel>
+      {/* <InputLabel id="country-select-label">Country</InputLabel>
       <Select
         labelId="mcountry-select-label"
         id="country-select"
@@ -39,8 +39,17 @@ function FileSelect(props) {
       {props.countries.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
-      </Select>
+      </Select> */}
 
+      <Autocomplete
+      disablePortal
+      id="country-select"
+      options={props.countries}
+      value={props.country}
+      onChange={(d,e) => {if(e !== null) props.setCountry(e)}}
+      sx={{ m:2 }}
+      renderInput={(params) => <TextField {...params} label="Country" />}
+     />
 
     </FormControl>
     </Grid>
@@ -65,7 +74,7 @@ function FileSelect(props) {
     <Grid item>
     <FormControl sx={{ my: 2, width: 1 }}>
 
-      <InputLabel id="year-select-label">Year</InputLabel>
+      {/* <InputLabel id="year-select-label">Year</InputLabel>
       <Select
         labelId="year-select-label"
         id="year-select"
@@ -76,13 +85,22 @@ function FileSelect(props) {
       {props.years.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
-      </Select>
+      </Select> */}
+
+      <Autocomplete
+      disablePortal
+      id="year-select"
+      options={props.years}
+      value={props.year}
+      onChange={(d,e) => { if(e !== null) {props.setYear(e)} }}
+      sx={{ m:2 }}
+      renderInput={(params) => <TextField {...params} label="Year" />}
+     />
 
     </FormControl>
     </Grid>
     <Grid item>
     <FormControl sx={{ width: 1 }}>
-
     <Autocomplete
       disablePortal
       id="highlight_nodes"

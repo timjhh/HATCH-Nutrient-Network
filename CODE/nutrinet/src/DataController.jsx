@@ -24,6 +24,8 @@ function DataController() {
 
   const [bigData, setBigData] = useState([])
 
+  const [loaded, setLoaded] = useState(false);
+
 // NOTE: Removal of more variables in the map object
 // NOTE: GraphController creates links using these nutrients and the FAO_CropName - if you wish to do further analysis of matrix variables, change code at start of
 // GraphController to include nutrients, cropname and your desired vars
@@ -72,15 +74,16 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
     // })
 
 
-    d3.csv("./DATA_INPUTS/Nutri_2019.csv").then(data => {
+    d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
 
       // Year,Source,Country
 
       setBigData(data)
       setCountries([...new Set(data.map(d => d.Country))]);
       setMethods([...new Set(data.map(d => d.Source))]);
-      setYears([...new Set(data.map(d => d.Year))]);
+      setYears([...new Set(data.map(d => d.Year))].sort());
 
+      setLoaded(true)
   
     })
 
@@ -95,6 +98,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
     <Routes>
         <Route path='/'
          element={<GraphController
+         loaded={loaded}
          bigData={bigData}
          nutrients={nutrients}
          unused={unused}
@@ -105,15 +109,14 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
         <Route path='/maps'
           element={<MapController
+          loaded={loaded}
           unused={unused}
           files={files}
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
           countries={countries} methods={methods} years={years}/>}/>
-
     </Routes>
-
 
     <DataDownloader 
     paperElevation={paperElevation}

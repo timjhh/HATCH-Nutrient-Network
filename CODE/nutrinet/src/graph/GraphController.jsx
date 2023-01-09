@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
-import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack } from '@mui/material/'
+import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack, LinearProgress } from '@mui/material/'
 import InfoIcon from '@mui/icons-material/Info';
 
 import * as d3 from "d3";
@@ -37,6 +37,8 @@ function GraphController(props) {
   const [bipData, setBipData] = useState([]);
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
+  const [dataProcessed, setDataProcessed] = useState(false)
+
 // const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
 //             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
 //             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
@@ -62,19 +64,7 @@ useEffect(() => {
 
       try {
 
-        let thresh = props.threshold?'threshold':'nothreshold';
-
         const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
-
-        /**
-         * Opted-for approach that builds filename from user selected values
-         */
-        // var file = country+"_"+method+(props.threshold?"_":"_noThreshold_")+year+".csv"
-
-        //const d = await getData('./Afghanistan_ImportsGlobalConstrained_2019.csv');
-        // `${process.env.PUBLIC_URL}`+"/DATA_INPUTS/Tabular_data_inputs/"+filtered[0]
-
-        //const d = await getData("./DATA_INPUTS/Tabular_data_inputs/"+thresh+"/"+file);
 
         const w = await wrangle(d);
 
@@ -202,6 +192,7 @@ useEffect(() => {
       setLinkMatrix(linkedMatrix);
 
       setCurrent([nds,lnks]);
+      setDataProcessed(true)
 
       }
 
@@ -214,7 +205,7 @@ useEffect(() => {
 
 
 
-}, [props.files, country, method, year, props.threshold])
+}, [props.files, country, method, year, props.threshold, props.loaded])
 
 
 
@@ -261,16 +252,16 @@ useEffect(() => {
 
 
 
-
-
-
     </Grid>
 
     <Grid container spacing={2} sx={{dispaly: 'flex'}}>
 
+    {props.loaded?
+      <>
       <Grid item xs={12} lg={9}>
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
           <Graph 
+          loaded={dataProcessed}
           maxWidth={maxWidth} 
           minOpacity={minOpacity} 
           nutrients={props.nutrients} 
@@ -333,8 +324,12 @@ useEffect(() => {
 
 
       </Grid>
-
-
+      </>
+      :
+      <Box sx={{ width: 1, px:3 }}>
+        <LinearProgress />
+      </Box>
+      }
 
 
       </Grid>

@@ -18,9 +18,9 @@ const [sim, setSim] = useState(null);
 
   useEffect(() => {
 
-    genGraph(props.current);
+    if(props.loaded) genGraph(props.current);
 
-  }, [props.current])
+  }, [props.loaded, props.current])
 
   // Update node(s) on highlight
   useEffect(() => {
@@ -137,15 +137,10 @@ const [sim, setSim] = useState(null);
     const nodes = data[0];
     const links = data[1];
 
-
-
-
     const svg = d3.select("#graph")
     .append("svg")
     .attr("class", "svg-content-responsive svg-container")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    //.style("border", "1px solid black")
-    //.style("position", "absolute")
     .attr("viewBox", "0 0 " + (width) + " " + height)
     .on("click", (event) => {
 
@@ -261,11 +256,6 @@ const [sim, setSim] = useState(null);
     simulation.force("link")
     .links(links);
 
-
-
-
-
-
   function dragstarted(d) {
     if (!d.active) simulation.alphaTarget(0.3).restart();
     d.subject.fx = d.x;
@@ -304,22 +294,15 @@ const [sim, setSim] = useState(null);
 
   setSim(simulation);
 
-
-
-      // Re-compute y force on graph
-      //simulation.force("y").initialize(nodes);
-
-      // Restart simulation
-      simulation
-      .alpha(0.3)
-      .alphaTarget(0)
-      .restart();
+  // Restart simulation
+  simulation
+  .alpha(0.3)
+  .alphaTarget(0)
+  .restart();
   }
 
   return (
     <div id={"graph"}>
- 
-      
     </div>
   );
 }
