@@ -132,10 +132,6 @@ function FileSelect(props) {
           <Typography>Y</Typography>
       </Stack>
     </Grid>
-
-    <a href="./DATA_INPUTS/Nutri_2019.csv" download><Button variant="contained">Download This Data(test)</Button></a>
-
-
 </Box>
 </Paper>
 

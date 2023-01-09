@@ -11,7 +11,7 @@ import MapController from './map/MapController.jsx'
 function DataController() {
 
   const [selected, setSelected] = useState(null);
-  const [threshold,setThreshold] = useState(true);
+  const [threshold,setThreshold] = useState(false);
 
   // What elevation each tile should have from the webpage
   const paperElevation = 6;

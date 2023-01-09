@@ -40,7 +40,7 @@ function DataDownloader(props) {
             Download me
         </CSVLink> */}
 
-        <Box sx={{ width: 1, display:"flex", flexWrap:"wrap" }}>
+        <Box sx={{ width: 1, display:"flex", flexWrap:"wrap", justifyContent:"center" }}>
 
 
 
