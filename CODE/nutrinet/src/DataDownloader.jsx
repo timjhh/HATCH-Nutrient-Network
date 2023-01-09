@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 
-import { Paper, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack } from '@mui/material';
+import { Paper, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack, LinearProgress } from '@mui/material';
 
 import Typography from '@mui/material/Typography';
 import { CSVLink, CSVDownload } from "react-csv";
@@ -32,11 +32,13 @@ function DataDownloader(props) {
 
         <Paper elevation={props.paperElevation} sx={{ my:2, p:2, background: 'primary.main'}}>
 
+        {props.loaded ?
+        <>
         <Typography mb={2} variant={"h4"} sx={{"textAlign": "center"}}>Download This Data</Typography>
         <Button variant="contained" onClick={downloadData}>Download</Button>
-        <CSVLink data={props.data}>
+        {/* <CSVLink asyncOnClick={true} onClick={downloadData} filename={"nutrinet-custom-data.csv"} data={props.data}>
             Download me
-        </CSVLink>
+        </CSVLink> */}
 
         <Box sx={{ width: 1, display:"flex", flexWrap:"wrap" }}>
 
@@ -63,6 +65,8 @@ function DataDownloader(props) {
             options={props.methods}
             />
         </Box>
+        </>
+        :<LinearProgress/>}
         </Paper>
 
     );
