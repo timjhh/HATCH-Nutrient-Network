@@ -5,7 +5,6 @@ import * as d3 from "d3";
 import { Route, Routes } from 'react-router-dom';
 
 import GraphController from './graph/GraphController.jsx'
-import DataDownloader from './DataDownloader.jsx'
 import MapController from './map/MapController.jsx'
 
 function DataController() {
@@ -74,7 +73,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
     // })
 
 
-    d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
+    d3.csv("./DATA_INPUTS/LF_NoThreshold2.csv").then(data => {
 
       // Year,Source,Country
 
@@ -118,13 +117,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
           countries={countries} methods={methods} years={years}/>}/>
     </Routes>
 
-    <DataDownloader 
-    loaded={loaded}
-    data={bigData}
-    paperElevation={paperElevation}
-    countries={countries}
-    methods={methods}
-    years={years} />
+
     </>
 
 

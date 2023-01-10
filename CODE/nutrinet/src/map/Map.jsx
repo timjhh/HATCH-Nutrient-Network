@@ -110,15 +110,12 @@ useEffect(() => {
 
 
 
-  fetch('./DATA_INPUTS/Spatial_data_inputs/world.geo.json').then(response => {
+  fetch('./world.geo.json').then(response => {
 
           return response.json();
   
         }).then(data => {
 
-         
-
-       
             
           const svg = d3.select("#map")
           .append("svg")
@@ -169,22 +166,9 @@ useEffect(() => {
           })
 
 
-        
-          //let svg = d3.select("#mapSVG")
-          
+    
           g.call(tip);
 
-          // function slided(d) {
-
-
-          //   let transform = d3.zoomTransform(g.node());
-          //   transform.k = d.target.value;
-
-          //   g.attr("transform", transform);
-          //   d3.select("#sliderP").select("input").attr("value", transform.k)
-
-
-          // }
           
           const zoom = d3.zoom()
           .scaleExtent([1, 8])
@@ -194,11 +178,6 @@ useEffect(() => {
 
             g.attr("transform", d.transform)
             setSlider(parseFloat(d.transform.k))
-            //console.log(d.transform)
-            //console.log(d3.select("#sliderP").select("input").attr("value"))
-            //d3.select("#sliderP").select("input").attr("value", d.transform.k)
-          
-            //d3.select("#sliderP").node().value = zoom.scale();
 
           });
           
@@ -211,59 +190,10 @@ useEffect(() => {
           .attr("min", zoom.scaleExtent()[0])
           .attr("max", zoom.scaleExtent()[1])
           .attr("step", (zoom.scaleExtent()[1] - zoom.scaleExtent()[0]) / 100);
-          //.on("input", () => {
 
-            // var scale = zoom.scale(), extent = zoom.scaleExtent(), translate = zoom.translate();
-            // var x = translate[0], y = translate[1];
-            // var target_scale = +this.value;
-            // var factor = target_scale / scale;
-
-            // var clamped_target_scale = Math.max(extent[0], Math.min(extent[1], target_scale));
-            // if (clamped_target_scale != target_scale) {
-            //     target_scale = clamped_target_scale;
-            //     factor = target_scale / scale;
-            // }
-            // x = (x - center[0]) * factor + center[0];
-            // y = (y - center[1]) * factor + center[1];
-
-            // zoom.scale(target_scale).translate([x, y]);
-
-            // g.transition()
-            //         .attr("transform", "translate(" + zoom.translate().join(",") + ") scale(" + zoom.scale() + ")");
-            // g.selectAll("path")
-            //         .attr("d", path.projection(projection));
-
-         // });
 
           
           svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
-
-
-
-
-          // function setupZoom(svg, circles, gx, gy) {
-          //   // D3 Zoom API:
-          //   const extent = [[margin.left, margin.top], [width - margin.right, height - margin.bottom]];
-          //   const zoom = d3.zoom()
-          //       .extent(extent)          // Where the interaction occurs
-          //       .translateExtent(extent) // Limits panning to the original extent
-          //       .scaleExtent([1, 32])    // Sets the maximum zoom factor
-          //       .on("zoom", zooming);
-          //   svg.call(zoom);
-            
-          //   function zooming(event) {
-          //       mutable transform = event.transform;
-          //       // Do zooming here, event.transform expresses the pan+zoom from original x & y scales
-          //       const xz = event.transform.rescaleX(x);  // generates a new Scale with modified domain
-          //       const yz = event.transform.rescaleY(y);
-          //       circles.attr("cx", d => xz(d.Longitude))
-          //              .attr("cy", d => yz(d.Latitude));
-          //       gx.call(xAxis, xz);
-          //       gy.call(yAxis, yz);
-          //   }
-          // }
-          
-          // mutable transform = null;
 
 
 

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
 
-import { Paper, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack, LinearProgress } from '@mui/material';
+import { Paper, Box, Button, LinearProgress, Divider } from '@mui/material';
 
 import Typography from '@mui/material/Typography';
 import { CSVLink, CSVDownload } from "react-csv";
@@ -15,9 +14,7 @@ function DataDownloader(props) {
     const [sourcesDL, setSourcesDL] = useState([])
 
     function downloadData() {
-        console.log(yearsDL)
-        console.log(countriesDL)
-        console.log(sourcesDL)
+ 
         let dl = props.data.filter(d => 
             (yearsDL.length > 0 && yearsDL.includes(d.Year.toString())) &&
             (countriesDL.length > 0 && countriesDL.includes(d.Country)) &&
@@ -35,12 +32,8 @@ function DataDownloader(props) {
         {props.loaded ?
         <>
         <Typography mb={2} variant={"h4"} sx={{"textAlign": "center"}}>Download This Data</Typography>
-        <Button variant="contained" onClick={downloadData}>Download</Button>
-        {/* <CSVLink asyncOnClick={true} onClick={downloadData} filename={"nutrinet-custom-data.csv"} data={props.data}>
-            Download me
-        </CSVLink> */}
 
-        <Box sx={{ width: 1, display:"flex", flexWrap:"wrap", justifyContent:"center" }}>
+        <Box sx={{ width: 1, display:"flex", flexWrap:"wrap", justifyContent:"space-between" }}>
 
 
 
@@ -51,12 +44,16 @@ function DataDownloader(props) {
             options={props.countries}
             />
 
+            <Divider orientation="vertical" flexItem />
+
             <ListSelect
             label={"Years"}
             data={yearsDL}
             setData={setYearsDL}
             options={props.years}
             />
+
+            <Divider orientation="vertical" flexItem />
 
             <ListSelect
             label={"Sources"}
@@ -65,6 +62,10 @@ function DataDownloader(props) {
             options={props.methods}
             />
         </Box>
+        <Button variant="contained" onClick={downloadData}>Download</Button>
+        {/* <CSVLink asyncOnClick={true} onClick={downloadData} filename={"nutrinet-custom-data.csv"} data={props.data}>
+            Download me
+        </CSVLink> */}
         </>
         :<LinearProgress/>}
         </Paper>

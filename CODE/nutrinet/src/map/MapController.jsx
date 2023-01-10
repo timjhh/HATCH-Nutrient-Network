@@ -3,7 +3,7 @@ import Map from './Map.jsx';
 import NutriSelect from './NutriSelect.jsx';
 import MapGraphs from './MapGraphs.jsx';
 
-import { Grid, Stack, Switch, Paper, FormControl } from '@mui/material';
+import { Grid, Stack, Switch, Paper, FormControl, LinearProgress } from '@mui/material';
 
 import * as d3 from "d3";
 
@@ -92,7 +92,7 @@ function MapController(props) {
 
   useEffect(() => {
 
-    d3.csv(`${process.env.PUBLIC_URL}`+"/DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
+    d3.csv(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
 
       let data = res.filter(d => d.Source === source);
 
@@ -165,7 +165,6 @@ function MapController(props) {
           v2 = scaleVar2(parseFloat(d[variable2]));
   
         } else {
-          //console.log(scaleVar2(parseFloat(d[variable2])));
           v2 = Math.round(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
           v2 = v2 < 0 ? 0 : v2;
         }
@@ -275,6 +274,7 @@ function MapController(props) {
 
 
           <Paper elevation={props.paperElevation}>
+            {props.loaded?
             <Map
             className="viz"
             variable1={variable1} 
@@ -292,6 +292,7 @@ function MapController(props) {
             setSelected={setSelected}
   
             />
+            :<LinearProgress />}
           </Paper>
 
           </Grid>

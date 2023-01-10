@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import { Paper, Grid, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack } from '@mui/material';
+import { Paper, Grid, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack, Checkbox, ListItemText, OutlinedInput } from '@mui/material';
 
 function ListSelect(props) {
 
@@ -31,6 +31,7 @@ return (
                 native
                 value={props.data}
                 onChange={handleChangeMultiple}
+                input={<OutlinedInput label="Tag" />}
                 label={props.label}
                 inputProps={{
                     id: 'select-multiple-native',
@@ -38,9 +39,17 @@ return (
                 >
                 {props.options.map((item) => (
                     <option key={item} value={item}>
-                    {item}
+                        {item}
                     </option>
                 ))}
+                {/* {props.options.map((item) => (
+                    <MenuItem key={item} value={item}>
+                        <Checkbox checked={props.data.indexOf(item) > -1} />
+                    <ListItemText primary={item} />
+                    </MenuItem>
+                ))} */}
+
+
                 </Select>
             </FormControl>
             
@@ -49,13 +58,18 @@ return (
                 <Button variant="contained" onClick={() => props.setData([])}>Clear All</Button>
             </Stack>
 
-            <Stack direction="row" spacing={0.75} style={{display:"flex",flexWrap:"wrap"}}>
+            <Grid
+            container
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="flex-start">
             {props.data.slice(0,MAX_LABELS).map(d => (
-                <Chip key={d} label={d} />
+                <Chip sx={{m:0.25}} key={d} label={d} />
             ))}
             {props.data.length > MAX_LABELS &&
-            <Chip key={"more"} label={("And " + (props.data.length-MAX_LABELS) + " More...")} />}
-            </Stack>
+            <Chip key={"more"} sx={{m:0.25}} label={("And " + (props.data.length-MAX_LABELS) + " More...")} />}
+            </Grid>
+
             </Stack>
             </Grid>
     

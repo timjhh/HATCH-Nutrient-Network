@@ -3,6 +3,7 @@ import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
 import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack, LinearProgress } from '@mui/material/'
 import InfoIcon from '@mui/icons-material/Info';
+import DataDownloader from '../DataDownloader.jsx'
 
 import * as d3 from "d3";
 
@@ -65,7 +66,7 @@ useEffect(() => {
       try {
 
         const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
-
+        console.log(d)
         const w = await wrangle(d);
 
       } catch(err) {
@@ -87,37 +88,39 @@ useEffect(() => {
       let lnks = [];
       let nodes = [];
 
-      props.nutrients.forEach(e => {
+      if(d.length > 0) {
+        props.nutrients.forEach(e => {
 
-        nds.push({id: e, group: 2, degree: 0 });
-        nodes.push(e);
+          nds.push({id: e, group: 2, degree: 0 });
+          nodes.push(e);
 
-        // Find the cumulative sum of each nutrient's contents
-        sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0);
+          // Find the cumulative sum of each nutrient's contents
+          sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0);
 
-        // Find the crop which contributes the most to each nutrient
-        let max = d[d3.maxIndex(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0)]
+          // Find the crop which contributes the most to each nutrient
+          let max = d[d3.maxIndex(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0)]
 
-        // If there is an entry for this crop, save its name, % contribution and # of occurrences as the max contributor
-        // The final state of this object should be:
-        // max[Crop] = [
-        //  [list of % contributions to nutrients],
-        //  Avg % contributed -> this is a derived value after dictionary generation, of % contribution to nutrients it is the largest contributor to
-        //  Avg % contributed total -> this is a derived value after dictionary generation
-        //  # of links -> this is a derived value after dictionary generation
-        // ]
-        ///
-        /// NOTE: The rest of maxes should be filled after links are calculated, for the quickest implementation of # connections by crop
-        ///
-        if(max["FAO_CropName"] && maxes[max["FAO_CropName"]]) {
-          maxes[max["FAO_CropName"]][0].push(max[e]/sums[e]);
+          // If there is an entry for this crop, save its name, % contribution and # of occurrences as the max contributor
+          // The final state of this object should be:
+          // max[Crop] = [
+          //  [list of % contributions to nutrients],
+          //  Avg % contributed -> this is a derived value after dictionary generation, of % contribution to nutrients it is the largest contributor to
+          //  Avg % contributed total -> this is a derived value after dictionary generation
+          //  # of links -> this is a derived value after dictionary generation
+          // ]
+          ///
+          /// NOTE: The rest of maxes should be filled after links are calculated, for the quickest implementation of # connections by crop
+          ///
+          if(max["FAO_CropName"] && maxes[max["FAO_CropName"]]) {
+            maxes[max["FAO_CropName"]][0].push(max[e]/sums[e]);
 
-        } else {
-          maxes[max["FAO_CropName"]] = [[max[e]/sums[e]], 0, 0, 0]; 
-        }
+          } else {
+            maxes[max["FAO_CropName"]] = [[max[e]/sums[e]], 0, 0, 0]; 
+          }
 
 
-      })
+        })
+      }
 
 
       d.forEach(e => {
@@ -174,9 +177,9 @@ useEffect(() => {
 
       // Maximum amount of links is p*q where p = crop count, q = nutrient count
       metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
-      metadata["crops"] = (nds.length)-props.nutrients.length;
+      metadata["crops"] = Math.max((nds.length)-props.nutrients.length,0);
       metadata["links"] = lnks.length;
-      metadata["avgWeight"] = d3.mean(lnks, d => d.width);
+      metadata["avgWeight"] = lnks.length > 0 ? d3.mean(lnks, d => d.width) : 0;
 
       // Turn dictionary into key/value pair where key = name of crop
       // and value = array of crop metadata
@@ -195,15 +198,6 @@ useEffect(() => {
       setDataProcessed(true)
 
       }
-
-      async function getData(link) {
-          return d3.csv(link).then((res, idz) => {
-            return res;
-          });
-      }
-
-
-
 
 }, [props.files, country, method, year, props.threshold, props.loaded])
 
@@ -369,6 +363,15 @@ useEffect(() => {
 
 
       </Grid>
+
+      <DataDownloader 
+      loaded={props.loaded}
+      data={props.bigData}
+      paperElevation={props.paperElevation}
+      countries={props.countries}
+      methods={props.methods}
+      years={props.years} />
+
 
     </>
 
