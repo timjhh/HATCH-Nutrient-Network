@@ -26,6 +26,10 @@ const Navigation = () => {
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
             <Button href="/maps" variant="text">Maps</Button>    
         </Box>
+
+        <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
+            <Button href="/data" variant="text">Data</Button>    
+        </Box>
         
         <Box sx={{ width: 1, display: "inline-flex", justifyContent: "flex-end", px:4 }}>
 

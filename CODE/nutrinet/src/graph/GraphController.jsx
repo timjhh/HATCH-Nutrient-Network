@@ -364,14 +364,6 @@ useEffect(() => {
 
       </Grid>
 
-      <DataDownloader 
-      loaded={props.loaded}
-      data={props.bigData}
-      paperElevation={props.paperElevation}
-      countries={props.countries}
-      methods={props.methods}
-      years={props.years} />
-
 
     </>
 

@@ -20,6 +20,8 @@ function MapController(props) {
 
   const [year, setYear] = useState(2019);
 
+  const [years, setYears] = useState([])
+
   const [current, setCurrent] = useState([]); // Current data selected with color attribute attached
   
   const [currentSNA, setCurrentSNA] = useState([]); // Current Sans-NA values
@@ -93,7 +95,7 @@ function MapController(props) {
   useEffect(() => {
 
     d3.csv(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
-
+  
       let data = res.filter(d => d.Source === source);
 
       let m1 = d3.max(data, d => parseFloat(d[variable1]));
@@ -192,6 +194,7 @@ function MapController(props) {
 
       // Update global variables for use in child classes
       setVariables(res.columns.filter(d => !props.unused.includes(d)));
+      setYears([...new Set(res.map(d => d.Year))].sort());
       setCurrent(data);
       setCurrentSNA(data.filter(z => z.color !== nullclr));
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
@@ -200,7 +203,6 @@ function MapController(props) {
       // We add one to place because our null color has an index of -1
       setDistribution(colorDist.map(e => ({color: e[0], value: e[1], place: (colors1d.indexOf(e[0])+1) }))); 
       
-
     
     });
 
@@ -249,6 +251,7 @@ function MapController(props) {
             setSelected={setSelected}
             year={year}
             setYear={setYear}
+            years={years}
             source={source}
             setSource={setSource}
             sources={sources}
@@ -274,7 +277,7 @@ function MapController(props) {
 
 
           <Paper elevation={props.paperElevation}>
-            {props.loaded?
+  
             <Map
             className="viz"
             variable1={variable1} 
@@ -292,7 +295,7 @@ function MapController(props) {
             setSelected={setSelected}
   
             />
-            :<LinearProgress />}
+      
           </Paper>
 
           </Grid>

@@ -141,11 +141,7 @@ useEffect(() => {
           .attr('class', 'd3-tip')
           .direction('s')
           .html(function(event,d) { 
-            
-            //console.log(props.current)
-            //var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
 
-            //console.log(val)
             return d.properties.name; 
           
           });
@@ -234,7 +230,7 @@ useEffect(() => {
     .direction('s')
     .html(function(event,d) { 
       
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
 
       if(val) {
         
@@ -263,7 +259,7 @@ useEffect(() => {
     .on("mouseout", tip.hide)
     .attr("fill", (d,idx) => {
 
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
 
       if(!val) {
         nf.push(d.properties);
@@ -278,7 +274,7 @@ useEffect(() => {
     });
 
 
-  } // else console.log("CURRENT 0")
+  }
 
   // Diagnostic print statements for associating countries with data
   // console.log(nf.length + " COUNTRIES NOT FOUND\n");
@@ -299,7 +295,7 @@ useEffect(() => {
     .duration(200)
     .style("stroke", d => {
 
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
 
       // Assure that this value truly exists in our database
       if(!val) return props.nullclr;
@@ -311,7 +307,7 @@ useEffect(() => {
     .style("stroke-width", d => {
       
 
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
 
       // Assure that this value truly exists in our database
       if(!val) return props.nullclr;

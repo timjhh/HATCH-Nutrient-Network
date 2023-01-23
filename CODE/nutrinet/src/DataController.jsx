@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
+import DataDownloader from 'DataDownloader';
 
 function DataController() {
 
@@ -38,7 +39,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
 
-  var filesTmp = [];
+  // var filesTmp = [];
 
   // var countriesTmp = [];
   // var yearsTmp = [];
@@ -46,45 +47,22 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
   useEffect(() => {
 
-    // d3.text(`./DATA_INPUTS/files.csv`).then(data => {
+    if(bigData.length === 0) {
 
-    //   filesTmp = data.split(",\r\n");
-    //   setFiles(data.split(",\r\n"));
-  
-    //   filesTmp.forEach(d => {
-    //     let arr = d.split("_");
-    //     //arr[2] = arr[2].split(".")[0];
-    //     //arr[0] = arr[0].split("/")[1];
-    //     if(!countriesTmp.includes(arr[0])) countriesTmp.push(arr[0]);
-    //     if(!methodsTmp.includes(arr[1])) methodsTmp.push(arr[1]);
-  
-    //     let offset = arr.length === 3 ? 2 : 3;
-  
-    //     if(!yearsTmp.includes(arr[offset]) && (arr[offset].length === 4)) yearsTmp.push(arr[offset])
-    //     //if(!years.includes(arr[2]) && (arr[2] !== "noThreshold")) years.push(arr[2]);
-  
-    //   })
-  
+      d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
 
-    //   setCountries(countriesTmp);
-    //   setMethods(methodsTmp);
-    //   setYears(yearsTmp);
-  
-    // })
+        // Year,Source,Country
 
+        setBigData(data)
+        setCountries([...new Set(data.map(d => d.Country))]);
+        setMethods([...new Set(data.map(d => d.Source))]);
+        setYears([...new Set(data.map(d => d.Year))].sort());
 
-    d3.csv("./DATA_INPUTS/LF_NoThreshold2.csv").then(data => {
+        setLoaded(true)
+    
+      })
 
-      // Year,Source,Country
-
-      setBigData(data)
-      setCountries([...new Set(data.map(d => d.Country))]);
-      setMethods([...new Set(data.map(d => d.Source))]);
-      setYears([...new Set(data.map(d => d.Year))].sort());
-
-      setLoaded(true)
-  
-    })
+    }
 
 
   }, [])
@@ -95,7 +73,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
     <>
     <Routes>
-        <Route path='/'
+        <Route path='/' exact
          element={<GraphController
          loaded={loaded}
          bigData={bigData}
@@ -114,7 +92,17 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
-          countries={countries} methods={methods} years={years}/>}/>
+          countries={countries} methods={methods}/>}/>
+
+        <Route path='/data'
+          element={<DataDownloader 
+            loaded={loaded}
+            data={bigData}
+            paperElevation={paperElevation}
+            countries={countries}
+            methods={methods}
+            years={years} />}/>
+
     </Routes>
 
 
