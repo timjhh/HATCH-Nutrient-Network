@@ -18,10 +18,8 @@ const Navigation = () => {
 
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "flex-start", alignItems: 'flex-center' }}>
-            <Button sx={{mx: 2}} href="/" variant="text">Graphs</Button>  
+            <Button sx={{ml: 2}} href="/" variant="text">Graphs</Button>  
         </Box>
-
-
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
             <Button href="/maps" variant="text">Maps</Button>    
@@ -31,6 +29,10 @@ const Navigation = () => {
             <Button href="/data" variant="text">Data</Button>    
         </Box>
         
+        <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
+            <Button href="/trends" variant="text">Trends</Button>    
+        </Box>
+
         <Box sx={{ width: 1, display: "inline-flex", justifyContent: "flex-end", px:4 }}>
 
             <Typography variant="h6" sx={{mx: 1}}>Code</Typography>

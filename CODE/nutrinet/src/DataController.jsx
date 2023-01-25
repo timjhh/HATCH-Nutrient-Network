@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
 import DataDownloader from 'DataDownloader';
+import Trends from './trends/Trends.jsx'
 
 function DataController() {
 
@@ -52,7 +53,6 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
       d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
 
         // Year,Source,Country
-
         setBigData(data)
         setCountries([...new Set(data.map(d => d.Country))]);
         setMethods([...new Set(data.map(d => d.Source))]);
@@ -60,7 +60,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
         setLoaded(true)
     
-      })
+      }).catch(err => console.log(err))
 
     }
 
@@ -96,6 +96,15 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
         <Route path='/data'
           element={<DataDownloader 
+            loaded={loaded}
+            data={bigData}
+            paperElevation={paperElevation}
+            countries={countries}
+            methods={methods}
+            years={years} />}/>
+
+        <Route path='/trends'
+          element={<Trends
             loaded={loaded}
             data={bigData}
             paperElevation={paperElevation}

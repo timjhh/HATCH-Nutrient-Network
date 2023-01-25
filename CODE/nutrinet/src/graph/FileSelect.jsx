@@ -17,7 +17,6 @@ import Grid from '@mui/material/Grid'
 
 function FileSelect(props) {
 
-
   return (
 
 
@@ -28,18 +27,7 @@ function FileSelect(props) {
 
     <Grid item>
     <FormControl sx={{ my:2, width: 1 }}>
-      {/* <InputLabel id="country-select-label">Country</InputLabel>
-      <Select
-        labelId="mcountry-select-label"
-        id="country-select"
-        value={props.country}
-        label="Country"
-        onChange={(e) => { props.setCountry(e.target.value) }}
-      >
-      {props.countries.map(d => (
-        <MenuItem key={d} value={d}>{d}</MenuItem>
-        ))}
-      </Select> */}
+
 
       <Autocomplete
       disablePortal
@@ -73,19 +61,6 @@ function FileSelect(props) {
     </Grid>
     <Grid item>
     <FormControl sx={{ my: 2, width: 1 }}>
-
-      {/* <InputLabel id="year-select-label">Year</InputLabel>
-      <Select
-        labelId="year-select-label"
-        id="year-select"
-        value={props.year}
-        label="Year"
-        onChange={(e) => { props.setYear(e.target.value) }}
-      >
-      {props.years.map(d => (
-        <MenuItem key={d} value={d}>{d}</MenuItem>
-        ))}
-      </Select> */}
 
       <Autocomplete
       disablePortal

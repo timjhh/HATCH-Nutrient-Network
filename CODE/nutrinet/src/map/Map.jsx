@@ -230,7 +230,7 @@ useEffect(() => {
     .direction('s')
     .html(function(event,d) { 
       
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3));
 
       if(val) {
         
@@ -259,7 +259,7 @@ useEffect(() => {
     .on("mouseout", tip.hide)
     .attr("fill", (d,idx) => {
 
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
 
       if(!val) {
         nf.push(d.properties);
@@ -295,7 +295,7 @@ useEffect(() => {
     .duration(200)
     .style("stroke", d => {
 
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
 
       // Assure that this value truly exists in our database
       if(!val) return props.nullclr;
@@ -307,7 +307,7 @@ useEffect(() => {
     .style("stroke-width", d => {
       
 
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
 
       // Assure that this value truly exists in our database
       if(!val) return props.nullclr;

@@ -3,7 +3,6 @@ import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
 import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack, LinearProgress } from '@mui/material/'
 import InfoIcon from '@mui/icons-material/Info';
-import DataDownloader from '../DataDownloader.jsx'
 
 import * as d3 from "d3";
 
@@ -43,10 +42,6 @@ function GraphController(props) {
 // const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "Vitamin.A", "Folate", "Calcium", "Iron", "Zinc", "Potassium", 
 //             "Dietary.Fiber", "Copper", "Sodium", "Phosphorus", "Thiamin", "Riboflavin", "Niacin", "B6", "Choline",
 //             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
-
-// const [country, setCountry] = useState(props.countries[0]);
-// const [method, setMethod] = useState(props.methods[0]);
-// const [year, setYear] = useState(props.years[0]);
 
 const [country, setCountry] = useState("Angola");
 const [method, setMethod] = useState("Production_kg");
@@ -261,6 +256,7 @@ useEffect(() => {
           current={current} 
           linkMatrix={linkMatrix}
           switch={bipartite} 
+          nodes={nodes}
           highlighted={highlighted} 
           setHighlighted={setHighlighted} />
           : <LinearProgress />}

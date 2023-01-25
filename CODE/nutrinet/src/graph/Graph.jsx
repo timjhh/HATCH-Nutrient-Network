@@ -22,7 +22,8 @@ const [sim, setSim] = useState(null);
 
   }, [props.loaded, props.current])
 
-  // Update node(s) on highlight
+
+  // Update highlighted preferences on manual user selection, and automatically update when graph itself regens
   useEffect(() => {
 
     let node = d3.select(".content").selectAll(".nodes").selectAll("circle");
@@ -32,7 +33,7 @@ const [sim, setSim] = useState(null);
 
     let sel = props.highlighted;
 
-    if(sel) {
+    if(sel && (props.nodes.includes(sel))) {
 
       let connected = link.filter(g => g.source.id === sel || g.target.id === sel);
   
@@ -60,10 +61,11 @@ const [sim, setSim] = useState(null);
 
       node.attr("fill-opacity", 1);
       link.attr("stroke-opacity", d => (d.width/props.maxWidth)+props.minOpacity);
+      props.setHighlighted(null)
 
     }
 
-  }, [props.highlighted])
+  }, [props.highlighted, sim])
 
   useEffect(() => {
 
