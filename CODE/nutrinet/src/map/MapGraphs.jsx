@@ -161,14 +161,6 @@ useEffect(() => {
           genScatterPlot();
 
 
-
-
-//         }).catch(err => {
-
-//           console.log("Error Reading data " + err);
-
-// });
-
 }, []);
 
 
@@ -199,7 +191,7 @@ useEffect(() => {
 
     paths.attr("fill", (d,idx) => {
       
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3 || e.ISO3_Code === d.properties.iso_a3))      
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3 || e.ISO3.Code === d.properties.iso_a3))      
 
       if(!val) {
         nf.push(d.properties);
@@ -216,7 +208,7 @@ useEffect(() => {
 
         props.setSelected(null);
 
-        var val = props.current.find(f => f["ISO3_Code"] === d.properties.iso_a3)
+        var val = props.current.find(f => f["ISO3.Code"] === d.properties.iso_a3)
 
         props.setCountry(val);
         
@@ -291,7 +283,6 @@ function genScatterPlot() {
   svg.append("g")
       .attr("id", "scYAxis")
       .call(d3.axisLeft(scaleY).ticks(4));
-      // .attr("transform", "translate(0," + (0-hHeight) + ")");
 
   svg.selectAll("circle")
     // .data(props.distribution.sort((a,b) => props.colors1d.indexOf(b) - props.colors1d.indexOf(a))) // Optional sorting based on a different metric ??
@@ -304,8 +295,6 @@ function genScatterPlot() {
     .delay(200)
     .ease(d3.easeCubicOut)
     .attr("cy", d => scaleY(d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])));
-    //.attr("cy", d => hHeight);
-
 
 }
 function populateScatterPlot() {
@@ -594,14 +583,14 @@ useEffect(() => {
  
   svgScatter.selectAll("circle")
     //.data(props.current)
-    //.filter(d => d["ISO3_Code"] === props.selected)
+    //.filter(d => d["ISO3.Code"] === props.selected)
     .transition()
     .duration(300)
-    .attr("r", d => (d["ISO3_Code"] === props.selected) ? (scR*scR) : scR)
-    .attr("fill", d => (d["ISO3_Code"] === props.selected) ? props.highlightClr : d.color);
+    .attr("r", d => (d["ISO3.Code"] === props.selected) ? (scR*scR) : scR)
+    .attr("fill", d => (d["ISO3.Code"] === props.selected) ? props.highlightClr : d.color);
 
   svgScatter.selectAll("circle")
-  .filter(d => d["ISO3_Code"] === props.selected)
+  .filter(d => d["ISO3.Code"] === props.selected)
   .each(function() {  
     this.parentNode.appendChild(this); 
     });
@@ -620,7 +609,7 @@ useEffect(() => {
   .attr("stroke", d => d === props.highlight ? props.highlightClr : null)
   .filter(d => d === props.highlight)
   .each(function() {  
-    this.parentNode.appendChild(this); 
+    this.parentNode.appendChild(this);
     });
   //.attr("stroke-width", d => d === props.highlight)
   //.filter(d => d === props.highlight).attr("fill", "black")

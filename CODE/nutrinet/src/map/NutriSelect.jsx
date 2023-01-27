@@ -79,12 +79,12 @@ function NutriSelect(props) {
 
             <FormControl sx={{ m: 2 }}>
 
-              <InputLabel id="method-select-label">Method</InputLabel>
+              <InputLabel id="source-select-label">Source</InputLabel>
               <Select
-                labelId="method-select-label"
-                id="method-select"
+                labelId="source-select-label"
+                id="source-select"
                 value={props.source}
-                label="Method"
+                label="Source"
                 onChange={(e) => { props.setSource(e.target.value) }}
               >
                 {props.sources.map(d => (

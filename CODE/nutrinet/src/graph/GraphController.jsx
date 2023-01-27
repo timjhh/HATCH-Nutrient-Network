@@ -3,6 +3,7 @@ import Graph from './Graph.jsx';
 import FileSelect from './FileSelect.jsx';
 import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack, LinearProgress } from '@mui/material/'
 import InfoIcon from '@mui/icons-material/Info';
+import LineChart from './LineChart.jsx';
 
 import * as d3 from "d3";
 
@@ -49,6 +50,9 @@ const [year, setYear] = useState("2019");
 
 const [highlighted, setHighlighted] = useState(null);
 
+// 40 data points for each year, symbolizing 
+const [lineChartData, setLineChartData] = useState([]);
+
 useEffect(() => {
 
   console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
@@ -61,7 +65,7 @@ useEffect(() => {
       try {
 
         const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
-        console.log(d)
+
         const w = await wrangle(d);
 
       } catch(err) {
@@ -120,6 +124,8 @@ useEffect(() => {
 
       d.forEach(e => {
 
+        if(!nodes.includes(e.FAO_CropName)) {
+
         nds.push({id: e.FAO_CropName, group: 1, degree: 0 });
         nodes.push(e.FAO_CropName);
 
@@ -150,7 +156,7 @@ useEffect(() => {
 
         })
         
-
+      }
       })
 
       // For all max-contributing crops, ascertain the # of connections and avg % contributed
@@ -185,18 +191,62 @@ useEffect(() => {
       // Update all data for graph and webpage
       setMetaData(metadata);
       setBipData([nds,lnks]);
-      setNodes(nodes);
+      setNodes(nodes.filter(function(elem, pos) {
+        return nodes.indexOf(elem) == pos;
+      }));
 
       setLinkMatrix(linkedMatrix);
-
+      genLineChartData()
       setCurrent([nds,lnks]);
+      
       setDataProcessed(true)
-
       }
 
 }, [props.files, country, method, year, props.threshold, props.loaded])
 
+useEffect(() => {
 
+  genLineChartData()
+
+}, [highlighted])
+
+// For each crop, count the amount of nonzero connections to each nutrient
+function getNonZeroVals(item) {
+  let count = 0;
+  props.nutrients.forEach(d => {
+    if(parseInt(item[d])) count++;
+  })
+  return count;
+}
+
+function genLineChartData() {
+
+  const timeData = props.bigData.filter(d => d.Country === country && d.Source === method)
+  let yearDist = [];
+
+  if(highlighted) {
+
+    if(props.nutrients.includes(highlighted)) {
+
+      // Subset all crops that contain this nutrient
+      let subset = timeData.filter(d => d[highlighted] !== "0")
+      yearDist = d3.rollups(subset, v => v.length, d => d.Year);
+
+    } else { // In this case, highlighted must be a crop
+
+      let subset = timeData.filter(d => highlighted === d.FAO_CropName)
+      yearDist = subset.map(v => [v.Year, getNonZeroVals(v)])
+
+
+    }
+  } else {
+    yearDist = d3.rollups(timeData, v => v.length, d => d.Year);
+  }
+  
+  // Force conversion of years to int instead of string, then sort by year
+  setLineChartData(yearDist.map(d => [new Date(parseInt(d[0]),0), d[1]]).sort((a,b) => a[0]-b[0]))
+
+}
 
   return (
 
@@ -245,7 +295,9 @@ useEffect(() => {
 
     <Grid container spacing={2} sx={{dispaly: 'flex'}}>
 
-      <Grid item xs={12} lg={9}>
+      <Grid item xs={12} lg={9} sx={{ height:'100%', display: 'flex', flexDirection: 'column' }}>
+        
+        
         <Paper elevation={props.paperElevation} sx={{ height: '100%' }}>
           {dataProcessed ?
           <Graph 
@@ -261,7 +313,39 @@ useEffect(() => {
           setHighlighted={setHighlighted} />
           : <LinearProgress />}
         </Paper>
+        
+        <Paper elevation={props.paperElevation} sx={{ height: '100%', mt:2, pl:2 }}>
+        <Grid container alignItems={"center"}>
+            <Grid item xs={6} lg={3} alignItems={"center"}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
+              <p>{metaData["crops"]}</p>
+            </Grid>
+            <Grid item xs={6} lg={3}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Links</b></Typography>
+              <p>{metaData["links"]}</p>
+            </Grid>
+            <Grid item xs={6} lg={3}>
+              <Stack direction="row" alignItems={"center"}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
+              <Tooltip title="Total amount of links divided by the largest amount possible">
+                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
+              </Tooltip>
+              </Stack>
+              <p>{(metaData["density"]).toFixed(2)}%</p>
+            </Grid>
+            <Grid item xs={6} lg={3}>
+              <Stack direction="row" alignItems={"center"}>
+              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
+              <Tooltip title="Strength between a node is the amount of a nutrient present in a node, normalized between [0,max]. This is the average strength between all connections.">
+                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
+              </Tooltip>
+              </Stack>
+              <p className='text-wrap'>{(parseFloat(metaData["avgWeight"])/maxWidth).toFixed(4)}%</p>
+            </Grid>
+            </Grid>
+        </Paper>
       </Grid>
+    
 
 
       <Grid item xs={12} lg={3} sx={{ height:'100%', alignContent: 'space-around', display: 'flex', flexDirection: 'column' }}>
@@ -281,9 +365,10 @@ useEffect(() => {
           : <LinearProgress />}
         </Box>
 
-        <Box sx={{ height: '100%', alignItems: 'stretch', display: 'flex' }}>
+        <Box sx={{ height: '100%', alignItems: 'stretch' }}>
           <Paper elevation={props.paperElevation} sx={{ mt:2, p:1, pl:2 }}>
-            <Grid container>
+            <LineChart data={lineChartData} highlighted={highlighted} years={props.years} />
+            {/* <Grid container>
             <Grid item xs={6}>
               <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
               <p>{metaData["crops"]}</p>
@@ -310,7 +395,7 @@ useEffect(() => {
               </Stack>
               <p className='text-wrap'>{(parseFloat(metaData["avgWeight"])/maxWidth).toFixed(4)}%</p>
             </Grid>
-            </Grid>
+            </Grid> */}
           </Paper>
         </Box>
 

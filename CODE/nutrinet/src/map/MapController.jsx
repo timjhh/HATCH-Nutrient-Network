@@ -28,9 +28,9 @@ function MapController(props) {
  
   const [distribution, setDistribution] = useState([]); // Distribution of colors from 2-d legend, used to create histogram
 
-  const [source, setSource] = useState("Import_kg"); // What method of food intake? Import, Production, etc.
+  const [source, setSource] = useState("Production_kg"); // What source of food intake? Import, Production, etc.
 
-  const [sources, setSources] = useState(["Import_kg"]); // List containing all methods of food intake
+  const [sources, setSources] = useState(["Production_kg"]); // List containing all sources of food intake
 
   const [variables, setVariables] = useState([]);
 
@@ -245,7 +245,7 @@ function MapController(props) {
 
           <Grid sx={{height: "100%"}} container justifyContent="space-between" direction="column"  spacing={0}>
             <NutriSelect
-            //methods={props.methods} // Many .csv files
+      
             setHighlight={setHighlight}
             selected={selected}
             setSelected={setSelected}
@@ -260,8 +260,6 @@ function MapController(props) {
             setVariable1={setVariable1}
             variable2={variable2}
             setVariable2={setVariable2}  
-            // method={method}
-            // setMethod={setMethod}
             scaleType1={scaleType1}
             scaleType2={scaleType2}
             setScaleType1={setScaleType1}
