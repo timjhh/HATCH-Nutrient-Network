@@ -109,7 +109,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
             data={bigData}
             paperElevation={paperElevation}
             countries={countries}
-            methods={methods}
+            sources={methods}
             years={years} />}/>
 
     </Routes>
