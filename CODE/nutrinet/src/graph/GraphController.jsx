@@ -368,34 +368,6 @@ function genLineChartData() {
         <Box sx={{ height: '100%', alignItems: 'stretch' }}>
           <Paper elevation={props.paperElevation} sx={{ mt:2, p:1, pl:2 }}>
             <LineChart data={lineChartData} highlighted={highlighted} years={props.years} />
-            {/* <Grid container>
-            <Grid item xs={6}>
-              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Crops</b></Typography>
-              <p>{metaData["crops"]}</p>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Links</b></Typography>
-              <p>{metaData["links"]}</p>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack direction="row" alignItems={"center"}>
-              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Density</b></Typography>
-              <Tooltip title="Total amount of links divided by the largest amount possible">
-                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
-              </Tooltip>
-              </Stack>
-              <p>{(metaData["density"]).toFixed(2)}%</p>
-            </Grid>
-            <Grid item xs={6}>
-              <Stack direction="row" alignItems={"center"}>
-              <Typography variant={"p"} style={{"fontSize": "1.2em", "textAlign": "center"}}><b>Avg. Weight</b></Typography>
-              <Tooltip title="Strength between a node is the amount of a nutrient present in a node, normalized between [0,max]. This is the average strength between all connections.">
-                <IconButton sx={{pl:0}}><InfoIcon fontSize='small' sx={{width: 0.8}} /></IconButton>
-              </Tooltip>
-              </Stack>
-              <p className='text-wrap'>{(parseFloat(metaData["avgWeight"])/maxWidth).toFixed(4)}%</p>
-            </Grid>
-            </Grid> */}
           </Paper>
         </Box>
 

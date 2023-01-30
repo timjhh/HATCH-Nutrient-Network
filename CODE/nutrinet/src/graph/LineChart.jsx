@@ -50,15 +50,6 @@ useEffect(() => {
 
 }, [props.data])
 
-// function ensureDataExists() {
-//   return new Promise(function (resolve, reject) {
-//       (function waitForData(){
-//           if (props.data.length > 0) return resolve();
-//           setTimeout(waitForData, 50);
-//       })();
-//   });
-// }
-
 function genLineChart() {
 
   let scaleX = d3.scaleTime()

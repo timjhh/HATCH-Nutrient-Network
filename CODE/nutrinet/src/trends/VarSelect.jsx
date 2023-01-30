@@ -1,25 +1,42 @@
 import React, {useState} from 'react';
-import { Grid, Typography, Stack, Switch, Paper, Box, Select, MenuItem, InputLabel, FormControl, Button, Snackbar, Alert } from '@mui/material';
+import * as d3 from "d3";
+import { Grid, Typography, Stack, Switch, Paper, Box, Select, MenuItem, InputLabel, FormControl, Button, Snackbar, Alert, Chip, LinearProgress } from '@mui/material';
 
 function VarSelect(props) {
 
   const [snackBar, setSnackBar] = useState(null)
   const [open,setOpen] = useState(false)
+  const [colorIdx, setColorIdx] = useState(0)
+  const MAX_LINES = 10
+
+  // Same color scale as maps page
+  const colors = ["#e8e8e8", "#bddede", "#8ed4d4", "#5ac8c8", "#dabdd4", "#bdbdd4", "#8ebdd4", "#5abdc8", "#cc92c1", "#bd92c1", "#8e92c1", "#5a92c1", "#be64ac", "#bd64ac", "#8e64ac", "#5a64ac"];
+
 
   function sanitize(text) {
     return text.split("_").join(" ");
   }
   
   function addLine() {
-
-    if(props.lines.includes(props.country+" - "+props.variable+" - "+props.year)) {
-      setSnackBar(props.country+" - "+props.variable+" - "+props.year)
+    if(props.lines.find(d => d.label === (props.country+" - "+props.source+" - "+props.variable))) {
+      setSnackBar(props.country+" - "+props.source+" - "+props.variable + " already in graph")
       setOpen(true)
-    } else {
-      const lns = props.lines.concat(props.country+" - "+props.variable+" - "+props.year)
+    }
+    else if(props.lines.length >= MAX_LINES) {
+      setSnackBar("Cannot add more than "+MAX_LINES+" lines")
+      setOpen(true)
+    }
+    else {
+      // Return the first color we haven't used
+      const clr = colors.find(d => !props.lines.map(e => e.color).includes(d))
+      console.log(clr)
+      const lns = props.lines.concat({
+        label: props.country+" - "+props.source+" - "+props.variable,
+        color: clr,
+        data: []
+      })
       props.setLines(lns)
     }
-
   }
   const handleSBClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -30,11 +47,16 @@ function VarSelect(props) {
     setSnackBar(null)
   };
 
+  function removeLine(item) {
+    props.setLines(props.lines.filter(d => d.label !== item))
+  }
+
   return (
+          <>
+          { props.loaded ?(
+          <>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 2fr)', alignItems: "center" }}>
 
-
-
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', alignItems: "center" }}>
 
             <FormControl sx={{ m: 2 }}>
               <InputLabel id="country-select-label">Country</InputLabel>
@@ -49,7 +71,6 @@ function VarSelect(props) {
                   <MenuItem key={d} value={d}>{sanitize(d)}</MenuItem>
                 ))}
               </Select>
-              {/* <Typography sx={{m:2, width:1}} style={{"font-size": "2em", "font-weight": "lighter"}}>Scaling</Typography> */}
 
             </FormControl>
             <FormControl sx={{ m: 2 }}>
@@ -96,14 +117,29 @@ function VarSelect(props) {
                 <Typography>Log</Typography>
              </Stack>
 
-
-             <Snackbar open={open} autoHideDuration={2000} onClose={handleSBClose}>
-              <Alert onClose={handleSBClose} severity="error" sx={{ width: '100%' }}>
-                {snackBar + " already in graph"}
-              </Alert>
-            </Snackbar>
-
           </Box>
+
+        <Grid
+          container
+          sx={{ gridTemplateColumns: 'repeat(4, 2fr)'}}
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center">
+          {props.lines.map((d,idx) => (
+              <Grid item alignItems="center" display="flex" key={d.label+idx}>
+                  <Chip sx={{m:0.25, backgroundColor: d.color, stroke: 1}} onClick={() => props.setSelected(d)} onDelete={() => removeLine(d.label)} key={d.label+idx} label={d.label} />
+              </Grid>
+          ))}
+        </Grid>
+
+        <Snackbar open={open} autoHideDuration={2000} onClose={handleSBClose}>
+              <Alert onClose={handleSBClose} severity="error" sx={{ width: '100%' }}>
+                {snackBar}
+              </Alert>
+        </Snackbar>
+        </>
+        ): <LinearProgress />}
+        </>
 
   );
 }

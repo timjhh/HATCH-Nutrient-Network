@@ -26,7 +26,8 @@ useEffect(() => {
   scaleX.ticks(d3.timeYear.every(5))
 
   let scaleY = d3.scaleLinear()
-  .domain([0,d3.max(props.data, d => d[1])])
+  //.domain([0,d3.max(props.data, d => d[1])])
+  .domain([0,d3.max(props.lines, e => e.data)])
   .range([height, margin.top])
 
   d3.select("#lineGraph")
@@ -41,6 +42,8 @@ useEffect(() => {
     .curve(d3.curveBasis))
   
 }, [props.data])
+
+
 
 
 function genLineChart() {
@@ -66,8 +69,6 @@ function genLineChart() {
     .attr("y", margin.top/2)
     .attr("font-weight", "light")
     .attr("id", "lcTitle")
-    //.text((props.highlighted ?? "Crop Count") + " by Year");
-
 
     // Append x-axis label
     svg.append("text")

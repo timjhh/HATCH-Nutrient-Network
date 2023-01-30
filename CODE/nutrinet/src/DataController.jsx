@@ -21,8 +21,6 @@ function DataController() {
   const [years, setYears] = useState([]);
   const [methods, setMethods] = useState([]);
 
-  const [files, setFiles] = useState([]);
-
   const [bigData, setBigData] = useState([])
 
   const [loaded, setLoaded] = useState(false);
@@ -38,13 +36,6 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 // Unused variables with names verbatim from the provided .csv file
 // This is passed to MapController to control which variables are selectable in the Map element
 const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
-
-
-  // var filesTmp = [];
-
-  // var countriesTmp = [];
-  // var yearsTmp = [];
-  // var methodsTmp = [];
 
   useEffect(() => {
 
@@ -80,7 +71,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
          nutrients={nutrients}
          unused={unused}
          paperElevation={paperElevation}
-         files={files} selected={selected} setSelected={setSelected}
+         selected={selected} setSelected={setSelected}
          threshold={threshold} setThreshold={setThreshold}
          countries={countries} methods={methods} years={years}/>}/>
 
@@ -88,7 +79,6 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
           element={<MapController
           loaded={loaded}
           unused={unused}
-          files={files}
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
