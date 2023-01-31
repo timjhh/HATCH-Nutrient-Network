@@ -16,30 +16,30 @@ useEffect(() => {
   .select("svg")
 
   if(svg.empty()) {
-    genLineChart()
+    // genLineChart()
   }
 
-  let scaleX = d3.scaleTime()
-  .domain(d3.extent(props.data, d => d[0]))
-  .range([margin.left,width]);
+  // let scaleX = d3.scaleTime()
+  // .domain(d3.extent(props.data, d => d[0]))
+  // .range([margin.left,width]);
 
-  scaleX.ticks(d3.timeYear.every(5))
+  // scaleX.ticks(d3.timeYear.every(5))
 
-  let scaleY = d3.scaleLinear()
-  //.domain([0,d3.max(props.data, d => d[1])])
-  .domain([0,d3.max(props.lines, e => e.data)])
-  .range([height, margin.top])
+  // let scaleY = d3.scaleLinear()
+  // //.domain([0,d3.max(props.data, d => d[1])])
+  // .domain([0,d3.max(props.lines, e => e.data)])
+  // .range([height, margin.top])
 
-  d3.select("#lineGraph")
-    .select("#grLine")
-    .datum(props.data)
-    .transition()
-    .duration(1500)
-    .ease(d3.easeLinear)
-    .attr("d", d3.line()
-    .x(d => scaleX(d[0]))
-    .y(d => scaleY(d[1]))
-    .curve(d3.curveBasis))
+  // d3.select("#lineGraph")
+  //   .select("#grLine")
+  //   .datum(props.data)
+  //   .transition()
+  //   .duration(1500)
+  //   .ease(d3.easeLinear)
+  //   .attr("d", d3.line()
+  //   .x(d => scaleX(d[0]))
+  //   .y(d => scaleY(d[1]))
+  //   .curve(d3.curveBasis))
   
 }, [props.data])
 

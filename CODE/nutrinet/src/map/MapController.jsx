@@ -18,6 +18,8 @@ function MapController(props) {
 
   const [variable2, setVariable2] = useState("Population");
 
+  const [bigData, setBigData] = useState([]);
+
   const [year, setYear] = useState(2019);
 
   const [years, setYears] = useState([])
@@ -90,125 +92,134 @@ function MapController(props) {
   // ];
 
 
+  useEffect(() => {
+    d3.csv(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/SocioEconNutri_AY.csv").then((res, err) => {
+      // Only set large dataset up once
+      setBigData(res)
+
+      // Set up selectable variables,years and sources for interaction
+      setVariables(res.columns.filter(d => !props.unused.includes(d)));
+      setYears([...new Set(res.map(d => d.Year))].sort());
+      setSources(Array.from(d3.group(res, d => d.Source).keys()));
+      updateData()
+    });
+  }, [])
 
 
   useEffect(() => {
+    if(bigData.length > 0) {
+      updateData()
+    }
+  }, [variable1, variable2, source, scaleType1, scaleType2, year])
 
-    d3.csv(`${process.env.PUBLIC_URL}`+"./DATA_INPUTS/SocioEconNutri_2019.csv").then((res, idz) => {
+  function updateData() {
+
+    let data = bigData.filter(d => d.Source === source && d.Year === String(year));
+    
+    let m1 = d3.max(data, d => parseFloat(d[variable1]));
+    let m2 = d3.max(data, d => parseFloat(d[variable2]));
+
+    var scaleVar1;
+    var scaleVar2;
+
+    if(scaleType1 === "Quantile") {
+
+      // PASS THE ENTIRE DOMAIN DATASET INSTEAD OF MIN/MAX
+      // YES YES YES!!!!!
+      scaleVar1 = d3.scaleQuantile()
+      .domain(data.map(e => e[variable1]))
+      .range(d3.range(0,colors2d.length));
+
+
+    } else {
+      
+      scaleVar1 = d3.scaleSymlog()
+      .domain([0, m1])
+      .range([0,1]);
+
+      // Experimental: rangeRound to flatten numbers to array index
+      // scaleVar1 = d3.scaleSymlog()
+      // .domain([0, m1])
+      // .rangeRound(d3.range(0, colors2d.length));
+
+    }
+
+    if(scaleType2 === "Quantile") {
+
+      scaleVar2 = d3.scaleQuantile()
+      .domain(data.map(e => e[variable2]))
+      .range(d3.range(0,colors2d.length));
+
+    } else {
+
+      scaleVar2 = d3.scaleSymlog()
+      .domain([0,m2])
+      .range([0,1]);
+
+    }
   
-      let data = res.filter(d => d.Source === source);
 
-      let m1 = d3.max(data, d => parseFloat(d[variable1]));
-      let m2 = d3.max(data, d => parseFloat(d[variable2]));
 
-      var scaleVar1;
-      var scaleVar2;
 
+    // Iterate over data to assign colors to each country
+    data.forEach(d => {
+
+
+      let v1 = 0;
+      let v2 = 0;
+
+
+      // Apply scale each variable for coloring
       if(scaleType1 === "Quantile") {
 
-        // PASS THE ENTIRE DOMAIN DATASET INSTEAD OF MIN/MAX
-        // YES YES YES!!!!!
-        scaleVar1 = d3.scaleQuantile()
-        .domain(data.map(e => e[variable1]))
-        .range(d3.range(0,colors2d.length));
-
+        v1 = scaleVar1(parseFloat(d[variable1]));
 
       } else {
-        
-        scaleVar1 = d3.scaleSymlog()
-        .domain([0, m1])
-        .range([0,1]);
 
-        // Experimental: rangeRound to flatten numbers to array index
-        // scaleVar1 = d3.scaleSymlog()
-        // .domain([0, m1])
-        // .rangeRound(d3.range(0, colors2d.length));
-
+        v1 = Math.round(scaleVar1(parseFloat(d[variable1])) * colors2d.length)-1;
+        v1 = v1 < 0 ? 0 : v1;
       }
 
       if(scaleType2 === "Quantile") {
 
-        scaleVar2 = d3.scaleQuantile()
-        .domain(data.map(e => e[variable2]))
-        .range(d3.range(0,colors2d.length));
+        v2 = scaleVar2(parseFloat(d[variable2]));
 
       } else {
-
-        scaleVar2 = d3.scaleSymlog()
-        .domain([0,m2])
-        .range([0,1]);
-
+        v2 = Math.round(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
+        v2 = v2 < 0 ? 0 : v2;
       }
-    
- 
-
-
-      // Iterate over data to assign colors to each country
-      data.forEach(d => {
-
-
-        let v1 = 0;
-        let v2 = 0;
-
-
-        // Apply scale each variable for coloring
-        if(scaleType1 === "Quantile") {
-
-          v1 = scaleVar1(parseFloat(d[variable1]));
-
-        } else {
-  
-          v1 = Math.round(scaleVar1(parseFloat(d[variable1])) * colors2d.length)-1;
-          v1 = v1 < 0 ? 0 : v1;
-        }
-
-        if(scaleType2 === "Quantile") {
-
-          v2 = scaleVar2(parseFloat(d[variable2]));
-  
-        } else {
-          v2 = Math.round(scaleVar2(parseFloat(d[variable2])) * colors2d.length)-1;
-          v2 = v2 < 0 ? 0 : v2;
-        }
-        
-
-        try {
-          // Apply a color if it's found, else apply our default null coloring(defined above)
-          d.color = ((v1 === undefined || v2 === undefined) || (isNaN(v1) || isNaN(v2))) ? nullclr : colors2d[v2][v1];
-          
-        } catch(e) {
-          console.error("Error: Cannot map variables " + v1 + " " + v2 + " to map color");
-        }
-        
-
-
-      })
-
-      // Create color distribution for later use in histogram
-      let colorDist = d3.rollups(data, v => v.length-1, d => d.color);
-
-      // If a color has not been found from our 1d ledger, map it with an occurrence of 0
-      colors1d.forEach((d,idx) => {
-        if(colorDist.filter(e => e[0] === d).length === 0) colorDist.push([d, 0]);
-      })
-
-      // Update global variables for use in child classes
-      setVariables(res.columns.filter(d => !props.unused.includes(d)));
-      setYears([...new Set(res.map(d => d.Year))].sort());
-      setCurrent(data);
-      setCurrentSNA(data.filter(z => z.color !== nullclr));
-      setSources(Array.from(d3.group(res, d => d.Source).keys()));
-
-      // Now map colors into a usable object with values { color: x, value: y, place: sequential index of color in order }
-      // We add one to place because our null color has an index of -1
-      setDistribution(colorDist.map(e => ({color: e[0], value: e[1], place: (colors1d.indexOf(e[0])+1) }))); 
       
-    
-    });
+
+      try {
+        // Apply a color if it's found, else apply our default null coloring(defined above)
+        d.color = ((v1 === undefined || v2 === undefined) || (isNaN(v1) || isNaN(v2))) ? nullclr : colors2d[v2][v1];
+        
+      } catch(e) {
+        console.error("Error: Cannot map variables " + v1 + " " + v2 + " to map color");
+      }
+      
 
 
-  }, [variable1, variable2, source, scaleType1, scaleType2])
+    })
 
+    // Create color distribution for later use in histogram
+    let colorDist = d3.rollups(data, v => v.length-1, d => d.color);
+
+    // If a color has not been found from our 1d ledger, map it with an occurrence of 0
+    colors1d.forEach((d,idx) => {
+      if(colorDist.filter(e => e[0] === d).length === 0) colorDist.push([d, 0]);
+    })
+
+    // Update 'global' vars that need to be reset on each new selection
+    setCurrent(data);
+    setCurrentSNA(data.filter(z => z.color !== nullclr));
+
+    // Now map colors into a usable object with values { color: x, value: y, place: sequential index of color in order }
+    // We add one to place because our null color has an index of -1
+    setDistribution(colorDist.map(e => ({color: e[0], value: e[1], place: (colors1d.indexOf(e[0])+1) }))); 
+
+
+  }
 
   return (
 

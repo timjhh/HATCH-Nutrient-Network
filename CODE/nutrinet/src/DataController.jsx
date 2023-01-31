@@ -35,7 +35,7 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 
 // Unused variables with names verbatim from the provided .csv file
 // This is passed to MapController to control which variables are selectable in the Map element
-const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
+const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
   useEffect(() => {
 
@@ -95,8 +95,9 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3_Code", "So
 
         <Route path='/trends'
           element={<Trends
-            loaded={loaded}
-            data={bigData}
+            //loaded={loaded}
+            //data={bigData}
+            unused={unused}
             paperElevation={paperElevation}
             countries={countries}
             sources={methods}

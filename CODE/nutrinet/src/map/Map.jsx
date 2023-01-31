@@ -230,7 +230,7 @@ useEffect(() => {
     .direction('s')
     .html(function(event,d) { 
       
-      var val = props.current.find(e => (e["ISO3_Code"] === d.properties.iso_a3));
+      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
 
       if(val) {
         
