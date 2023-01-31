@@ -13,8 +13,8 @@ function Trends(props) {
         Presets for trendline collections
     */
     const preset1  = [
-        {label: "Angola - Production_kg - Calcium", color: "#e8e8e8", data: []},
-        {label: "Angola - Imports_kg - Calcium", color: "#bddede", data: []},
+        {label: "Angola - Production_kg - Population", color: "#e8e8e8", data: []},
+        {label: "Angola - Import_kg - Population", color: "#bddede", data: []},
         {label: "Cuba - Production_kg - CropRichness", color: "#8ed4d4", data: []},
     ]
 
@@ -23,7 +23,7 @@ function Trends(props) {
     const [year, setYear] = useState("2019")
     const [source, setSource] = useState("Production_kg")
     const [scaleType, setScaleType] = useState("Linear")
-    const [variable, setVariable] = useState("Production")
+    const [variable, setVariable] = useState("Population")
     const [selected, setSelected] = useState(null)
     const [lines,setLines] = useState(preset1)
     const [lineData, setLineData] = useState([])
@@ -81,7 +81,7 @@ function Trends(props) {
         if(loaded) {
             var dt = []
             var lns = lines
-            lns.forEach((d,idx) => {
+            lines.forEach((d,idx) => {
                 //if(lns[idx].length === 0) { // Only update data if necessary
                     let vars = d.label.split(" - ")
                     let ctry = vars[0]
@@ -92,16 +92,21 @@ function Trends(props) {
                     
                     // Filter for country, source selected, count crop richness then sort by year
                     // TODO add variable filtering
-                    let datum = d3
-                    .rollups(props.data.filter(e => e.Country === ctry && e.Source === src), v => v.length, d => parseInt(d.Year))
-                    .sort((a,b) => a[0]-b[0])
-                    //.map(e => [{year: e[0], value: e[1], label: d.label}])
-                    //.map(e => [{label: d.label, year: d.Year, val: e}])
-                    console.log(datum)
-                    lns[idx] = datum
-                    dt = dt.concat(datum)
+                    // let datum = d3
+                    // .rollups(data.filter(e => e.Country === ctry && e.Source === src), v => v.length, d => parseInt(d.Year))
+                    // .sort((a,b) => a[0]-b[0])
+                    // console.log(datum)
+                    // lns[idx] = datum
+                    // dt = dt.concat(datum)
+
+                    let datum = data.filter(e => e.Country === ctry && e.Source === src)
+
+                    dt.push(datum.map(e => {
+                        return {...e, Value: e[vr]}}))
+
                 //}
             })
+            
             console.log(dt)
             
             // lns.forEach((d,idx) => {

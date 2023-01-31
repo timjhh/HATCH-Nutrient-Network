@@ -29,7 +29,7 @@ function VarSelect(props) {
     else {
       // Return the first color we haven't used
       const clr = colors.find(d => !props.lines.map(e => e.color).includes(d))
-      console.log(clr)
+    
       const lns = props.lines.concat({
         label: props.country+" - "+props.source+" - "+props.variable,
         color: clr,

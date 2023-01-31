@@ -101,8 +101,8 @@ function MapController(props) {
       setVariables(res.columns.filter(d => !props.unused.includes(d)));
       setYears([...new Set(res.map(d => d.Year))].sort());
       setSources(Array.from(d3.group(res, d => d.Source).keys()));
-      updateData()
-    });
+    
+    })
   }, [])
 
 
@@ -110,8 +110,10 @@ function MapController(props) {
     if(bigData.length > 0) {
       updateData()
     }
-  }, [variable1, variable2, source, scaleType1, scaleType2, year])
+  }, [variable1, variable2, scaleType1, scaleType2, source, year, bigData])
 
+  // On each new variable selection, scale type, year or source change
+  // Query the data for this source/year and plot all variables
   function updateData() {
 
     let data = bigData.filter(d => d.Source === source && d.Year === String(year));
@@ -211,13 +213,13 @@ function MapController(props) {
     })
 
     // Update 'global' vars that need to be reset on each new selection
-    setCurrent(data);
     setCurrentSNA(data.filter(z => z.color !== nullclr));
 
     // Now map colors into a usable object with values { color: x, value: y, place: sequential index of color in order }
     // We add one to place because our null color has an index of -1
     setDistribution(colorDist.map(e => ({color: e[0], value: e[1], place: (colors1d.indexOf(e[0])+1) }))); 
 
+    setCurrent(data);
 
   }
 

@@ -37,12 +37,13 @@ function Map(props) {
   // Uses props.descriptors
   function descriptors2d(nums) {
 
-    return [props.descriptors[nums[0]], props.descriptors[nums[1]]];
+    return [nums[0] ? props.descriptors[nums[0]] : "N/A", nums[1] ? props.descriptors[nums[1]] : "N/A"];
 
   }
 
 // Zoom slider value
 const [slider, setSlider] = useState(1);
+const [mapLoaded, setMapLoaded] = useState(false)
 
 // Dimensions of map
 const width = 1200,
@@ -190,14 +191,12 @@ useEffect(() => {
 
           
           svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
-
+          setMapLoaded(true)
 
 
         }).catch(err => {
-
           console.log("Error Reading data " + err);
-
-});
+        });
 
 }, []);
 
@@ -206,81 +205,12 @@ useEffect(() => {
 
 // Update map each time new data is retrieved
 useEffect(() => {
-
-
-  // Update legend labels
-  let regex = /[^(a-z)(A-Z)(0-9)]/g;
-  d3.select(".v1label").text(props.variable1.replace(regex, " "));
-  d3.select(".v2label").text(props.variable2.replace(regex, " "));
-
-
-  var g = d3.select("#pathsG");
-
-  
-  let nf = [];
-
-  if(props.current.length !== 0) { 
-
-    let g = d3.select("#pathsG");
-
-
-    var tip = d3.tip()
-    .attr("id", "d3Tip")
-    .attr('class', 'd3-tip')
-    .direction('s')
-    .html(function(event,d) { 
-      
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
-
-      if(val) {
-        
-        let desc = descriptors2d(arrIdx2d(val.color));
-
-        return val.Country + "<br/>" + props.variable1 + ": " + desc[0] + "<br/>" + props.variable2 + ": " + desc[1]; 
-      
-      } else {
-      
-        return d.properties.name;
-
-      }
-
-    });
-
-  
-
-    let paths = g.selectAll("path");
-
-
-
-    g.call(tip);
-    
-    paths
-    .on("mouseover", tip.show)
-    .on("mouseout", tip.hide)
-    .attr("fill", (d,idx) => {
-
-      var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
-
-      if(!val) {
-        nf.push(d.properties);
-      }
-
-      // Assure that this value truly exists in our database
-      if(!val) return props.nullclr;
-      if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
-
-      return val.color;
-
-    });
-
-
+  if(mapLoaded) {
+    updateMapData()
   }
+}, [props.current, mapLoaded]);
 
-  // Diagnostic print statements for associating countries with data
-  // console.log(nf.length + " COUNTRIES NOT FOUND\n");
-  // console.log(nf);
 
-}, [props.current]);
 
 
 // Update highlighted countries
@@ -357,43 +287,87 @@ useEffect(() => {
 }, [props.selected])
 
 
+function updateMapData() {
 
+    // Update legend labels
+    let regex = /[^(a-z)(A-Z)(0-9)]/g;
+    d3.select(".v1label").text(props.variable1.replace(regex, " "));
+    d3.select(".v2label").text(props.variable2.replace(regex, " "));
+    
+    let nf = [];
+  
+    if(props.current.length !== 0) { 
+  
+      let g = d3.select("#pathsG");
+  
+  
+      var tip = d3.tip()
+      .attr("id", "d3Tip")
+      .attr('class', 'd3-tip')
+      .direction('s')
+      .html(function(event,d) { 
+        
+        var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
+  
+        if(val) {
+          
+          let desc = descriptors2d(arrIdx2d(val.color));
+  
+          return val.Country + "<br/>" + props.variable1 + ": " + desc[0] + "<br/>" + props.variable2 + ": " + desc[1]; 
+        
+        } else {
+        
+          // Either no records exist for this year or there is a joining issue with country codes
+          // But it's most likely that no records exist
+          return d.properties.name;
+  
+        }
+  
+      });
+  
+    
+      // Update colors on data change
+      let paths = g.selectAll("path");
+  
+      g.call(tip);
+      
+      paths
+      .on("mouseover", tip.show)
+      .on("mouseout", tip.hide)
+      .attr("fill", (d,idx) => {
+  
+        var val = props.current.find(e => (e["ISO3.Code"] === d.properties.iso_a3));
+  
+        if(!val) {
+          nf.push(d.properties);
+        }
+  
+        // Assure that this value truly exists in our database
+        if(!val) return props.nullclr;
+        if(isNaN(val[props.variable1]) || isNaN(val[props.variable2])) return props.nullclr;
+  
+        return val.color;
+  
+      });
+  
+  
+    }
+  
+    // Diagnostic print statements for associating countries with data
+    // console.log(nf.length + " COUNTRIES NOT FOUND\n");
+    // console.log(nf);
+  
+}
 
 
   return (
-
-
     <>
-
       <div id="map">
-    
-        {/* <div id="sliderP"></div> */}
         <input type="range" onChange={(e) => {
-          
-          // let g = d3.select("#pathsG");
-          
-          //   const zoom = d3.zoom()
-          //   .scaleExtent([1, 8])
-          //   .extent([[0, 0], [width, height]])
-          //   //.translateBy(g, 500, -500)
-          //   .on("zoom", (d) => {
-  
-          //     g.attr("transform", d.transform);
-          //     setSlider(parseFloat(d.transform.k));
-
-          //   });
-
           setSlider(parseFloat(e.target.value));
-
-          //d3.select("#mapSVG").call(zoom).call(zoom.transform, d3.zoomIdentity.translate(0,height/4).scale(1.27));
-       
        }} value={slider} min={1} max={8} orient="vertical" id="sliderP"/>
-
       </div>
-
     </>
-
-
   );
 }
 
