@@ -37,7 +37,7 @@ useEffect(() => {
   svg
   .select("#lineYAxis")
   .transition(t)
-  .call(d3.axisLeft(scaleY).ticks(4, ".2")) 
+  .call(d3.axisLeft(scaleY).ticks(4, ".3")) 
 
   d3.select("#lines")
     .selectAll("path")
