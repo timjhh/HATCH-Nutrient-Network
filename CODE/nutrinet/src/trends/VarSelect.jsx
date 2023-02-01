@@ -163,10 +163,10 @@ function VarSelect(props) {
               </Button>
             </FormControl>
             <Stack sx={{}} direction="row" spacing={1} alignItems="center">
-              <Typography>Quantile</Typography>
+              <Typography>Linear</Typography>
               <Switch
                 id="scaleVar1Switch"
-                checked={props.scaleType !== "Quantile"}
+                checked={props.scaleType !== "Linear"}
                 onChange={() => {
                   // props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile");
                   // props.setHighlight(null);
