@@ -176,34 +176,6 @@ function Trends(props) {
           This page is under construction!
         </Typography>
       </Paper>
-
-      <Grid item xs={12}>
-        <Paper
-          elevation={props.paperElevation}
-          sx={{ my: 2, p: 2, background: "primary.main" }}
-        >
-          <Chart
-            year={year}
-            setYear={setYear}
-            country={country}
-            setCountry={setCountry}
-            source={source}
-            setSource={setSource}
-            scaleType={scaleType}
-            setScaleType={setScaleType}
-            variable={variable}
-            setVariable={setVariable}
-            variables={variables}
-            selected={selected}
-            setSelected={setSelected}
-            data={data}
-            lines={lines}
-            lineData={lineData}
-            loaded={loaded}
-          />
-        </Paper>
-      </Grid>
-
       <Grid item xs={12}>
         <Paper
           elevation={props.paperElevation}
@@ -232,12 +204,38 @@ function Trends(props) {
             presets={presets}
             preset={preset}
             setPreset={setPreset}
+            colors={colors}
             {...props}
           />
         </Paper>
       </Grid>
 
-
+      <Grid item xs={12}>
+        <Paper
+          elevation={props.paperElevation}
+          sx={{ my: 2, p: 2, background: "primary.main" }}
+        >
+          <Chart
+            year={year}
+            setYear={setYear}
+            country={country}
+            setCountry={setCountry}
+            source={source}
+            setSource={setSource}
+            scaleType={scaleType}
+            setScaleType={setScaleType}
+            variable={variable}
+            setVariable={setVariable}
+            variables={variables}
+            selected={selected}
+            setSelected={setSelected}
+            data={data}
+            lines={lines}
+            lineData={lineData}
+            loaded={loaded}
+          />
+        </Paper>
+      </Grid>
     </Grid>
   );
 }

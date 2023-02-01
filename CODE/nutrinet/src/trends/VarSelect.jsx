@@ -26,26 +26,6 @@ function VarSelect(props) {
   const [open, setOpen] = useState(false);
   const MAX_LINES = 10;
 
-  // Same color scale as maps page
-  const colors = [
-    "#e8e8e8",
-    "#bddede",
-    "#8ed4d4",
-    "#5ac8c8",
-    "#dabdd4",
-    "#bdbdd4",
-    "#8ebdd4",
-    "#5abdc8",
-    "#cc92c1",
-    "#bd92c1",
-    "#8e92c1",
-    "#5a92c1",
-    "#be64ac",
-    "#bd64ac",
-    "#8e64ac",
-    "#5a64ac",
-  ];
-
   function sanitize(text) {
     return text.split("_").join(" ");
   }
@@ -64,7 +44,7 @@ function VarSelect(props) {
       setOpen(true);
     } else {
       // Return the first color we haven't used
-      const clr = colors.find(
+      const clr = props.colors.find(
         (d) => !props.lines.map((e) => e.color).includes(d)
       );
 
@@ -95,7 +75,7 @@ function VarSelect(props) {
     props.setLines([])
     let lns = []
     props.preset.data.forEach((ps,idx) => {
-        const clr = colors[idx%MAX_LINES]
+        const clr = props.colors[idx%MAX_LINES]
   
         lns.push({
           label: ps,
