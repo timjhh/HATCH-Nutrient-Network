@@ -44,15 +44,15 @@ function FileSelect(props) {
     <Grid item>
     <FormControl sx={{ my: 2, width: 1 }}>
 
-      <InputLabel id="method-select-label">Method</InputLabel>
+      <InputLabel id="source-select-label">Source</InputLabel>
       <Select
-        labelId="method-select-label"
-        id="method-select"
-        value={props.method}
-        label="Method"
-        onChange={(e) => { props.setMethod(e.target.value) }}
+        labelId="source-select-label"
+        id="source-select"
+        value={props.source}
+        label="Source"
+        onChange={(e) => { props.setSource(e.target.value) }}
       >
-      {props.methods.map(d => (
+      {props.sources.map(d => (
         <MenuItem key={d} value={d}>{d}</MenuItem>
         ))}
       </Select>
@@ -67,7 +67,8 @@ function FileSelect(props) {
       id="year-select"
       options={props.years}
       value={props.year}
-      onChange={(d,e) => { if(e !== null) {props.setYear(e)} }}
+      freeSolo
+      onChange={(d,e) => { if(e !== null) {props.setYear(parseInt(e))} }}
       sx={{ m:2 }}
       renderInput={(params) => <TextField {...params} label="Year" />}
      />

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import * as d3 from "d3";
 
 import { Route, Routes } from 'react-router-dom';
 
@@ -8,6 +7,9 @@ import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
 import DataDownloader from 'DataDownloader';
 import Trends from './trends/Trends.jsx'
+import { initializeApp } from "firebase/app";
+import { Snackbar, Alert } from '@mui/material';
+import { getDatabase } from "firebase/database";
 
 function DataController() {
 
@@ -17,13 +19,35 @@ function DataController() {
   // What elevation each tile should have from the webpage
   const paperElevation = 6;
 
-  const [countries, setCountries] = useState([]);
-  const [years, setYears] = useState([]);
-  const [methods, setMethods] = useState([]);
+  const [countries, setCountries] = useState(["Afghanistan","Albania","Algeria","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belgium-Luxembourg","Belize","Benin","Bhutan","Bolivia (Plurinational State of)","Bosnia and Herzegovina","Botswana","Brazil","Brunei Darussalam","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China, Hong Kong SAR","China, Macao SAR","China, mainland","China, Taiwan Province of","Colombia","Comoros","Congo","Cook Islands","Costa Rica","Côte d'Ivoire","Croatia","Cuba","Cyprus","Czechia","Czechoslovakia","Democratic People's Republic of Korea","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Ethiopia PDR","Faroe Islands","Fiji","Finland","France","French Guyana","French Polynesia","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guadeloupe","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran (Islamic Republic of)","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Lao People's Democratic Republic","Latvia","Lebanon","Lesotho","Liberia","Libya","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Martinique","Mauritania","Mauritius","Mexico","Micronesia (Federated States of)","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Niue","North Macedonia","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Republic of Korea","Republic of Moldova","Réunion","Romania","Russian Federation","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Serbia and Montenegro","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Sudan","Spain","Sri Lanka","Sudan","Sudan (former)","Suriname","Sweden","Switzerland","Syrian Arab Republic","Tajikistan","Thailand","Timor-Leste","Togo","Tokelau","Tonga","Trinidad and Tobago","Tunisia","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom of Great Britain and Northern Ireland","United Republic of Tanzania","United States of America","Uruguay","USSR","Uzbekistan","Vanuatu","Venezuela (Bolivarian Republic of)","Viet Nam","Yemen","Yugoslav SFR","Zambia","Zimbabwe",]);
+  const [years, setYears] = useState([...Array(40).keys()].map(i => String(i + 1980)));
+  const [sources, setSources] = useState([
+    "Production_kg",
+    "Import_kg",
+    "Export_kg"
+  ]);
 
   const [bigData, setBigData] = useState([])
 
   const [loaded, setLoaded] = useState(false);
+
+  const [database,setDatabase] = useState(null)
+
+
+  // Is error snackbar open?
+  const [open, setOpen] = useState(false);
+
+  // Error snackbar message, should be null if it is closed
+  const [snackBar, setSnackBar] = useState(null);
+
+  const handleSBClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+  
+    setSnackBar(null);
+  };
+
 
 // NOTE: Removal of more variables in the map object
 // NOTE: GraphController creates links using these nutrients and the FAO_CropName - if you wish to do further analysis of matrix variables, change code at start of
@@ -37,28 +61,55 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin.C", "
 // This is passed to MapController to control which variables are selectable in the Map element
 const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
+
+
   useEffect(() => {
 
-    if(bigData.length === 0) {
-
-      d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
-
-        // Year,Source,Country
-        setBigData(data)
-        setCountries([...new Set(data.map(d => d.Country))]);
-        setMethods([...new Set(data.map(d => d.Source))]);
-        setYears([...new Set(data.map(d => d.Year))].sort());
-
-        setLoaded(true)
+    const firebaseConfig = {
+      databaseURL: "https://nutrinet-d98b6-default-rtdb.firebaseio.com/",
+    };
     
-      }).catch(err => console.log(err))
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    
+    // Initialize Realtime Database and get a reference to the service
+    const db = getDatabase(app);
+    setDatabase(db)
+    setLoaded(true)
 
-    }
+    //const ref = ref(database, "/")
+
+    // const rf = query(ref(database, '/'), orderByChild('Country'), equalTo("Timor-Leste"));
+    // get(rf).then(snapshot => {
+    //   console.log(snapshot.val())
+    //   snapshot.forEach(child => {
+    //     console.log(child.key, child.val())
+    //   })
+    // }).catch(e => console.log(e))
+    
+
+
+    // if(bigData.length === 0) {
+
+    //   d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
+
+    //     // Year,Source,Country
+    //     setBigData(data)
+    //     setCountries([...new Set(data.map(d => d.Country))]);
+    //     setSources([...new Set(data.map(d => d.Source))]);
+    //     setYears([...new Set(data.map(d => d.Year))].sort());
+
+
+
+    
+    //   }).catch(err => console.log(err))
+
+  
+
+      //}
 
 
   }, [])
-
-
 
   return (
 
@@ -66,6 +117,9 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
     <Routes>
         <Route path='/' exact
          element={<GraphController
+         snackBar={snackBar}
+         setSnackBar={setSnackBar}
+         database={database}
          loaded={loaded}
          bigData={bigData}
          nutrients={nutrients}
@@ -73,7 +127,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
          paperElevation={paperElevation}
          selected={selected} setSelected={setSelected}
          threshold={threshold} setThreshold={setThreshold}
-         countries={countries} methods={methods} years={years}/>}/>
+         countries={countries} sources={sources} years={years}/>}/>
 
         <Route path='/maps'
           element={<MapController
@@ -82,15 +136,18 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
-          countries={countries} methods={methods}/>}/>
+          countries={countries} sources={sources}/>}/>
 
         <Route path='/data'
           element={<DataDownloader 
+            snackBar={snackBar}
+            setSnackBar={setSnackBar}
             loaded={loaded}
             data={bigData}
+            database={database}
             paperElevation={paperElevation}
             countries={countries}
-            methods={methods}
+            sources={sources}
             years={years} />}/>
 
         <Route path='/trends'
@@ -100,10 +157,20 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
             unused={unused}
             paperElevation={paperElevation}
             countries={countries}
-            sources={methods}
+            sources={sources}
             years={years} />}/>
 
     </Routes>
+
+    <Snackbar open={snackBar!==null} autoHideDuration={5000} onClose={handleSBClose}>
+      <Alert
+        onClose={handleSBClose}
+        severity="error"
+        sx={{ width: "100%" }}
+      >
+        {snackBar}
+      </Alert>
+    </Snackbar>
 
 
     </>

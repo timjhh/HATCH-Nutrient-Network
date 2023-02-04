@@ -4,6 +4,7 @@ import FileSelect from './FileSelect.jsx';
 import { Grid, Paper, Typography, Box, Tooltip, IconButton, Stack, LinearProgress } from '@mui/material/'
 import InfoIcon from '@mui/icons-material/Info';
 import LineChart from './LineChart.jsx';
+import { ref, onValue, equalTo, query, orderByChild, get } from "firebase/database";
 
 import * as d3 from "d3";
 
@@ -30,6 +31,9 @@ function GraphController(props) {
     maxes: []
   }
 
+  // On country update, our large dataset should be updated
+  const [data, setData] = useState([]);
+
   // Metadata about graph such as node/link count, density, etc.
   const [metaData, setMetaData] = useState(metadata);
 
@@ -45,7 +49,7 @@ function GraphController(props) {
 //             "Magnesium", "Manganese", "Saturated.FA", "Monounsaturated.FA", "Polyunsaturated.FA", "Omega.3..USDA.only.", "B12..USDA.only."];
 
 const [country, setCountry] = useState("Angola");
-const [method, setMethod] = useState("Production_kg");
+const [source, setSource] = useState("Production_kg");
 const [year, setYear] = useState("2019");
 
 const [highlighted, setHighlighted] = useState(null);
@@ -53,156 +57,40 @@ const [highlighted, setHighlighted] = useState(null);
 // 40 data points for each year, symbolizing 
 const [lineChartData, setLineChartData] = useState([]);
 
+
 useEffect(() => {
 
-  console.log("Country: " + country + "\nMethod: " + method + "\nYear: " + year);
-
-    if(props.bigData.length === 0) return;
+    if(!props.database) return;
 
     (async () => {
 
-
-      try {
-
-        const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === method)
-
-        const w = await wrangle(d);
-
-      } catch(err) {
-        console.log(err);
-      }
+      //const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === source)
+      const rf = query(ref(props.database, '/'), orderByChild('Country'), equalTo(country));
+      get(rf).then(snapshot => {
+        console.log(Object.values(snapshot.val()))
+        setData(Object.values(snapshot.val()))
+      }).catch(e => {
+        console.log(e)
+        props.setSnackBar("Error: Database Call Failed")
+      })
 
 
     }) ();
 
 
-      // yee haw!!
-      async function wrangle(d) {
 
-      let maxes = [];
-      let sums = {};
-      let linkedMatrix = {};
+},[country, props.database])
 
-      let nds = [];
-      let lnks = [];
-      let nodes = [];
+useEffect(() => {
 
-      if(d.length > 0) {
-        props.nutrients.forEach(e => {
+  console.log("Country: " + country + "\nSource: " + source + "\nYear: " + year);
 
-          nds.push({id: e, group: 2, degree: 0 });
-          nodes.push(e);
+  if(data.length === 0) return;
+  
+  const tmp = data.filter(d => d.Year === parseInt(year) && d.Source === source)
+  wrangle(tmp)
 
-          // Find the cumulative sum of each nutrient's contents
-          sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0);
-
-          // Find the crop which contributes the most to each nutrient
-          let max = d[d3.maxIndex(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0)]
-
-          // If there is an entry for this crop, save its name, % contribution and # of occurrences as the max contributor
-          // The final state of this object should be:
-          // max[Crop] = [
-          //  [list of % contributions to nutrients],
-          //  Avg % contributed -> this is a derived value after dictionary generation, of % contribution to nutrients it is the largest contributor to
-          //  Avg % contributed total -> this is a derived value after dictionary generation
-          //  # of links -> this is a derived value after dictionary generation
-          // ]
-          ///
-          /// NOTE: The rest of maxes should be filled after links are calculated, for the quickest implementation of # connections by crop
-          ///
-          if(max["FAO_CropName"] && maxes[max["FAO_CropName"]]) {
-            maxes[max["FAO_CropName"]][0].push(max[e]/sums[e]);
-
-          } else {
-            maxes[max["FAO_CropName"]] = [[max[e]/sums[e]], 0, 0, 0]; 
-          }
-
-
-        })
-      }
-
-
-      d.forEach(e => {
-
-        if(!nodes.includes(e.FAO_CropName)) {
-
-        nds.push({id: e.FAO_CropName, group: 1, degree: 0 });
-        nodes.push(e.FAO_CropName);
-
-        // Take subset of actually used variables as specified in DataController, this is all nutrients and the FAO_CropName
-        let subset = Object.entries(e).filter(f => props.nutrients.includes(f[0]) || f[0] === "FAO_CropName")
-
-
-        subset.forEach(f => {
-
-
-            // Links are constructed from a crop to a nutrient
-            // Values are the explicit cell values of link strength
-            // Width is the value expressed from [0,maxWidth]
-            if(!Number.isNaN(f[1]) && f[1] > 0) {
-              // if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
-              
-              // Take 2
-              if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
-             
-              // Take 3
-              //if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: (sums[f[0]]*maxWidth)-(f[1]/sums[f[0]])*maxWidth, width: (f[1]/sums[f[0]])*maxWidth })
-
-              // There is a link between this crop/nutrient
-              linkedMatrix[e.FAO_CropName + "/" + f[0]] = ((f[1]/sums[f[0]])*maxWidth);
-
-            }
-            
-
-        })
-        
-      }
-      })
-
-      // For all max-contributing crops, ascertain the # of connections and avg % contributed
-      Object.entries(maxes).forEach(f => {
-
-        let cropLinks = lnks.filter(lnk => lnk.source === f[0]);
-
-        maxes[f[0]][1] = d3.mean(maxes[f[0]][0]);
-        maxes[f[0]][2] = d3.mean(cropLinks, d => d.width/maxWidth)
-        maxes[f[0]][3] = cropLinks.length;
-
-      })
-
-      lnks.forEach(function(d){
-
-        nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
-      
-      });
-
-      // Maximum amount of links is p*q where p = crop count, q = nutrient count
-      metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
-      metadata["crops"] = Math.max((nds.length)-props.nutrients.length,0);
-      metadata["links"] = lnks.length;
-      metadata["avgWeight"] = lnks.length > 0 ? d3.mean(lnks, d => d.width) : 0;
-
-      // Turn dictionary into key/value pair where key = name of crop
-      // and value = array of crop metadata
-      var statItems = Object.keys(maxes).map((key) => { return [key, maxes[key]] });
-      statItems.sort((a,b) => b[1][0].length-a[1][0].length);
-      metadata["maxes"] = statItems;
-
-      // Update all data for graph and webpage
-      setMetaData(metadata);
-      setBipData([nds,lnks]);
-      setNodes(nodes.filter(function(elem, pos) {
-        return nodes.indexOf(elem) == pos;
-      }));
-
-      setLinkMatrix(linkedMatrix);
-      genLineChartData()
-      setCurrent([nds,lnks]);
-      
-      setDataProcessed(true)
-      }
-
-}, [props.files, country, method, year, props.threshold, props.loaded])
+}, [data, props.files, source, year, props.threshold, props.loaded])
 
 useEffect(() => {
 
@@ -221,7 +109,7 @@ function getNonZeroVals(item) {
 
 function genLineChartData() {
 
-  const timeData = props.bigData.filter(d => d.Country === country && d.Source === method)
+  const timeData = data.filter(d => d.Source === source)
   let yearDist = [];
 
   if(highlighted) {
@@ -247,6 +135,133 @@ function genLineChartData() {
   setLineChartData(yearDist.map(d => [new Date(parseInt(d[0]),0), d[1]]).sort((a,b) => a[0]-b[0]))
 
 }
+
+
+      // yee haw!!
+      async function wrangle(d) {
+
+        let maxes = [];
+        let sums = {};
+        let linkedMatrix = {};
+  
+        let nds = [];
+        let lnks = [];
+        let nodes = [];
+  
+        if(d.length > 0) {
+          props.nutrients.forEach(e => {
+  
+            nds.push({id: e, group: 2, degree: 0 });
+            nodes.push(e);
+  
+            // Find the cumulative sum of each nutrient's contents
+            sums[e] = d3.sum(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0);
+  
+            // Find the crop which contributes the most to each nutrient
+            let max = d[d3.maxIndex(d, item => !Number.isNaN(item[e]) && item[e] !== "NA" ? parseFloat(item[e]) : 0)]
+  
+            // If there is an entry for this crop, save its name, % contribution and # of occurrences as the max contributor
+            // The final state of this object should be:
+            // max[Crop] = [
+            //  [list of % contributions to nutrients],
+            //  Avg % contributed -> this is a derived value after dictionary generation, of % contribution to nutrients it is the largest contributor to
+            //  Avg % contributed total -> this is a derived value after dictionary generation
+            //  # of links -> this is a derived value after dictionary generation
+            // ]
+            ///
+            /// NOTE: The rest of maxes should be filled after links are calculated, for the quickest implementation of # connections by crop
+            ///
+            if(max) {
+              if(max["FAO_CropName"] && maxes[max["FAO_CropName"]]) {
+                maxes[max["FAO_CropName"]][0].push(max[e]/sums[e]);
+    
+              } else {
+                maxes[max["FAO_CropName"]] = [[max[e]/sums[e]], 0, 0, 0]; 
+              }
+            }
+          })
+        }
+  
+  
+        d.forEach(e => {
+  
+          if(!nodes.includes(e.FAO_CropName)) {
+  
+          nds.push({id: e.FAO_CropName, group: 1, degree: 0 });
+          nodes.push(e.FAO_CropName);
+  
+          // Take subset of actually used variables as specified in DataController, this is all nutrients and the FAO_CropName
+          let subset = Object.entries(e).filter(f => props.nutrients.includes(f[0]) || f[0] === "FAO_CropName")
+  
+  
+          subset.forEach(f => {
+  
+  
+              // Links are constructed from a crop to a nutrient
+              // Values are the explicit cell values of link strength
+              // Width is the value expressed from [0,maxWidth]
+              if(!Number.isNaN(f[1]) && f[1] > 0) {
+                // if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/maxes[f[0]])*maxWidth })
+                
+                // Take 2
+                if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: f[1], width: (f[1]/sums[f[0]])*maxWidth })
+               
+                // Take 3
+                //if(props.nutrients.includes(f[0])) lnks.push({ source: e.FAO_CropName, target: f[0], value: (sums[f[0]]*maxWidth)-(f[1]/sums[f[0]])*maxWidth, width: (f[1]/sums[f[0]])*maxWidth })
+  
+                // There is a link between this crop/nutrient
+                linkedMatrix[e.FAO_CropName + "/" + f[0]] = ((f[1]/sums[f[0]])*maxWidth);
+  
+              }
+              
+  
+          })
+          
+        }
+        })
+  
+        // For all max-contributing crops, ascertain the # of connections and avg % contributed
+        Object.entries(maxes).forEach(f => {
+  
+          let cropLinks = lnks.filter(lnk => lnk.source === f[0]);
+  
+          maxes[f[0]][1] = d3.mean(maxes[f[0]][0]);
+          maxes[f[0]][2] = d3.mean(cropLinks, d => d.width/maxWidth)
+          maxes[f[0]][3] = cropLinks.length;
+  
+        })
+  
+        lnks.forEach(function(d){
+  
+          nds.find(e => e.id === d.source || e.id === d.target).degree++; // Add a degree attribute to each node
+        
+        });
+  
+        // Maximum amount of links is p*q where p = crop count, q = nutrient count
+        metadata["density"] = ((lnks.length) / (props.nutrients.length * ((nds.length)-props.nutrients.length))).toFixed(3)*100; 
+        metadata["crops"] = Math.max((nds.length)-props.nutrients.length,0);
+        metadata["links"] = lnks.length;
+        metadata["avgWeight"] = lnks.length > 0 ? d3.mean(lnks, d => d.width) : 0;
+  
+        // Turn dictionary into key/value pair where key = name of crop
+        // and value = array of crop metadata
+        var statItems = Object.keys(maxes).map((key) => { return [key, maxes[key]] });
+        statItems.sort((a,b) => b[1][0].length-a[1][0].length);
+        metadata["maxes"] = statItems;
+  
+        // Update all data for graph and webpage
+        setMetaData(metadata);
+        setBipData([nds,lnks]);
+        setNodes(nodes.filter(function(elem, pos) {
+          return nodes.indexOf(elem) == pos;
+        }));
+  
+        setLinkMatrix(linkedMatrix);
+        genLineChartData()
+        setCurrent([nds,lnks]);
+        
+        setDataProcessed(true)
+        }
 
   return (
 
@@ -356,7 +371,7 @@ function genLineChartData() {
           nutrients={props.nutrients}
           paperElevation={props.paperElevation}
           country={country} setCountry={setCountry}
-          method={method} setMethod={setMethod}
+          source={source} setSource={setSource}
           year={year} setYear={setYear}
           bipartite={bipartite} setBipartite={setBipartite}
           highlightOptions={nodes}
@@ -412,9 +427,6 @@ function genLineChartData() {
           </Grid>
         </Paper>
       </Grid>
-
-
-
       </Grid>
 
 
