@@ -66,7 +66,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
   useEffect(() => {
 
     const firebaseConfig = {
-      databaseURL: "https://nutrinet-d98b6-default-rtdb.firebaseio.com/",
+      databaseURL: process.env.REACT_APP_DATABASE_URL,
     };
     
     // Initialize Firebase
@@ -76,39 +76,6 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
     const db = getDatabase(app);
     setDatabase(db)
     setLoaded(true)
-
-    //const ref = ref(database, "/")
-
-    // const rf = query(ref(database, '/'), orderByChild('Country'), equalTo("Timor-Leste"));
-    // get(rf).then(snapshot => {
-    //   console.log(snapshot.val())
-    //   snapshot.forEach(child => {
-    //     console.log(child.key, child.val())
-    //   })
-    // }).catch(e => console.log(e))
-    
-
-
-    // if(bigData.length === 0) {
-
-    //   d3.csv("./DATA_INPUTS/LF_NoThreshold.csv").then(data => {
-
-    //     // Year,Source,Country
-    //     setBigData(data)
-    //     setCountries([...new Set(data.map(d => d.Country))]);
-    //     setSources([...new Set(data.map(d => d.Source))]);
-    //     setYears([...new Set(data.map(d => d.Year))].sort());
-
-
-
-    
-    //   }).catch(err => console.log(err))
-
-  
-
-      //}
-
-
   }, [])
 
   return (

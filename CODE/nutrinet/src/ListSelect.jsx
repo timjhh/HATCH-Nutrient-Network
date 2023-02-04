@@ -1,81 +1,87 @@
-import React, {useState} from 'react';
+import React from "react";
 
-import { Paper, Grid, Box, Select, MenuItem, InputLabel, FormControl, Chip, Button, Stack, Checkbox, ListItemText, OutlinedInput } from '@mui/material';
+import {
+  Grid,
+  Select,
+  InputLabel,
+  FormControl,
+  Chip,
+  Button,
+  Stack,
+  OutlinedInput,
+} from "@mui/material";
 
 function ListSelect(props) {
-
-    const handleChangeMultiple = (event) => {
-        const {options} = event.target
-        let val = [];
-        for(let i=0;i<options.length;i++) {
-            if(options[i].selected) val.push(options[i].value)
-        }
-        props.setData(val)
+  const handleChangeMultiple = (event) => {
+    const { options } = event.target;
+    let val = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) val.push(options[i].value);
     }
+    props.setData(val);
+  };
 
+  // Max amount of chips to show before displaying overflow chip
+  const MAX_LABELS = 10;
 
-    // Max amount of chips to show before displaying overflow chip
-    const MAX_LABELS = 10
-
-return (
-
+  return (
     <>
-            <Grid item sx={{ m: 1, maxWidth: 300 }}>
-            <Stack spacing={2}>
-            <FormControl>
-                <InputLabel shrink htmlFor="select-multiple-native">
-                   {props.label}
-                </InputLabel>
-                <Select
-                multiple
-                native
-                value={props.data}
-                onChange={handleChangeMultiple}
-                input={<OutlinedInput label="Tag" />}
-                label={props.label}
-                inputProps={{
-                    id: 'select-multiple-native',
-                }}
-                >
-                {props.options.map((item) => (
-                    <option key={item} value={item}>
-                        {item}
-                    </option>
-                ))}
-                {/* {props.options.map((item) => (
-                    <MenuItem key={item} value={item}>
-                        <Checkbox checked={props.data.indexOf(item) > -1} />
-                    <ListItemText primary={item} />
-                    </MenuItem>
-                ))} */}
+      <Grid item sx={{ m: 1, width: "30%" }}>
+        <Stack spacing={2}>
+          <FormControl>
+            <InputLabel shrink htmlFor={"lS" + props.label}>
+              {props.label}
+            </InputLabel>
+            <Select
+              multiple
+              native
+              value={props.data}
+              onChange={handleChangeMultiple}
+              input={<OutlinedInput label="Input" />}
+              label={props.label}
+              id={"lS" + props.label}
+            >
+              {props.options.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
 
+          <Stack direction="row" spacing={1} justifyContent="center">
+            <Button
+              variant="contained"
+              onClick={() => props.setData(props.options)}
+            >
+              Select All
+            </Button>
+            <Button variant="contained" onClick={() => props.setData([])}>
+              Clear All
+            </Button>
+          </Stack>
 
-                </Select>
-            </FormControl>
-            
-            <Stack direction="row" spacing={1} justifyContent="center">
-                <Button variant="contained" onClick={() => props.setData(props.options)}>Select All</Button>
-                <Button variant="contained" onClick={() => props.setData([])}>Clear All</Button>
-            </Stack>
-
-            <Grid
+          <Grid
             container
             direction="row"
             justifyContent="flex-start"
-            alignItems="flex-start">
-            {props.data.slice(0,MAX_LABELS).map(d => (
-                <Chip sx={{m:0.25}} key={d} label={d} />
+            alignItems="flex-start"
+          >
+            {props.data.slice(0, MAX_LABELS).map((d) => (
+              <Chip sx={{ m: 0.25 }} key={d} label={d} />
             ))}
-            {props.data.length > MAX_LABELS &&
-            <Chip key={"more"} sx={{m:0.25}} label={("And " + (props.data.length-MAX_LABELS) + " More...")} />}
-            </Grid>
-
-            </Stack>
-            </Grid>
-    
+            {props.data.length > MAX_LABELS && (
+              <Chip
+                key={"more"}
+                sx={{ m: 0.25 }}
+                label={"And " + (props.data.length - MAX_LABELS) + " More..."}
+              />
+            )}
+          </Grid>
+        </Stack>
+      </Grid>
     </>
-
-)
+  );
 }
 
 export default ListSelect;
