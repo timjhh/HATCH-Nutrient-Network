@@ -42,6 +42,7 @@ function LineChart(props) {
         "d",
         d3
           .line()
+          //.defined(function (d) { return d[1] != 0 })
           .x((d) => scaleX(d[0]))
           .y((d) => scaleY(d[1]))
           .curve(d3.curveBasis)

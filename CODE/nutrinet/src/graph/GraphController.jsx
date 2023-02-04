@@ -60,11 +60,17 @@ function GraphController(props) {
   // 40 data points for each year, symbolizing
   const [lineChartData, setLineChartData] = useState([]);
 
+
+  /**
+   * Update large set of data on each country selection by querying Firebase
+   * Callbacks: 
+   * country - when a country is updated we need a new db query
+   * props.database - initially populate the dataset when the db exists
+   */
   useEffect(() => {
     if (!props.database) return;
 
     (async () => {
-      //const d = props.bigData.filter(d => d.Country === country && d.Year === year && d.Source === source)
       const rf = query(
         ref(props.database, "/"),
         orderByChild("Country"),
@@ -72,7 +78,6 @@ function GraphController(props) {
       );
       get(rf)
         .then((snapshot) => {
-          console.log(Object.values(snapshot.val()));
           setData(Object.values(snapshot.val()));
         })
         .catch((e) => {
@@ -82,18 +87,19 @@ function GraphController(props) {
     })();
   }, [country, props.database]);
 
+
+
   useEffect(() => {
     console.log(
       "Country: " + country + "\nSource: " + source + "\nYear: " + year
     );
 
     if (data.length === 0) return;
-
     const tmp = data.filter(
       (d) => d.Year === parseInt(year) && d.Source === source
     );
     wrangle(tmp);
-  }, [data, props.files, source, year, props.threshold, props.loaded]);
+  }, [data, source, year, props.threshold, props.loaded]);
 
   useEffect(() => {
     genLineChartData();
@@ -121,6 +127,7 @@ function GraphController(props) {
           (v) => v.length,
           (d) => d.Year
         );
+
       } else {
         // In this case, highlighted must be a crop
         let subset = timeData.filter((d) => highlighted === d.FAO_CropName);
@@ -133,8 +140,21 @@ function GraphController(props) {
         (d) => d.Year
       );
     }
+    // If there are any gaps in the data, we must append null / 0
+    // so d3 doesn't try to erroneously create continuity in the graph
+    if(yearDist.length < (d3.max(props.years)-d3.min(props.years))) {
+      
+      // Set of values that ARE in the data
+      let yrs = yearDist.map(y => y[0])
 
-    // Force conversion of years to int instead of string, then sort by year
+      // Find years that have not yet been used
+      let unused = props.years.filter(x => !yrs.includes(parseInt(x)))
+
+      // Concatenate unused years with a 0
+      yearDist = yearDist.concat(unused.map(y => [parseInt(y), 0]))
+    }
+    
+      // Force conversion of years to int instead of string, then sort by year
     setLineChartData(
       yearDist
         .map((d) => [new Date(parseInt(d[0]), 0), d[1]])

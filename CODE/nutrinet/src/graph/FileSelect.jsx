@@ -68,7 +68,7 @@ function FileSelect(props) {
       options={props.years}
       value={props.year}
       freeSolo
-      onChange={(d,e) => { if(e !== null) {props.setYear(parseInt(e))} }}
+      onChange={(d,e) => { if(e !== null) {props.setYear(e)} }}
       sx={{ m:2 }}
       renderInput={(params) => <TextField {...params} label="Year" />}
      />
