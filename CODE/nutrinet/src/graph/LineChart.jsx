@@ -29,7 +29,7 @@ function LineChart(props) {
 
     let scaleY = d3
       .scaleLinear()
-      .domain([0, d3.max(props.data, (d) => d[1])])
+      .domain([0, d3.max(props.data, (d) => +d[1])])
       .range([hHeight, margin.top]);
 
     d3.select("#lineGraph")
@@ -59,18 +59,16 @@ function LineChart(props) {
       .domain(d3.extent(props.data, (d) => d[0]))
       .range([margin.left, hWidth]);
 
-    scaleX.ticks(2);
-
     let scaleY = d3
       .scaleLinear()
-      .domain([0, d3.max(props.data, (d) => d[1])])
+      .domain([0, d3.max(props.data, (d) => +d[1])])
       .range([hHeight, margin.top]);
 
     var svg = d3
       .select("#lineGraph")
       .append("svg")
       .attr("viewBox", [0, 0, hWidth * 1.25, hHeight * 1.25])
-      .attr("transform", "translate(" + margin.left / 2 + ",0)")
+      .attr("transform", "translate(" + (margin.left / 3) + ",0)")
       .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
     svg

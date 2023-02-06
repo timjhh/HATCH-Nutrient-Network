@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Check from '@mui/icons-material/Check'
+import Check from "@mui/icons-material/Check";
 import {
   Grid,
   Typography,
@@ -18,7 +18,8 @@ import {
   ListItemText,
   MenuList,
   Divider,
-  ListItemIcon
+  ListItemIcon,
+  Paper,
 } from "@mui/material";
 
 function VarSelect(props) {
@@ -31,10 +32,9 @@ function VarSelect(props) {
   }
 
   function addLine(label) {
-
-    if(!label) {
+    if (!label) {
       label = props.country + " - " + props.source + " - " + props.variable;
-      props.setPreset({label: "Custom"})
+      props.setPreset({ label: "Custom" });
     }
     if (props.lines.find((d) => d.label === label)) {
       setSnackBar(label + " already in graph");
@@ -64,175 +64,174 @@ function VarSelect(props) {
     setSnackBar(null);
   };
 
-  function removeLine(item) {
-    props.setLines(props.lines.filter((d) => d.label !== item));
-  }
-
-
-
-  useEffect(() => {
-    if(props.preset.label === "Custom") return;
-    props.setLines([])
-    let lns = []
-    props.preset.data.forEach((ps,idx) => {
-        const clr = props.colors[idx%MAX_LINES]
-  
-        lns.push({
-          label: ps,
-          color: clr,
-        });
-      });
-    props.setLines(lns);
-  }, [props.preset])
 
   return (
     <>
       {props.loaded ? (
-        <>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(5, 2fr)",
-              alignItems: "center",
-            }}
+        <Grid mb={1} container spacing={2} sx={{ height: "70%" }}>
+          <Grid item xs={9}>
+          <Paper
+            elevation={props.paperElevation}
+            sx={{ my: 2, p: 2, background: "primary.main" }}
           >
-            <FormControl sx={{ m: 2 }}>
-              <InputLabel id="country-select-label">Country</InputLabel>
-              <Select
-                labelId="mcountry-select-label"
-                id="country-select"
-                value={props.country}
-                label="Variable One"
-                onChange={(e) => {
-                  props.setCountry(e.target.value);
-                }}
-              >
-                {props.countries.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {sanitize(d)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 2 }}>
-              <InputLabel id="source-select-label">Source</InputLabel>
-              <Select
-                labelId="source-select-label"
-                id="source-select"
-                value={props.source}
-                label="Source"
-                onChange={(e) => {
-                  props.setSource(e.target.value);
-                }}
-              >
-                {props.sources.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {sanitize(d)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 2 }}>
-              <InputLabel id="variable-select-label">Variable</InputLabel>
-              <Select
-                labelId="variable-select-label"
-                id="variable-select"
-                value={props.variable}
-                label="Variable One"
-                onChange={(e) => {
-                  props.setVariable(e.target.value);
-                }}
-              >
-                {props.variables.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {sanitize(d)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 2 }}>
-              <Button variant="contained" onClick={() => addLine()}>
-                Add Line
-              </Button>
-              <Button
-                sx={{ my: 1 }}
-                variant="contained"
-                onClick={() => props.setLines([])}
-              >
-                Clear All
-              </Button>
-            </FormControl>
-            <Stack sx={{}} direction="row" spacing={1} alignItems="center">
-              <Typography>Linear</Typography>
-              <Switch
-                id="scaleVar1Switch"
-                checked={props.scaleType !== "Linear"}
-                onChange={() => {
-                  // props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile");
-                  // props.setHighlight(null);
-                  // props.setSelected(null);
-                }}
-                name="scaleType1"
-              />
-              <Typography>Log</Typography>
-            </Stack>
-          </Box>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(5, 1fr)",
+                alignItems: "center",
+              }}
+            >
+              <FormControl sx={{ m: 2 }}>
+                <InputLabel id="country-select-label">Country</InputLabel>
+                <Select
+                  labelId="mcountry-select-label"
+                  id="country-select"
+                  value={props.country}
+                  label="Variable One"
+                  onChange={(e) => {
+                    props.setCountry(e.target.value);
+                  }}
+                >
+                  {props.countries.map((d) => (
+                    <MenuItem key={d} value={d}>
+                      {sanitize(d)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ m: 2 }}>
+                <InputLabel id="source-select-label">Source</InputLabel>
+                <Select
+                  labelId="source-select-label"
+                  id="source-select"
+                  value={props.source}
+                  label="Source"
+                  onChange={(e) => {
+                    props.setSource(e.target.value);
+                  }}
+                >
+                  {props.sources.map((d) => (
+                    <MenuItem key={d} value={d}>
+                      {sanitize(d)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ m: 2 }}>
+                <InputLabel id="variable-select-label">Variable</InputLabel>
+                <Select
+                  labelId="variable-select-label"
+                  id="variable-select"
+                  value={props.variable}
+                  label="Variable One"
+                  onChange={(e) => {
+                    props.setVariable(e.target.value);
+                  }}
+                >
+                  {props.variables.map((d) => (
+                    <MenuItem key={d} value={d}>
+                      {sanitize(d)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ m: 2 }}>
+                <Button variant="contained" onClick={() => addLine()}>
+                  Add Line
+                </Button>
+                <Button
+                  sx={{ my: 1 }}
+                  variant="contained"
+                  onClick={() => props.setLines([])}
+                >
+                  Clear All
+                </Button>
+              </FormControl>
 
-          <Grid
-            container
-            sx={{ gridTemplateColumns: "repeat(4, 2fr)" }}
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            {props.lines.map((d, idx) => (
-              <Grid item alignItems="center" display="flex" key={d.label + idx}>
-                <Chip
-                  sx={{ m: 0.25, backgroundColor: d.color, stroke: 1 }}
-                  onClick={() => props.setSelected(d)}
-                  onDelete={() => removeLine(d.label)}
-                  key={d.label + idx}
-                  label={d.label}
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography>Linear</Typography>
+                <Switch
+                  id="scaleVar1Switch"
+                  checked={props.scaleType !== "Linear"}
+                  onChange={() => {
+                    props.setScaleType(
+                      props.scaleType === "Linear" ? "Log" : "Linear"
+                    );
+                  }}
+                  name="scaleTypeSwitch"
                 />
-              </Grid>
-            ))}
+                <Typography>Log</Typography>
+              </Stack>
+            </Box>
+
+            {/* <Grid
+              container
+              sx={{ gridTemplateColumns: "repeat(4, 2fr)" }}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              {props.lines.map((d, idx) => (
+                <Grid
+                  item
+                  alignItems="center"
+                  display="flex"
+                  key={d.label + idx}
+                >
+                  <Chip
+                    sx={{ m: 0.25, backgroundColor: d.color, stroke: 1 }}
+                    onClick={() => props.setSelected(d)}
+                    onDelete={() => removeLine(d.label)}
+                    key={d.label + idx}
+                    label={d.label}
+                  />
+                </Grid>
+              ))}
+            </Grid> */}
+
+            <Snackbar
+              open={open}
+              autoHideDuration={2000}
+              onClose={handleSBClose}
+            >
+              <Alert
+                onClose={handleSBClose}
+                severity="error"
+                sx={{ width: "100%" }}
+              >
+                {snackBar}
+              </Alert>
+            </Snackbar>
+          </Paper>
           </Grid>
 
-          <Grid
-          container
-          sx={{ gridTemplateColumns: "repeat(4, 2fr)" }}
-          direction="row"
-          justifyContent="flex-start"
-          alignItems="center">
-          <MenuList dense>
-          <Divider />
-              {props.presets.map((d,idx) => (
-                <MenuItem>
-                  {d.label === props.preset.label &&
+          <Grid item xs={3}>
+          <Paper
+            elevation={props.paperElevation}
+            sx={{ my: 2, p: 2, background: "primary.main" }}
+          >
+            <MenuList>
+              <Divider />
+              <Typography variant={"p"} sx={{ fontSize: "1.2em", m: 2 }}>
+                Highlights
+              </Typography>
+              {props.presets.map((d, idx) => (
+                <MenuItem key={"preset" + idx}>
+                  {d.label === props.preset.label && (
                     <ListItemIcon>
                       <Check />
                     </ListItemIcon>
-                  }
-                  <ListItemText onClick={(e) => props.setPreset(d)} inset>{d.label}</ListItemText>
+                  )}
+                  <ListItemText onClick={(e) => props.setPreset(d)} inset>
+                    {d.label}
+                  </ListItemText>
                 </MenuItem>
               ))}
-          <Divider />
-          </MenuList>
+              <Divider />
+            </MenuList>
+          </Paper>
           </Grid>
-
-
-
-
-          <Snackbar open={open} autoHideDuration={2000} onClose={handleSBClose}>
-            <Alert
-              onClose={handleSBClose}
-              severity="error"
-              sx={{ width: "100%" }}
-            >
-              {snackBar}
-            </Alert>
-          </Snackbar>
-        </>
+        </Grid>
       ) : (
         <LinearProgress />
       )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Paper, Grid, Typography } from "@mui/material";
+import { Paper, Grid, Chip } from "@mui/material";
 import VarSelect from "./VarSelect";
 import * as d3 from "d3";
 import Chart from "./Chart";
@@ -9,27 +9,8 @@ function Trends(props) {
   /*
         Presets for trendline collections
     */
-  const preset1 = [
-    { label: "Angola - Production_kg - CropRichness", color: "#e8e8e8" },
-    { label: "Angola - Import_kg - CropRichness", color: "#bddede" },
-    { label: "Cuba - Production_kg - CropRichness", color: "#8ed4d4" },
-  ];
 
-  const preset2 = [
-    { label: "Estonia - Production_kg - CropRichness", color: "#e8e8e8" },
-    { label: "Latvia - Production_kg - CropRichness", color: "#bddede" },
-    { label: "Lithuania - Production_kg - CropRichness", color: "#8ed4d4" },
-  ];
-
-  const preset3 = [
-    { label: "Denmark - Production_kg - CropRichness", color: "#e8e8e8" },
-    { label: "Sweden - Production_kg - CropRichness", color: "#bddede" },
-    { label: "Norway - Production_kg - CropRichness", color: "#8ed4d4" },
-    { label: "Finland - Production_kg - CropRichness", color: "#5ac8c8" },
-    { label: "Iceland - Production_kg - CropRichness", color: "#dabdd4" },
-    { label: "Faroe Islands - Production_kg - CropRichness", color: "#bdbdd4" },
-    { label: "Greenland - Production_kg - CropRichness", color: "#8ebdd4" },
-  ];
+  const MAX_LINES = 10;
 
   const ps1 = [
     "Brunei Darussalam - Production_kg - CropRichness",
@@ -53,7 +34,7 @@ function Trends(props) {
     "Belize - Production_kg - CropRichness",
   ]
 
-  const ps4 = [
+  const ps3 = [
     "Denmark - Production_kg - CropRichness",
     "Sweden - Production_kg - CropRichness",
     "Norway - Production_kg - CropRichness",
@@ -64,30 +45,44 @@ function Trends(props) {
   ];
 
   const presets = [
-    {label: "Scandinavia", data: ps4},
+    {label: "Test", data: ["United States of America - Import_kg - CropRichness"]},
+    {label: "Scandinavia", data: ps3},
     {label: "Central America", data: ps2},
     {label: "Southeast Asia", data:ps1},
     {label: "Custom", data: []}
   ]
 
+  // const colors = [
+  //   "#e8e8e8",
+  //   "#bddede",
+  //   "#8ed4d4",
+  //   "#5ac8c8",
+  //   "#dabdd4",
+  //   "#bdbdd4",
+  //   "#8ebdd4",
+  //   "#5abdc8",
+  //   "#cc92c1",
+  //   "#bd92c1",
+  //   "#8e92c1",
+  //   "#5a92c1",
+  //   "#be64ac",
+  //   "#bd64ac",
+  //   "#8e64ac",
+  //   "#5a64ac",
+  // ];
+
   const colors = [
-    "#e8e8e8",
-    "#bddede",
-    "#8ed4d4",
-    "#5ac8c8",
-    "#dabdd4",
-    "#bdbdd4",
-    "#8ebdd4",
-    "#5abdc8",
-    "#cc92c1",
-    "#bd92c1",
-    "#8e92c1",
-    "#5a92c1",
-    "#be64ac",
-    "#bd64ac",
-    "#8e64ac",
-    "#5a64ac",
-  ];
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+  ]
 
   const [data, setData] = useState([]);
   const [country, setCountry] = useState("Angola");
@@ -104,7 +99,7 @@ function Trends(props) {
   const [years, setYears] = useState([]);
   const [sources, setSources] = useState([]);
   const [variables, setVariables] = useState([]);
-  const [preset, setPreset] = useState(presets[0])
+  const [preset, setPreset] = useState(null)
 
   useEffect(() => {
     if (data.length === 0) {
@@ -116,6 +111,7 @@ function Trends(props) {
           setSources([...new Set(res.map((d) => d.Source))]);
           setYears([...new Set(res.map((d) => d.Year))].sort());
           setVariables(res.columns.filter((d) => !props.unused.includes(d)));
+          setPreset(presets[0])
           setLoaded(true);
         })
         .catch((err) => console.log(err));
@@ -128,10 +124,13 @@ function Trends(props) {
     }
   }, [lines, props.data]);
 
+  function removeLine(item) {
+    setLines(lines.filter((d) => d.label !== item));
+  }
+
   function updateLineData() {
     if (loaded) {
       var dt = [];
-      var lns = lines;
       lines.forEach((d, idx) => {
         let vars = d.label.split(" - ");
         let ctry = vars[0];
@@ -139,6 +138,21 @@ function Trends(props) {
         let vr = vars[2];
 
         let datum = data.filter((e) => e.Country === ctry && e.Source === src);
+        
+        // Fill in the gaps in our data with 0 values
+        if((datum.length < (d3.max(props.years)-d3.min(props.years))+1) && datum.length > 0) {
+          // Set of values that ARE in the data
+          let yrs = datum.map(y => y.Year)
+          // Find years that have not yet been used
+          let unused = props.years.filter(x => !yrs.includes(x))
+
+          // Concatenate unused years with a 0
+          datum = datum.concat(unused.map(y => {
+            let o = {Year: y}
+            o[vr] = 0
+            return o
+          }))
+        }
 
         dt = dt.concat(
           datum.map((e) => {
@@ -148,12 +162,32 @@ function Trends(props) {
               Color: d.color,
               key: d.label,
             };
-          })
+          }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
       });
+
       setLineData(dt);
     }
   }
+
+  // State update for switching presets
+  // Each preset should have a label and data attribute
+  // Data should be in the form of an array containing labels in the format of
+  // "Country - Source - Variable"
+  useEffect(() => {
+    if(preset === null || preset.label === "Custom" || preset.data.length === 0) return;
+    setLines([])
+    let lns = []
+    preset.data.forEach((ps,idx) => {
+        const clr = colors[idx%MAX_LINES]
+  
+        lns.push({
+          label: ps,
+          color: clr,
+        });
+      });
+    setLines(lns);
+  }, [preset])
 
   function addLine(label) {
     // Return the first color we haven't used
@@ -168,19 +202,8 @@ function Trends(props) {
 
   return (
     <Grid container>
-      <Paper
-        elevation={props.paperElevation}
-        sx={{ width: 1, my: 2, p: 2, background: "primary.main" }}
-      >
-        <Typography align="center" variant="h4">
-          This page is under construction!
-        </Typography>
-      </Paper>
+
       <Grid item xs={12}>
-        <Paper
-          elevation={props.paperElevation}
-          sx={{ my: 2, p: 2, background: "primary.main" }}
-        >
           <VarSelect
             year={year}
             setYear={setYear}
@@ -207,7 +230,6 @@ function Trends(props) {
             colors={colors}
             {...props}
           />
-        </Paper>
       </Grid>
 
       <Grid item xs={12}>
@@ -235,7 +257,39 @@ function Trends(props) {
             loaded={loaded}
           />
         </Paper>
+
+
+        
       </Grid>
+      <Grid item xs={12}>
+        <Paper>
+        <Grid
+              container
+              sx={{ gridTemplateColumns: "repeat(4, 2fr)", p:2 }}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              {lines.map((d, idx) => (
+                <Grid
+                  item
+                  alignItems="center"
+                  display="flex"
+                  key={d.label + idx}
+                >
+                  <Chip
+                    sx={{ m: 0.25, backgroundColor: d.color, stroke: 1 }}
+                    onClick={() => setSelected(d)}
+                    onDelete={() => removeLine(d.label)}
+                    key={d.label + idx}
+                    label={d.label}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+        </Paper>
+      </Grid>
+
     </Grid>
   );
 }

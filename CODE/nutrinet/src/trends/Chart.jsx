@@ -1,63 +1,72 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as d3 from "d3";
 import { LinearProgress } from '@mui/material';
 
 function Chart(props) {
 
     // Dimensions of chart
-    const margin = {top: 50, right: 25, bottom: 30, left: 50};    
+    const margin = {top: 10, right: 0, bottom: 30, left: 20};    
     const width = 500 - margin.right - margin.left,
-    height = 300 - (margin.top+margin.bottom);
+    height = 250 - (margin.top+margin.bottom);
+
+    const [chartLoaded, setChartLoaded] = useState(false)
+
+useEffect(() => {
+  genLineChart()
+  setChartLoaded(true)
+}, [])
+
 
 useEffect(() => {
 
-  if(props.data.length === 0) return;
+  if(chartLoaded) {
+    updateLineChart()
+  }
+  
+}, [props.lineData, props.scaleType, props.loaded])
 
+function updateLineChart() {
   var data = d3.group(props.lineData, d => d.key)
   
   let svg = d3.select("#lineGraph")
   .select("svg")
 
-  if(svg.empty()) {
-    genLineChart()
-  }
-
   const t = svg.transition()
   .duration(750)
 
   let scaleX = d3.scaleTime()
-  .domain(d3.extent(props.data.sort((a,b) => a.Year-b.Year), d => new Date(d.Year)))
+  .domain(d3.extent(props.data, d => new Date(d.Year)))
   .range([margin.left,width]);
 
-  let scaleY = d3.scaleLinear()
-  //.domain([0,d3.max(props.lineData, d => d3.max(d, e => e.Value))])
-  .domain([0, d3.max(props.lineData, d => d.Value)])
+  let scaleY = props.scaleType === "Linear" ? d3.scaleLinear() : d3.scaleSymlog()
+
+  scaleY.domain([0, d3.max(props.lineData, d => d.Value)])
   .range([height, margin.top])
 
   svg
   .select("#lineYAxis")
   .transition(t)
   .call(d3.axisLeft(scaleY).ticks(4, ".3")) 
-
+  
   d3.select("#lines")
     .selectAll("path")
     .data(data)
-  //   .join(
-  //     enter => enter.append("path")
-  //     .attr("opacity", 0)
-  //     .transition(t)
-  //     .attr("opacity", 0.8),
-  //     update => update
-  //     .attr("fill", d => d.Color)
-  //     .attr("y", 0)
-  //   .call(update => update.transition(t)
-  //     .attr("y", d => scaleY(d.Value)),
-  // exit => exit
-  //   .call(exit => exit.transition(t)
-  //     .attr("y", 0)
-  //     .remove()))
-  //   )
-    .join("path")
+    .join(
+      enter => enter.append("path")
+        .attr("opacity", 0)
+        .transition()
+        .duration(500)
+        .attr("opacity", 0.8),
+      update => update
+        .call(update => update.transition()
+        .duration(500)
+        .attr("y", d => scaleY(+d.Value)),
+      exit => exit
+        .call(exit => exit.transition()
+        .duration(500)
+        .attr("opacity", 0)
+        .remove()))
+    )
     .attr("fill", "none")
     .attr("id", "grLine")
     .attr("stroke", d => d[1][0].Color)
@@ -68,26 +77,21 @@ useEffect(() => {
       (d[1])
       //.curve(d3.curveBasis)
       )
-  
-}, [props.lineData])
-
-
-
+}
 
 function genLineChart() {
-
-
-  var lns = props.lineData
   
   var data = d3.group(props.lineData, d => d.key)
 
   let scaleX = d3.scaleTime()
-  .domain(d3.extent(props.data.sort((a,b) => a.Year-b.Year), d => new Date(d.Year)))
+  .domain(d3.extent(props.data, d => new Date(d.Year)))
   .range([margin.left,width]);
 
-  let scaleY = d3.scaleLinear()
-  //.domain([0,d3.max(props.lineData, d => d3.max(d, e => e.Value))])
-  .domain([0, d3.max(props.lineData, d => d.Value)])
+  scaleX.ticks(d3.timeYear.every(5));
+
+  let scaleY = props.scaleType === "Linear" ? d3.scaleLinear() : d3.scaleSymlog()
+
+  scaleY.domain([0, d3.max(props.lineData, d => d.Value)])
   .range([height, margin.top])
 
   

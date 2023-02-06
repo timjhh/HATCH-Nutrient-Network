@@ -153,7 +153,7 @@ function GraphController(props) {
       // Concatenate unused years with a 0
       yearDist = yearDist.concat(unused.map(y => [parseInt(y), 0]))
     }
-    
+
       // Force conversion of years to int instead of string, then sort by year
     setLineChartData(
       yearDist
@@ -422,7 +422,7 @@ function GraphController(props) {
                   >
                     <b>Avg. Weight</b>
                   </Typography>
-                  <Tooltip title="Strength between a node is the amount of a nutrient present in a node, normalized between [0,max]. This is the average strength between all connections.">
+                  <Tooltip title={<p>Strength between a crop and nutrient is the amount of a nutrient present in the crop, normalized between [0,max of these crops]. This is the average strength of all connections.<br/><br/><em>On Average, each crop contributes this much to each nutrient composition</em></p>}>
                     <IconButton sx={{ pl: 0 }}>
                       <InfoIcon fontSize="small" sx={{ width: 0.8 }} />
                     </IconButton>
