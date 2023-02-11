@@ -80,6 +80,10 @@ function DataDownloader(props) {
           <Typography mb={2} variant={"h4"} sx={{ textAlign: "center" }}>
             Download This Data
           </Typography>
+          <Typography mb={2} variant={"p"} sx={{ textAlign: "center" }}>
+            Download data used for the "graphs" page containing many crops across years, and nutrients provided by this crop. Some
+            general data like serving size for that crop and population of countries are provided.
+          </Typography>
 
           <Box
             sx={{

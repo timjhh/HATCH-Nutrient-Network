@@ -51,9 +51,9 @@ function GraphController(props) {
 
   const [dataProcessed, setDataProcessed] = useState(false);
 
-  const [country, setCountry] = useState("Angola");
-  const [source, setSource] = useState("Production_kg");
-  const [year, setYear] = useState("2019");
+  const [country, setCountry] = useState(props.countries[0]);
+  const [source, setSource] = useState(props.sources[0]);
+  const [year, setYear] = useState("2020");
 
   const [highlighted, setHighlighted] = useState(null);
 
@@ -498,7 +498,7 @@ function GraphController(props) {
               <br />
               <br />* LCt is defined as the Largest Contributor to n nutrients.
               The summation of all LCt's below should equal to{" "}
-              <b>{props.nutrients.length}</b>, the total number of nutrients.
+              <b>{props.nutrients.length} - |Unused Nutrients|</b>.
               Thus, Avg. LCt Weight is the contribution each crop makes on
               average to nutrients where it is the largest contributor. This is
               compared to the Average Weight of this crop to all of its

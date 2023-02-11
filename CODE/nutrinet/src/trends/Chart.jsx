@@ -1,11 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import * as d3 from "d3";
+import * as d3module from "d3";
 import { LinearProgress } from '@mui/material';
+import d3tip from 'd3-tip'
+const d3 = {
+  ...d3module,
+  tip: d3tip
+}
 
 function Chart(props) {
 
     // Dimensions of chart
-    const margin = {top: 10, right: 0, bottom: 30, left: 20};    
+    const margin = {top: 10, right: 0, bottom: 30, left: 30};    
     const width = 500 - margin.right - margin.left,
     height = 250 - (margin.top+margin.bottom);
 
@@ -48,7 +53,20 @@ function updateLineChart() {
   .transition(t)
   .call(d3.axisLeft(scaleY).ticks(4, ".3")) 
   
-  d3.select("#lines")
+  svg.select("#lineXAxis")
+  .call(d3.axisBottom(scaleX).tickFormat(d3.timeFormat("%Y")))
+  
+  
+  var tip = d3.tip()
+  .attr("id", "d3Tip")
+  .attr('class', 'd3-tip')
+  .html(function(event,d) {
+    return d[0]
+  })
+  .style("left", d => d + "px")     
+  .style("top", d => (d*4) + "px");
+
+  const g = d3.select("#lines")
     .selectAll("path")
     .data(data)
     .join(
@@ -69,6 +87,8 @@ function updateLineChart() {
     )
     .attr("fill", "none")
     .attr("id", "grLine")
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide)
     .attr("stroke", d => d[1][0].Color)
     .attr("stroke-width", 4)
     .attr("d", d => d3.line()
@@ -77,6 +97,9 @@ function updateLineChart() {
       (d[1])
       //.curve(d3.curveBasis)
       )
+
+      g.call(tip);
+
 }
 
 function genLineChart() {
@@ -127,13 +150,25 @@ function genLineChart() {
     var lines = svg.append("g")
     .attr("id", "lines")
 
-    lines.selectAll("path")
+
+    var tip = d3.tip()
+    .attr("id", "d3Tip")
+    .attr('class', 'd3-tip')
+    .html(function(event,d) { 
+      return d[0] 
+    })
+    .style("left", d => d + "px")     
+    .style("top", d => (d*4) + "px");
+
+    const g = lines.selectAll("path")
         .data(data)
         .join("path")
         .attr("fill", "none")
         .attr("class", "grLine")
         .attr("stroke", d => d[1][0].Color)
         .attr("stroke-width", 4)
+        .on("mouseover", tip.show)
+        .on("mouseout", tip.hide)
         .attr("d", d => d3.line()
           .x(function(d) { return scaleX(new Date(d.Year)) })
           .y(function(d) { return scaleY(d.Value) })
@@ -141,7 +176,7 @@ function genLineChart() {
          // .curve(d3.curveBasis)
           )
         
-
+    g.call(tip)
   
   }
   return (

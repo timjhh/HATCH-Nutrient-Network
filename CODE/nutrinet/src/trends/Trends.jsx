@@ -25,30 +25,43 @@ function Trends(props) {
   ]
 
   const ps2 = [
-    "Mexico - Production_kg - CropRichness",
-    "Panama - Production_kg - CropRichness",
-    "Guatemala - Production_kg - CropRichness",
-    "Honduras - Production_kg - CropRichness",
-    "Nicaragua - Production_kg - CropRichness",
-    "Costa Rica - Production_kg - CropRichness",
-    "Belize - Production_kg - CropRichness",
+    "Mexico - Export_kg - CropRichness",
+    "Panama - Export_kg - CropRichness",
+    "Guatemala - Export_kg - CropRichness",
+    "Honduras - Export_kg - CropRichness",
+    "Nicaragua - Export_kg - CropRichness",
+    "Costa Rica - Export_kg - CropRichness",
+    "Belize - Export_kg - CropRichness",
   ]
 
   const ps3 = [
-    "Denmark - Production_kg - CropRichness",
-    "Sweden - Production_kg - CropRichness",
-    "Norway - Production_kg - CropRichness",
-    "Finland - Production_kg - CropRichness",
-    "Iceland - Production_kg - CropRichness",
-    "Faroe Islands - Production_kg - CropRichness",
-    "Greenland - Production_kg - CropRichness",
+    "Denmark - Import_kg - CropRichness",
+    "Sweden - Import_kg - CropRichness",
+    "Norway - Import_kg - CropRichness",
+    "Finland - Import_kg - CropRichness",
+    "Iceland - Import_kg - CropRichness",
+    "Faroe Islands - Import_kg - CropRichness",
+    "Greenland - Import_kg - CropRichness",
   ];
 
+  const ps4 = [
+    "United Kingdom of Great Britain and Northern Ireland - Production_kg - CropRichness",
+    "Luxembourg - Production_kg - CropRichness",
+    "Belgium - Production_kg - CropRichness",
+    "Belgium-Luxembourg - Production_kg - CropRichness",
+    "Ireland - Production_kg - CropRichness",
+    "Netherlands - Production_kg - CropRichness",
+    "France - Production_kg - CropRichness",
+    "Austria - Production_kg - CropRichness",
+    "Germany - Production_kg - CropRichness",
+    "Switzerland - Production_kg - CropRichness",
+  ]
+
   const presets = [
-    {label: "Test", data: ["United States of America - Import_kg - CropRichness"]},
-    {label: "Scandinavia", data: ps3},
-    {label: "Central America", data: ps2},
+    {label: "Scandinavia Imports", data: ps3},
+    {label: "Central America Exports", data: ps2},
     {label: "Southeast Asia", data:ps1},
+    {label: "Western Europe", data: ps4},
     {label: "Custom", data: []}
   ]
 
@@ -154,6 +167,7 @@ function Trends(props) {
           }))
         }
 
+        // Add this dataset to the set of lines we now have 
         dt = dt.concat(
           datum.map((e) => {
             return {
@@ -165,7 +179,7 @@ function Trends(props) {
           }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
       });
-
+    
       setLineData(dt);
     }
   }
@@ -231,7 +245,6 @@ function Trends(props) {
             {...props}
           />
       </Grid>
-
       <Grid item xs={12}>
         <Paper
           elevation={props.paperElevation}
@@ -261,35 +274,6 @@ function Trends(props) {
 
         
       </Grid>
-      <Grid item xs={12}>
-        <Paper>
-        <Grid
-              container
-              sx={{ gridTemplateColumns: "repeat(4, 2fr)", p:2 }}
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="center"
-            >
-              {lines.map((d, idx) => (
-                <Grid
-                  item
-                  alignItems="center"
-                  display="flex"
-                  key={d.label + idx}
-                >
-                  <Chip
-                    sx={{ m: 0.25, backgroundColor: d.color, stroke: 1 }}
-                    onClick={() => setSelected(d)}
-                    onDelete={() => removeLine(d.label)}
-                    key={d.label + idx}
-                    label={d.label}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-        </Paper>
-      </Grid>
-
     </Grid>
   );
 }
