@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Check from "@mui/icons-material/Check";
+import InfoIcon from "@mui/icons-material/Info";
 import {
   Grid,
   Typography,
@@ -20,13 +21,14 @@ import {
   ListItemIcon,
   Paper,
   Chip,
+  Tooltip
 } from "@mui/material";
 
 function VarSelect(props) {
   const [snackBar, setSnackBar] = useState(null);
   const [open, setOpen] = useState(false);
   const MAX_LINES = 10;
-
+  
   function sanitize(text) {
     return text.split("_").join(" ");
   }
@@ -108,7 +110,7 @@ function VarSelect(props) {
                         labelId="variable-select-label"
                         id="variable-select"
                         value={props.variable}
-                        label="Variable One"
+                        label="Variable"
                         onChange={(e) => {
                           props.setVariable(e.target.value);
                         }}
@@ -121,7 +123,17 @@ function VarSelect(props) {
                       </Select>
                     </FormControl>
                     <FormControl sx={{ m: 2 }}>
-                      <InputLabel id="source-select-label">Source</InputLabel>
+                      
+                      <InputLabel id="source-select-label">Source
+                      {props.socioEconVars.includes(props.variable) &&
+                      <Tooltip 
+                          //sx={!props.socioEconVars.includes(props.variable) && {display:"none"}}
+                          //sx={{px: 2}}
+                          title={"This variable is not affected by source"}>
+                        <InfoIcon sx={{fontSize: "inherit"}}/>
+                        </Tooltip>  
+                      }
+                      </InputLabel>
                       <Select
                         labelId="source-select-label"
                         id="source-select"

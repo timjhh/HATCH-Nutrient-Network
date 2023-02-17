@@ -61,7 +61,9 @@ const nutrients = ["Calories", "Protein", "Fat", "Carbohydrates", "Vitamin_C", "
 // This is passed to MapController to control which variables are selectable in the Map element
 const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "Source",	"income", "Kg_Omega.3..USDA.only.", "Kg_B12..USDA.only."];
 
-
+// Non-nutritional variables currently included in our dataset - used to filter ability to select Source if variable will not be
+// affected. E.g. user should NOT be able to select a source for GDP, as they are not dependent
+const socioEconVars = ["Population", "GDP", "life_expectancy", "infant_mortality"]
 
   useEffect(() => {
 
@@ -120,6 +122,7 @@ const unused = ["", "Year", "Country", "M49.Code", "ISO2.Code", "ISO3.Code", "So
           element={<Trends
             //loaded={loaded}
             //data={bigData}
+            socioEconVars={socioEconVars}
             unused={unused}
             paperElevation={paperElevation}
             countries={countries}
