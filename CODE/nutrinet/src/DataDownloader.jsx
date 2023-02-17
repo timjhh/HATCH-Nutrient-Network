@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-
-import { Paper, Box, Button, LinearProgress, Divider } from "@mui/material";
+import * as d3 from "d3";
+import {
+  Paper,
+  Box,
+  Button,
+  CircularProgress,
+  LinearProgress,
+  Divider,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+} from "@mui/material";
 import { ref, equalTo, query, orderByChild, get } from "firebase/database";
 
 import Typography from "@mui/material/Typography";
@@ -12,39 +23,91 @@ function DataDownloader(props) {
   const [yearsDL, setYearsDL] = useState([]);
   const [sourcesDL, setSourcesDL] = useState([]);
   const [canDownload, setCanDownload] = useState(false);
+  const [dataSource, setDataSource] = useState("database");
+  const [downloading, setDownloading] = useState(false);
+  const [dlLabel, setDlLabel] = useState("Select Data to Download");
 
   const [dlData, setDLData] = useState([]);
 
   const csvLink = React.createRef();
 
+  // Set download button state, downloading state, and can download state from one place
+  // props: whether a download is happening right now
+  function updateCanDownload(dl) {
+    if (!dl) {
+      setDownloading(false);
+      setCanDownload(
+        yearsDL.length > 0 && countriesDL.length > 0 && sourcesDL.length > 0
+      );
+      setDlLabel(
+        yearsDL.length > 0 && countriesDL.length > 0 && sourcesDL.length > 0
+          ? "Download"
+          : "Select Data to Download"
+      );
+    } else {
+      setDlLabel("Downloading....");
+      setDownloading(true);
+    }
+  }
+
   useEffect(() => {
-    setCanDownload(
-      !(yearsDL.length > 0 && countriesDL.length > 0 && sourcesDL.length > 0)
-    );
+    updateCanDownload(downloading);
   }, [countriesDL, yearsDL, sourcesDL]);
 
   useEffect(() => {
     if (dlData.length > 0) {
       csvLink.current.link.click();
+      updateCanDownload(false);
+      setDLData([])
     }
   }, [dlData]);
 
   // Queries firebase for data to be downloaded by iterating through countries, filtering returned data by year,
   // then by source requested
+  // If maps is selected, loads data from csv, filters for desired countries and source requested
   function downloadData() {
     if (!props.database) return;
 
-    Promise.all(
-      countriesDL.map((country) => {
-        return fetchDataByCountry(country);
-      })
-    ).then((data) => {
-      if (data.length > 0) {
-        setDLData(data.flat());
-      } else {
-        props.setSnackBar("Warning: 0 Records Found for Request");
-      }
-    });
+    updateCanDownload(true);
+
+    // Data is sourced from firebase db
+    if (dataSource === "database") {
+      Promise.all(
+        countriesDL.map((country) => {
+          return fetchDataByCountry(country);
+        })
+      ).then((data) => {
+        if (data.length > 0) {
+          setDLData(data.flat());
+        } else {
+          props.setSnackBar("Warning: 0 Records Found for Request");
+        }
+      });
+    } else {
+      // Data being downloaded must be from maps dataset
+      d3.csv(
+        `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri_AY.csv"
+      ).then((res, err) => {
+        console.log(res)
+        console.log(countriesDL)
+        console.log(yearsDL)
+        console.log(sourcesDL)
+        let datum = res.filter((e) => (
+          (countriesDL.length > 0 && countriesDL.includes(e.Country)) &&
+          (yearsDL.length > 0 && yearsDL.includes(e.Year)) &&
+          (sourcesDL.length > 0 && sourcesDL.includes(e.Source))
+        ))
+        if (datum.length > 0 && !err) {
+          setDLData(datum.flat());
+        } else {
+          props.setSnackBar("Warning: 0 Records Found for Request");
+          updateCanDownload(false)
+        }
+        
+
+
+      });
+    }
   }
 
   async function fetchDataByCountry(country) {
@@ -80,11 +143,37 @@ function DataDownloader(props) {
           <Typography mb={2} variant={"h4"} sx={{ textAlign: "center" }}>
             Download This Data
           </Typography>
-          <Typography mb={2} variant={"p"} sx={{ textAlign: "center" }}>
-            Download data used for the "graphs" page containing many crops across years, and nutrients provided by this crop. Some
-            general data like serving size for that crop and population of countries are provided.
+          <Typography variant={"p"} sx={{ textAlign: "center" }}>
+            Download data used for the "graphs" page containing many crops
+            across years, and nutrients provided by this crop. Some general data
+            like serving size for that crop and population of countries are
+            provided.
           </Typography>
 
+          <FormControl
+            sx={{ mt: 3, display: "inline-flex", justifyContent: "flex-start" }}
+          >
+            <RadioGroup
+              sx={{ display: "inline-flex", justifyContent: "flex-start" }}
+              row
+              aria-labelledby="data-source-radio-group"
+              value={dataSource}
+              name="data-source-radio-group"
+              onChange={(event) => setDataSource(event.target.value)}
+            >
+              <FormControlLabel
+                selected
+                value="database"
+                control={<Radio />}
+                label="By Crop (Used in Graphs)"
+              />
+              <FormControlLabel
+                value="map"
+                control={<Radio />}
+                label="Summarized, Across Crops (Used in Maps)"
+              />
+            </RadioGroup>
+          </FormControl>
           <Box
             sx={{
               width: 1,
@@ -119,11 +208,12 @@ function DataDownloader(props) {
             />
           </Box>
           <Button
-            disabled={canDownload}
+            disabled={!canDownload || downloading}
             variant="contained"
             onClick={downloadData}
           >
-            {!canDownload ? "Download Data" : "Select Data to Download"}
+            {dlLabel}
+            {downloading && <CircularProgress color="inherit" size="1rem" />}
           </Button>
           <CSVLink
             ref={csvLink}
