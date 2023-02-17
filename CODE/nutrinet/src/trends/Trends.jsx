@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Paper, Grid, Chip } from "@mui/material";
+import { Paper, Grid } from "@mui/material";
 import VarSelect from "./VarSelect";
 import * as d3 from "d3";
 import Chart from "./Chart";
@@ -98,8 +98,8 @@ function Trends(props) {
   ]
 
   const [data, setData] = useState([]);
-  const [country, setCountry] = useState("Angola");
-  const [year, setYear] = useState("2019");
+  const [country, setCountry] = useState(props.countries[0]);
+  const [year, setYear] = useState("2020");
   const [source, setSource] = useState("Production_kg");
   const [scaleType, setScaleType] = useState("Linear");
   const [variable, setVariable] = useState("Population");
@@ -242,6 +242,7 @@ function Trends(props) {
             preset={preset}
             setPreset={setPreset}
             colors={colors}
+            removeLine={removeLine}
             {...props}
           />
       </Grid>

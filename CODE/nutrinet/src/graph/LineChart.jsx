@@ -29,8 +29,19 @@ function LineChart(props) {
 
     let scaleY = d3
       .scaleLinear()
-      .domain([0, d3.max(props.data, (d) => +d[1])])
+      .domain([0, d3.max(props.data, (d) => d[1])])
       .range([hHeight, margin.top]);
+
+    svg
+      .select("#lineYAxis")
+      .transition()
+      .duration(500)
+      .call(d3.axisLeft(scaleY).ticks(4))
+      .attr("transform", "translate(" + margin.left + ",0)");
+
+    svg
+      .select("#lineXAxis")
+      .call(d3.axisBottom(scaleX))
 
     d3.select("#lineGraph")
       .select("#grLine")
@@ -42,7 +53,6 @@ function LineChart(props) {
         "d",
         d3
           .line()
-          //.defined(function (d) { return d[1] != 0 })
           .x((d) => scaleX(d[0]))
           .y((d) => scaleY(d[1]))
           .curve(d3.curveBasis)
@@ -61,7 +71,7 @@ function LineChart(props) {
 
     let scaleY = d3
       .scaleLinear()
-      .domain([0, d3.max(props.data, (d) => +d[1])])
+      .domain([0, d3.max(props.data, (d) => d[1])])
       .range([hHeight, margin.top]);
 
     var svg = d3
@@ -89,13 +99,14 @@ function LineChart(props) {
 
     svg
       .append("g")
+      .attr("id", "lineXAxis")
       .call(d3.axisBottom(scaleX).tickFormat(d3.timeFormat("%Y")))
       .attr("transform", "translate(0," + hHeight + ")");
 
     svg
       .append("g")
       .attr("id", "lineYAxis")
-      .call(d3.axisLeft(scaleY).ticks(3))
+      .call(d3.axisLeft(scaleY))
       .attr("transform", "translate(" + margin.left + ",0)");
 
     svg

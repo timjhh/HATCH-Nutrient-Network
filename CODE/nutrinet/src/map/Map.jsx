@@ -70,26 +70,6 @@ function Map(props) {
   //   ["#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"]
   // ];
 
-  // function multiplyColors(c1, c2) {
-
-  //   let rgb1 = d3.color(c1);
-  //   let rgb2 = d3.color(c2);
-
-  //   let r = Math.floor((rgb1['r'] * rgb2['r']) / 255);
-  //   let g = Math.floor((rgb1['g'] * rgb2['g']) / 255);
-  //   let b = Math.floor((rgb1['b'] * rgb2['b']) / 255);
-
-  //   return rgbToHex(r,g,b);
-
-  // }
-  // function rgbToHex(r, g, b) {
-  //   const componentToHex = c => {
-  //     const hex = c.toString(16);
-  //     return hex.length === 1 ? '0' + hex : hex;
-  //   };
-  //   return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
-  // }
-
   useEffect(() => {
     fetch("./world.geo.json")
       .then((response) => {
@@ -182,8 +162,6 @@ function Map(props) {
 
   // Update highlighted countries
   useEffect(() => {
-    if (!props.mapLoaded) return;
-
     var g = d3.select("#map").select("svg").select("g");
 
     if (props.highlight !== null) {
@@ -201,7 +179,9 @@ function Map(props) {
           if (isNaN(val[props.variable1]) || isNaN(val[props.variable2]))
             return props.nullStroke;
 
-          return val.color === props.highlight ? props.highlightClr : props.nullStroke;
+          return val.color === props.highlight
+            ? props.highlightClr
+            : props.nullStroke;
         })
         .style("stroke-width", (d) => {
           var val = props.current.find(
@@ -225,6 +205,10 @@ function Map(props) {
   }, [props.highlight]);
 
   useEffect(() => {
+    updateSelected();
+  }, [props.selected]);
+
+  function updateSelected() {
     var g = d3.select("#map").select("svg").select("g");
 
     if (props.selected != null) {
@@ -244,7 +228,7 @@ function Map(props) {
         .style("stroke", "white")
         .style("stroke-width", 0.5);
     }
-  }, [props.selected]);
+  }
 
   function updateMapData() {
     // Update legend labels

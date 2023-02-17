@@ -9,12 +9,23 @@ const d3 = {
 
 function Chart(props) {
 
+  var id = 'dQw4w9WgXcQ';
+  var url = 'https://www.youtube.com/watch?v=' + id;
+  
+  fetch('https://noembed.com/embed',
+      {format: 'json', url: url}, function (data) {
+      alert(data.title);
+      console.log(data)
+  });
+
     // Dimensions of chart
-    const margin = {top: 10, right: 0, bottom: 30, left: 30};    
+    const margin = {top: 10, right: 0, bottom: 30, left: 40};    
     const width = 500 - margin.right - margin.left,
     height = 250 - (margin.top+margin.bottom);
 
     const [chartLoaded, setChartLoaded] = useState(false)
+
+    const STROKE_WIDTH = 3
 
 useEffect(() => {
   genLineChart()
@@ -74,11 +85,20 @@ function updateLineChart() {
         .attr("opacity", 0)
         .transition()
         .duration(500)
-        .attr("opacity", 0.8),
+        .attr("opacity", 0.8)
+        .attr("d", d => d3.line()
+        .x(d => scaleX(new Date(d.Year)))
+        .y(d => scaleY(+d.Value))
+        (d[1])
+        ),
       update => update
         .call(update => update.transition()
         .duration(500)
-        .attr("y", d => scaleY(+d.Value)),
+        .attr("d", d => d3.line()
+        .x(d => scaleX(new Date(d.Year)))
+        .y(d => scaleY(+d.Value))
+        (d[1])
+        ),
       exit => exit
         .call(exit => exit.transition()
         .duration(500)
@@ -90,14 +110,12 @@ function updateLineChart() {
     .on("mouseover", tip.show)
     .on("mouseout", tip.hide)
     .attr("stroke", d => d[1][0].Color)
-    .attr("stroke-width", 4)
-    .attr("d", d => d3.line()
-      .x(d => scaleX(new Date(d.Year)))
-      .y(d => scaleY(+d.Value))
-      (d[1])
-      //.curve(d3.curveBasis)
-      )
-
+    .attr("stroke-width", STROKE_WIDTH)
+    // .attr("d", d => d3.line()
+    //   .x(d => scaleX(new Date(d.Year)))
+    //   .y(d => scaleY(+d.Value))
+    //   (d[1])
+    //   )
       g.call(tip);
 
 }
@@ -166,7 +184,7 @@ function genLineChart() {
         .attr("fill", "none")
         .attr("class", "grLine")
         .attr("stroke", d => d[1][0].Color)
-        .attr("stroke-width", 4)
+        .attr("stroke-width", STROKE_WIDTH)
         .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
         .attr("d", d => d3.line()

@@ -126,6 +126,7 @@ function VarSelect(props) {
                         labelId="source-select-label"
                         id="source-select"
                         value={props.source}
+                        disabled={props.socioEconVars.includes(props.variable)}
                         label="Source"
                         onChange={(e) => {
                           props.setSource(e.target.value);

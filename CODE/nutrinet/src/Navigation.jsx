@@ -1,7 +1,5 @@
 import React from "react";
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import { Typography, Button, Box } from "@mui/material";
 
 import gh from './images/GitHub-Mark-32px.png';
 
@@ -9,7 +7,6 @@ const Navigation = () => {
 
 
     return (
-
 
 
         <Box spacing={0}  sx={{ width: 1, mb: 4, bgcolor: '#8f97cf', display: 'inline-flex', alignItems: 'center' }}>

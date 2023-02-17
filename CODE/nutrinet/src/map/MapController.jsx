@@ -119,11 +119,11 @@ function MapController(props) {
     });
   }, []);
 
-  useEffect(() => {
-    if (mapLoaded) {
-      setHighlight(colors1d[10]);
-    }
-  }, [mapLoaded]);
+  // useEffect(() => {
+  //   if (mapLoaded) {
+  //     setHighlight(colors1d[10]);
+  //   }
+  // }, [mapLoaded]);
 
   useEffect(() => {
     if (bigData.length > 0) {
