@@ -30,7 +30,7 @@ function VarSelect(props) {
   const MAX_LINES = 10;
   
   function sanitize(text) {
-    return text.split("_").join(" ");
+    return text.split(/\_|\./).join(" ");
   }
 
   function addLine(label) {

@@ -41,8 +41,7 @@ function Trends(props) {
     "Finland - CropRichness - Import_kg",
     "Iceland - CropRichness - Import_kg",
     "Faroe Islands - CropRichness - Import_kg",
-    "Greenland - CropRichness - Import_kg",
-    "Denmark - Population - Import_kg"
+    "Greenland - CropRichness - Import_kg"
   ];
 
   const ps4 = [
@@ -116,7 +115,7 @@ function Trends(props) {
   const [preset, setPreset] = useState(null)
 
   function sanitize(text) {
-    return text.split("_").join(" ");
+    return text.split(/\_|\./).join(" ");
   }
 
   useEffect(() => {

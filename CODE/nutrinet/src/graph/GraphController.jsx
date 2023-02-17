@@ -46,7 +46,6 @@ function GraphController(props) {
 
   const [bipartite, setBipartite] = useState(false);
   const [current, setCurrent] = useState([]);
-  const [bipData, setBipData] = useState([]);
   const [nodes, setNodes] = useState([]); // Simple list of all node nodes
 
   const [dataProcessed, setDataProcessed] = useState(false);
@@ -60,10 +59,9 @@ function GraphController(props) {
   // 40 data points for each year, symbolizing
   const [lineChartData, setLineChartData] = useState([]);
 
-
   /**
    * Update large set of data on each country selection by querying Firebase
-   * Callbacks: 
+   * Callbacks:
    * country - when a country is updated we need a new db query
    * props.database - initially populate the dataset when the db exists
    */
@@ -86,8 +84,6 @@ function GraphController(props) {
         });
     })();
   }, [country, props.database]);
-
-
 
   useEffect(() => {
     console.log(
@@ -119,21 +115,25 @@ function GraphController(props) {
     let yearDist = [];
 
     if (highlighted) {
+      // This is the case where highlighted is a nutrient
       if (props.nutrients.includes(highlighted)) {
         // Subset all crops that contain this nutrient
-        let subset = timeData.filter((d) => d[highlighted] !== "0");
+        let subset = timeData.filter(
+          (d) => d[highlighted] && d[highlighted] != "0"
+        );
         yearDist = d3.rollups(
           subset,
           (v) => v.length,
           (d) => d.Year
         );
-
       } else {
         // In this case, highlighted must be a crop
         let subset = timeData.filter((d) => highlighted === d.FAO_CropName);
+        console.log(subset)
         yearDist = subset.map((v) => [v.Year, getNonZeroVals(v)]);
       }
     } else {
+      // If nothing is highlighted, default to counting Crop Richness(entries per year)
       yearDist = d3.rollups(
         timeData,
         (v) => v.length,
@@ -142,19 +142,18 @@ function GraphController(props) {
     }
     // If there are any gaps in the data, we must append null / 0
     // so d3 doesn't try to erroneously create continuity in the graph
-    if(yearDist.length < (d3.max(props.years)-d3.min(props.years))) {
-      
+    if (yearDist.length < d3.max(props.years) - d3.min(props.years)) {
       // Set of values that ARE in the data
-      let yrs = yearDist.map(y => y[0])
+      let yrs = yearDist.map((y) => y[0]);
 
       // Find years that have not yet been used
-      let unused = props.years.filter(x => !yrs.includes(parseInt(x)))
+      let unused = props.years.filter((x) => !yrs.includes(parseInt(x)));
 
       // Concatenate unused years with a 0
-      yearDist = yearDist.concat(unused.map(y => [parseInt(y), 0]))
+      yearDist = yearDist.concat(unused.map((y) => [parseInt(y), 0]));
     }
 
-      // Force conversion of years to int instead of string, then sort by year
+    // Force conversion of years to int instead of string, then sort by year
     setLineChartData(
       yearDist
         .map((d) => [new Date(parseInt(d[0]), 0), d[1]])
@@ -283,10 +282,9 @@ function GraphController(props) {
 
     // Update all data for graph and webpage
     setMetaData(metadata);
-    setBipData([nds, lnks]);
     setNodes(
       nodes.filter(function (elem, pos) {
-        return nodes.indexOf(elem) == pos;
+        return nodes.indexOf(elem) === pos;
       })
     );
 
@@ -422,7 +420,22 @@ function GraphController(props) {
                   >
                     <b>Avg. Weight</b>
                   </Typography>
-                  <Tooltip title={<p>Strength between a crop and nutrient is the amount of a nutrient present in the crop, normalized between [0,max of these crops]. This is the average strength of all connections.<br/><br/><em>On Average, each crop contributes this much to each nutrient composition</em></p>}>
+                  <Tooltip
+                    title={
+                      <p>
+                        Strength between a crop and nutrient is the amount of a
+                        nutrient present in the crop, normalized between [0,max
+                        of these crops]. This is the average strength of all
+                        connections.
+                        <br />
+                        <br />
+                        <em>
+                          On Average, each crop contributes this much to each
+                          nutrient composition
+                        </em>
+                      </p>
+                    }
+                  >
                     <IconButton sx={{ pl: 0 }}>
                       <InfoIcon fontSize="small" sx={{ width: 0.8 }} />
                     </IconButton>
@@ -498,11 +511,11 @@ function GraphController(props) {
               <br />
               <br />* LCt is defined as the Largest Contributor to n nutrients.
               The summation of all LCt's below should equal to{" "}
-              <b>{props.nutrients.length} - |Unused Nutrients|</b>.
-              Thus, Avg. LCt Weight is the contribution each crop makes on
-              average to nutrients where it is the largest contributor. This is
-              compared to the Average Weight of this crop to all of its
-              connected nutrients, regardless of its contributive rank.
+              <b>{props.nutrients.length} - |Unused Nutrients|</b>. Thus, Avg.
+              LCt Weight is the contribution each crop makes on average to
+              nutrients where it is the largest contributor. This is compared to
+              the Average Weight of this crop to all of its connected nutrients,
+              regardless of its contributive rank.
               <br />
             </Typography>
             <Grid container mt={2}>

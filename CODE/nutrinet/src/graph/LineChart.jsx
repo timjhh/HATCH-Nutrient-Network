@@ -48,7 +48,7 @@ function LineChart(props) {
       .datum(props.data)
       .transition()
       .duration(1500)
-      .ease(d3.easeLinear)
+      //.ease(d3.easeLinear)
       .attr(
         "d",
         d3
@@ -59,7 +59,7 @@ function LineChart(props) {
       );
 
     d3.select("#lcTitle").text(
-      (props.highlighted ?? "Crop Richness") + " by Year"
+      (props.highlighted ? "Links to " : "") + (props.highlighted ?? "Crop Richness") + " by Year"
     );
   }, [props.data]);
 
@@ -87,7 +87,7 @@ function LineChart(props) {
       .attr("y", margin.top / 2)
       .attr("font-weight", "light")
       .attr("id", "lcTitle")
-      .text((props.highlighted ?? "Crop Richness") + " by Year");
+      .text((props.highlighted ? "Links to " : "") + (props.highlighted ?? "Crop Richness") + " by Year");
 
     // Append x-axis label
     svg

@@ -21,7 +21,7 @@ function FileSelect(props) {
       elevation={props.paperElevation}
       sx={{ p: 2, background: "primary.main", height: "100%" }}
     >
-      <Grid container spacing={2}
+      <Grid container spacing={1}
        sx={{ width: 1 }}
        alignItems="center"
        justifyContent="center">
@@ -102,20 +102,18 @@ function FileSelect(props) {
             sx={{ width: 1 }}
             direction="row"
             alignItems="center"
-            justifyContent="center"
+            justifyContent={"center"}
           >
-            <Typography align="center">Railway</Typography>
+            <Typography align="start">Railway</Typography>
             <Switch
               id="bipSwitch"
-              sx={{mx:1}}
               checked={props.bipartite}
-              disabled={props.monopartite}
               onChange={() => {
                 props.setBipartite(!props.bipartite);
               }}
               name="bipartite"
             />
-            <Typography align="center">Force-Directed</Typography>
+            <Typography align="end">Force-Directed</Typography>
           </Stack>
         </Grid>
 
