@@ -9,15 +9,6 @@ const d3 = {
 
 function Chart(props) {
 
-  var id = 'dQw4w9WgXcQ';
-  var url = 'https://www.youtube.com/watch?v=' + id;
-  
-  fetch('https://noembed.com/embed',
-      {format: 'json', url: url}, function (data) {
-      alert(data.title);
-      console.log(data)
-  });
-
     // Dimensions of chart
     const margin = {top: 10, right: 0, bottom: 30, left: 40};    
     const width = 500 - margin.right - margin.left,

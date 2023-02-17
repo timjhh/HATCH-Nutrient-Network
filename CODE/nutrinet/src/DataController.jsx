@@ -27,15 +27,10 @@ function DataController() {
     "Export_kg"
   ]);
 
-  const [bigData, setBigData] = useState([])
-
   const [loaded, setLoaded] = useState(false);
 
   const [database,setDatabase] = useState(null)
 
-
-  // Is error snackbar open?
-  const [open, setOpen] = useState(false);
 
   // Error snackbar message, should be null if it is closed
   const [snackBar, setSnackBar] = useState(null);
@@ -90,7 +85,6 @@ const socioEconVars = ["Population", "GDP", "life_expectancy", "infant_mortality
          setSnackBar={setSnackBar}
          database={database}
          loaded={loaded}
-         bigData={bigData}
          nutrients={nutrients}
          unused={unused}
          paperElevation={paperElevation}
@@ -120,8 +114,6 @@ const socioEconVars = ["Population", "GDP", "life_expectancy", "infant_mortality
 
         <Route path='/trends'
           element={<Trends
-            //loaded={loaded}
-            //data={bigData}
             socioEconVars={socioEconVars}
             unused={unused}
             paperElevation={paperElevation}

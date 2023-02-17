@@ -35,7 +35,7 @@ function VarSelect(props) {
 
   function addLine(label) {
     if (!label) {
-      label = props.country + " - " + props.source + " - " + props.variable;
+      label = props.country + " - " + props.variable + " - " + props.source;
       props.setPreset({ label: "Custom" });
     }
     if (props.lines.find((d) => d.label === label)) {
@@ -49,10 +49,16 @@ function VarSelect(props) {
       const clr = props.colors.find(
         (d) => !props.lines.map((e) => e.color).includes(d)
       );
+      
+      let v = label.split(" - ")[1]
+
+      const displayLabel = sanitize(props.socioEconVars.includes(v) ? label.split(" - ", 2).join(" - ")
+      : label)
 
       const lns = props.lines.concat({
         label: label,
         color: clr,
+        displayLabel: displayLabel
       });
       props.setLines(lns);
     }
@@ -217,7 +223,7 @@ function VarSelect(props) {
                           onClick={() => props.setSelected(d)}
                           onDelete={() => props.removeLine(d.label)}
                           key={d.label + idx}
-                          label={d.label}
+                          label={d.displayLabel}
                         />
                       </Grid>
                     ))}

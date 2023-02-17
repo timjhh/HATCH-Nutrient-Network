@@ -13,48 +13,49 @@ function Trends(props) {
   const MAX_LINES = 10;
 
   const ps1 = [
-    "Brunei Darussalam - Production_kg - CropRichness",
-    "Myanmar - Production_kg - CropRichness",
-    "Indonesia - Production_kg - CropRichness",
-    "Lao People's Democratic Republic - Production_kg - CropRichness",
-    "Malaysia - Production_kg - CropRichness",
-    "Phillipines - Production_kg - CropRichness",
-    "Singapore - Production_kg - CropRichness",
-    "Thailand - Production_kg - CropRichness",
-    "Vietnam - Production_kg - CropRichness",
+    "Brunei Darussalam - CropRichness - Production_kg",
+    "Myanmar - CropRichness - Production_kg",
+    "Indonesia - CropRichness - Production_kg",
+    "Lao People's Democratic Republic - CropRichness - Production_kg",
+    "Malaysia - CropRichness - Production_kg",
+    "Phillipines - CropRichness - Production_kg",
+    "Singapore - CropRichness - Production_kg",
+    "Thailand - CropRichness - Production_kg",
+    "Vietnam - CropRichness - Production_kg",
   ]
 
   const ps2 = [
-    "Mexico - Export_kg - CropRichness",
-    "Panama - Export_kg - CropRichness",
-    "Guatemala - Export_kg - CropRichness",
-    "Honduras - Export_kg - CropRichness",
-    "Nicaragua - Export_kg - CropRichness",
-    "Costa Rica - Export_kg - CropRichness",
-    "Belize - Export_kg - CropRichness",
+    "Mexico - CropRichness - Export_kg",
+    "Panama - CropRichness - Export_kg",
+    "Guatemala - CropRichness - Export_kg",
+    "Honduras - CropRichness - Export_kg",
+    "Nicaragua - CropRichness - Export_kg",
+    "Costa Rica - CropRichness - Export_kg",
+    "Belize - CropRichness - Export_kg",
   ]
 
   const ps3 = [
-    "Denmark - Import_kg - CropRichness",
-    "Sweden - Import_kg - CropRichness",
-    "Norway - Import_kg - CropRichness",
-    "Finland - Import_kg - CropRichness",
-    "Iceland - Import_kg - CropRichness",
-    "Faroe Islands - Import_kg - CropRichness",
-    "Greenland - Import_kg - CropRichness",
+    "Denmark - CropRichness - Import_kg",
+    "Sweden - CropRichness - Import_kg",
+    "Norway - CropRichness - Import_kg",
+    "Finland - CropRichness - Import_kg",
+    "Iceland - CropRichness - Import_kg",
+    "Faroe Islands - CropRichness - Import_kg",
+    "Greenland - CropRichness - Import_kg",
+    "Denmark - Population - Import_kg"
   ];
 
   const ps4 = [
-    "United Kingdom of Great Britain and Northern Ireland - Production_kg - CropRichness",
-    "Luxembourg - Production_kg - CropRichness",
-    "Belgium - Production_kg - CropRichness",
-    "Belgium-Luxembourg - Production_kg - CropRichness",
-    "Ireland - Production_kg - CropRichness",
-    "Netherlands - Production_kg - CropRichness",
-    "France - Production_kg - CropRichness",
-    "Austria - Production_kg - CropRichness",
-    "Germany - Production_kg - CropRichness",
-    "Switzerland - Production_kg - CropRichness",
+    "United Kingdom of Great Britain and Northern Ireland - CropRichness - Production_kg",
+    "Luxembourg - CropRichness - Production_kg",
+    "Belgium - CropRichness - Production_kg",
+    "Belgium-Luxembourg - CropRichness - Production_kg",
+    "Ireland - CropRichness - Production_kg",
+    "Netherlands - CropRichness - Production_kg",
+    "France - CropRichness - Production_kg",
+    "Austria - CropRichness - Production_kg",
+    "Germany - CropRichnessy - Production_kg",
+    "Switzerland - CropRichness - Production_kg",
   ]
 
   const presets = [
@@ -114,6 +115,10 @@ function Trends(props) {
   const [variables, setVariables] = useState([]);
   const [preset, setPreset] = useState(null)
 
+  function sanitize(text) {
+    return text.split("_").join(" ");
+  }
+
   useEffect(() => {
     if (data.length === 0) {
       d3.csv("./DATA_INPUTS/SocioEconNutri_AY.csv")
@@ -147,8 +152,8 @@ function Trends(props) {
       lines.forEach((d, idx) => {
         let vars = d.label.split(" - ");
         let ctry = vars[0];
-        let src = vars[1];
-        let vr = vars[2];
+        let vr = vars[1];
+        let src = vars[2];
 
         let datum = data.filter((e) => e.Country === ctry && e.Source === src);
         
@@ -195,24 +200,20 @@ function Trends(props) {
     preset.data.forEach((ps,idx) => {
         const clr = colors[idx%MAX_LINES]
   
+        let v = ps.split(" - ")[1]
+        const displayLabel = sanitize(props.socioEconVars.includes(v) ? ps.split(" - ", 2).join(" - ")
+        : ps)
+
         lns.push({
           label: ps,
           color: clr,
+          displayLabel: displayLabel
         });
       });
     setLines(lns);
   }, [preset])
 
-  function addLine(label) {
-    // Return the first color we haven't used
-    const clr = colors.find((d) => !lines.map((e) => e.color).includes(d));
 
-    const lns = lines.concat({
-      label: label,
-      color: clr,
-    });
-    setLines(lns);
-  }
 
   return (
     <Grid container>
