@@ -194,7 +194,7 @@ function MapGraphs(props) {
         .attr("fill", (d, idx) => {
           var val = props.current.find(
             (e) =>
-              e["ISO3.Code"] === d.properties.iso_a3 ||
+              e["ISO3_Code"] === d.properties.iso_a3 ||
               e.ISO3.Code === d.properties.iso_a3
           );
 
@@ -213,7 +213,7 @@ function MapGraphs(props) {
           props.setSelected(null);
 
           var val = props.current.find(
-            (f) => f["ISO3.Code"] === d.properties.iso_a3
+            (f) => f["ISO3_Code"] === d.properties.iso_a3
           );
 
           props.setCountry(val);
@@ -365,7 +365,7 @@ function MapGraphs(props) {
       .attr("fill", (d) => d.color)
       .attr("r", scR)
       .on("click", (d,e) => {
-        props.setSelected(e["ISO3.Code"])
+        props.setSelected(e["ISO3_Code"])
       })
       .attr("cy", hHeight)
       .attr("cx", (d) =>
@@ -504,12 +504,12 @@ function MapGraphs(props) {
       .data(props.currentSNA)
       .join("circle")
       //.attr("fill", (d) => d.color)
-      .attr("r", (d) => (d["ISO3.Code"] === props.selected ? scR * scR : scR))
+      .attr("r", (d) => (d["ISO3_Code"] === props.selected ? scR * scR : scR))
       .attr("fill", (d) =>
-        d["ISO3.Code"] === props.selected ? props.highlightClr : d.color
+        d["ISO3_Code"] === props.selected ? props.highlightClr : d.color
       )
       .on("click", (d,e) => {
-        props.setSelected(e["ISO3.Code"])
+        props.setSelected(e["ISO3_Code"])
       })
       //.attr("r", scR)
       .transition()
@@ -540,7 +540,7 @@ function MapGraphs(props) {
 
     svgScatter
       .selectAll("circle")
-      .filter((d) => d["ISO3.Code"] === props.selected)
+      .filter((d) => d["ISO3_Code"] === props.selected)
       .each(function () {
         this.parentNode.appendChild(this);
       });
@@ -607,14 +607,14 @@ function MapGraphs(props) {
       .selectAll("circle")
       .transition()
       .duration(300)
-      .attr("r", (d) => (d["ISO3.Code"] === props.selected ? scR * scR : scR))
+      .attr("r", (d) => (d["ISO3_Code"] === props.selected ? scR * scR : scR))
       .attr("fill", (d) =>
-        d["ISO3.Code"] === props.selected ? props.highlightClr : d.color
+        d["ISO3_Code"] === props.selected ? props.highlightClr : d.color
       );
 
     svgScatter
       .selectAll("circle")
-      .filter((d) => d["ISO3.Code"] === props.selected)
+      .filter((d) => d["ISO3_Code"] === props.selected)
       .each(function () {
         this.parentNode.appendChild(this);
       });

@@ -96,6 +96,12 @@ function MapController(props) {
   // This should be equal to colors2d.length, i.e. one strip of our 2d color scale
   var descriptors = ["Low", "Medium-Low", "Medium-High", "High"];
 
+  // This scale will always be constant as its domain does not change
+  const gdpScale = d3
+  .scaleOrdinal()
+  .domain(["Low income","Lower middle income", "Upper middle income", "High income"])
+  .range(d3.range(0, colors2d.length));
+
   // const colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
   // const colors2d = [
   //   ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8"],
@@ -107,7 +113,7 @@ function MapController(props) {
 
   useEffect(() => {
     d3.csv(
-      `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri_AY.csv"
+      `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri.csv"
     ).then((res, err) => {
       // Only set large dataset up once
       setBigData(res);
@@ -119,11 +125,6 @@ function MapController(props) {
     });
   }, []);
 
-  // useEffect(() => {
-  //   if (mapLoaded) {
-  //     setHighlight(colors1d[10]);
-  //   }
-  // }, [mapLoaded]);
 
   useEffect(() => {
     if (bigData.length > 0) {
@@ -144,20 +145,15 @@ function MapController(props) {
     var scaleVar1;
     var scaleVar2;
 
+    // For both variables, check the selected scale type, create a new scale along one dimension
+    // of our 2d grid and pass our domain
     if (scaleType1 === "Quantile") {
-      // PASS THE ENTIRE DOMAIN DATASET INSTEAD OF MIN/MAX
-      // YES YES YES!!!!!
       scaleVar1 = d3
         .scaleQuantile()
         .domain(data.map((e) => e[variable1]))
         .range(d3.range(0, colors2d.length));
     } else {
       scaleVar1 = d3.scaleSymlog().domain([0, m1]).range([0, 1]);
-
-      // Experimental: rangeRound to flatten numbers to array index
-      // scaleVar1 = d3.scaleSymlog()
-      // .domain([0, m1])
-      // .rangeRound(d3.range(0, colors2d.length));
     }
 
     if (scaleType2 === "Quantile") {
@@ -191,10 +187,14 @@ function MapController(props) {
         v2 = v2 < 0 ? 0 : v2;
       }
 
+      // Special case: GDP is null
+      // In which case, use 'income' variable according to World Bank Classifier
+      if(variable1 === "GDP" && d[variable1] === "NA") v1 = gdpScale(d["income"])
+      if(variable2 === "GDP" && d[variable2] === "NA") v2 = gdpScale(d["income"])
       try {
         // Apply a color if it's found, else apply our default null coloring(defined above)
         d.color =
-          v1 === undefined || v2 === undefined || isNaN(v1) || isNaN(v2)
+          (v1 === undefined || v2 === undefined || isNaN(v1) || isNaN(v2))
             ? nullclr
             : colors2d[v2][v1];
       } catch (e) {
@@ -304,6 +304,7 @@ function MapController(props) {
                 colors1d={colors1d}
                 colors2d={colors2d}
                 descriptors={descriptors}
+                gdpScale={gdpScale}
                 nullclr={nullclr}
                 nullStroke={nullStroke}
                 highlightClr={highlightClr}

@@ -27,6 +27,8 @@ function Map(props) {
   // [string, string] - a ramped description of these 2 values
   // Uses props.descriptors
   function descriptors2d(nums) {
+    let d1;
+    let d2;
     return [
       nums[0] ? props.descriptors[nums[0]] : "N/A",
       nums[1] ? props.descriptors[nums[1]] : "N/A",
@@ -165,13 +167,12 @@ function Map(props) {
     var g = d3.select("#map").select("svg").select("g");
 
     if (props.highlight !== null) {
-      console.log(props.highlight);
       g.selectAll("path")
         .transition()
         .duration(200)
         .style("stroke", (d) => {
           var val = props.current.find(
-            (e) => e["ISO3.Code"] === d.properties.iso_a3
+            (e) => e["ISO3_Code"] === d.properties.iso_a3
           );
 
           // Assure that this value truly exists in our database
@@ -185,7 +186,7 @@ function Map(props) {
         })
         .style("stroke-width", (d) => {
           var val = props.current.find(
-            (e) => e["ISO3.Code"] === d.properties.iso_a3
+            (e) => e["ISO3_Code"] === d.properties.iso_a3
           );
 
           // Assure that this value truly exists in our database
@@ -248,9 +249,9 @@ function Map(props) {
         .direction("s")
         .html(function (event, d) {
           var val = props.current.find(
-            (e) => e["ISO3.Code"] === d.properties.iso_a3
+            (e) => e["ISO3_Code"] === d.properties.iso_a3
           );
-
+          
           if (val) {
             let desc = descriptors2d(arrIdx2d(val.color));
 
@@ -282,7 +283,7 @@ function Map(props) {
         .on("mouseout", tip.hide)
         .attr("fill", (d, idx) => {
           var val = props.current.find(
-            (e) => e["ISO3.Code"] === d.properties.iso_a3
+            (e) => e["ISO3_Code"] === d.properties.iso_a3 || e["ISO2_Code"] === d.properties.iso_a2
           );
 
           if (!val) {
@@ -290,17 +291,18 @@ function Map(props) {
           }
 
           // Assure that this value truly exists in our database
-          if (!val) return props.nullclr;
-          if (isNaN(val[props.variable1]) || isNaN(val[props.variable2]))
-            return props.nullclr;
-
-          return val.color;
+          // if (!val) return props.nullclr;
+          // if (isNaN(val[props.variable1]) || isNaN(val[props.variable2]))
+          //   return props.nullclr;
+          if(d.properties.name === "Libya" && val) console.log(val["GDP"], val["color"])
+          return val ? val.color : props.nullclr
+        
         });
     }
 
     // Diagnostic print statements for associating countries with data
-    // console.log(nf.length + " COUNTRIES NOT FOUND\n");
-    // console.log(nf);
+    console.log(nf.length + " COUNTRIES NOT FOUND\n");
+    console.log(nf);
   }
 
   return (
