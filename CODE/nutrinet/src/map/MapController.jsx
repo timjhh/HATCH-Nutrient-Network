@@ -139,6 +139,25 @@ function MapController(props) {
       (d) => d.Source === source && d.Year === String(year)
     );
 
+    /// If we are using a socio-econ variable and country does not have a record for this source
+    // try to find other sources that do exist for this country and fill in socioecon vars
+    if(props.socioEconVars.includes(variable1) || props.socioEconVars.includes(variable2)) {
+      if(data.length < props.countries.length) {
+        let used = data.map(e => e["Country"])
+        let unused = props.countries.filter(c => !used.includes(c))
+        unused.forEach(u => {
+          let t = bigData.find(b => b.Year === String(year) && b.Country === u)
+          if(t) {
+            props.nutrients.forEach(n => {
+              t[("Kg_"+n)] = "NA"
+            })
+            data.push(t)
+          }
+        })
+      }
+    }
+
+
     let m1 = d3.max(data, (d) => parseFloat(d[variable1]));
     let m2 = d3.max(data, (d) => parseFloat(d[variable2]));
 
