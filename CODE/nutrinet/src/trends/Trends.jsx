@@ -120,7 +120,7 @@ function Trends(props) {
 
   useEffect(() => {
     if (data.length === 0) {
-      d3.csv("./DATA_INPUTS/SocioEconNutri_AY.csv")
+      d3.csv("./DATA_INPUTS/SocioEconNutri.csv")
         .then((res) => {
           // Year,Source,Country
           setData(res);
@@ -183,7 +183,6 @@ function Trends(props) {
           }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
       });
-    
       setLineData(dt);
     }
   }
