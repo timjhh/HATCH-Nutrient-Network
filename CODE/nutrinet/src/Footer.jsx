@@ -52,7 +52,7 @@ function Footer() {
           This is an open-source application lisenced under GNU General Public License v2.0. Data was gathered from publicly available sources at the following locations:
         </Typography>
         <List>
-          <ListItem>Crop Production Quantity Data From the FATO Stat Databse [<a rel='noreferrer' target="_blank" href="https://www.fao.org/faostat/en/#data/QCL">Link</a>]</ListItem>
+          <ListItem>Crop Production Quantity Data From the FAO Stat Databse [<a rel='noreferrer' target="_blank" href="https://www.fao.org/faostat/en/#data/QCL">Link</a>]</ListItem>
           <ListItem>GENuS Nutrient Composition Data from the Harvard Dataverse [<a rel='noreferrer' target="_blank" href="https://dataverse.harvard.edu/dataverse/GENuS">Link</a>]</ListItem>
           <ListItem>Intake Data from the USDA Branded Food Products Database [<a rel='noreferrer' target="_blank" href="https://data.nal.usda.gov/dataset/usda-branded-food-products-database">Link</a>]</ListItem>
         </List>

@@ -27,11 +27,15 @@ function Map(props) {
   // [string, string] - a ramped description of these 2 values
   // Uses props.descriptors
   function descriptors2d(nums) {
-    let d1;
-    let d2;
+    // return [
+    //   nums[0] ? props.descriptors[nums[0]] : "N/A",
+    //   nums[1] ? props.descriptors[nums[1]] : "N/A",
+    // ];
+    let d1 = props.variable1 === "GDP" ? "*" : "";
+    let d2 = props.variable2 === "GDP" ? "*" : "";
     return [
-      nums[0] ? props.descriptors[nums[0]] : "N/A",
-      nums[1] ? props.descriptors[nums[1]] : "N/A",
+      (props.descriptors[nums[0]] + d1),
+      (props.descriptors[nums[1]] + d2)
     ];
   }
 
@@ -294,15 +298,14 @@ function Map(props) {
           // if (!val) return props.nullclr;
           // if (isNaN(val[props.variable1]) || isNaN(val[props.variable2]))
           //   return props.nullclr;
-          if(d.properties.name === "Libya" && val) console.log(val["GDP"], val["color"])
           return val ? val.color : props.nullclr
         
         });
     }
 
     // Diagnostic print statements for associating countries with data
-    console.log(nf.length + " COUNTRIES NOT FOUND\n");
-    console.log(nf);
+    // console.log(nf.length + " COUNTRIES NOT FOUND\n");
+    // console.log(nf);
   }
 
   return (

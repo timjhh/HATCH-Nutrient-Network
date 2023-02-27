@@ -173,7 +173,6 @@ function MapGraphs(props) {
     genHistogram();
 
     genScatterPlot();
-    
   }, []);
 
   // Update map each time new data is retrieved
@@ -193,9 +192,7 @@ function MapGraphs(props) {
       paths
         .attr("fill", (d, idx) => {
           var val = props.current.find(
-            (e) =>
-              e["ISO3_Code"] === d.properties.iso_a3 ||
-              e.ISO3.Code === d.properties.iso_a3
+            (e) => e["ISO3_Code"] === d.properties.iso_a3
           );
 
           if (!val) {
@@ -230,13 +227,11 @@ function MapGraphs(props) {
   function genScatterPlot() {
     let scaleX = d3
       .scaleLinear()
-      // .domain([0,d3.max(props.currentSNA, d => d[props.variable1])])
       .domain(d3.extent(props.currentSNA, (d) => d[props.variable1]))
       .range([0, hWidth]);
 
     let scaleY = d3
       .scaleSymlog()
-      // .domain([0,d3.max(props.currentSNA, d => d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2]))])
       .domain(
         d3.extent(props.currentSNA, (d) =>
           d.color === props.nullclr ? hHeight : parseFloat(d[props.variable2])
@@ -364,8 +359,8 @@ function MapGraphs(props) {
       .style("cursor", "pointer")
       .attr("fill", (d) => d.color)
       .attr("r", scR)
-      .on("click", (d,e) => {
-        props.setSelected(e["ISO3_Code"])
+      .on("click", (d, e) => {
+        props.setSelected(e["ISO3_Code"]);
       })
       .attr("cy", hHeight)
       .attr("cx", (d) =>
@@ -392,7 +387,6 @@ function MapGraphs(props) {
 
     let scaleY = d3
       .scaleLinear()
-      //.domain(d3.extent(props.distribution.entries(), d => d[1]))
       .domain([0, 200]) // There are 195 countries in the world, so let's start with 200
       .range([hHeight, 0]);
 
@@ -405,7 +399,11 @@ function MapGraphs(props) {
       .attr("width", hWidth)
       .attr(
         "transform",
-        "translate(" + (margin.left + margin.right / 2) + "," + ((height / 2)+margin.top) + ")"
+        "translate(" +
+          (margin.left + margin.right / 2) +
+          "," +
+          (height / 2 + margin.top) +
+          ")"
       )
       //.attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
       .append("g")
@@ -498,7 +496,7 @@ function MapGraphs(props) {
 
     d3.select("#scatterL1").text(props.variable1 + " (" + scatterX + ")");
     d3.select("#scatterL2").text(props.variable2 + " (" + scatterY + ")");
-
+    
     svgScatter
       .selectAll("circle")
       .data(props.currentSNA)
@@ -508,8 +506,8 @@ function MapGraphs(props) {
       .attr("fill", (d) =>
         d["ISO3_Code"] === props.selected ? props.highlightClr : d.color
       )
-      .on("click", (d,e) => {
-        props.setSelected(e["ISO3_Code"])
+      .on("click", (d, e) => {
+        props.setSelected(e["ISO3_Code"]);
       })
       //.attr("r", scR)
       .transition()
@@ -537,14 +535,12 @@ function MapGraphs(props) {
       .transition()
       .call(d3.axisLeft(scaleSY).ticks(4).tickFormat(d3.format(".2")));
 
-
     svgScatter
       .selectAll("circle")
       .filter((d) => d["ISO3_Code"] === props.selected)
       .each(function () {
         this.parentNode.appendChild(this);
       });
-      
   }
 
   function populateHistogram() {
@@ -634,7 +630,7 @@ function MapGraphs(props) {
 
   return (
     <>
-      <Paper sx={{mb:2}} elevation={props.paperElevation}>
+      <Paper sx={{ mb: 2 }} elevation={props.paperElevation}>
         <div id="colorLegend"></div>
       </Paper>
       <Paper elevation={props.paperElevation}>

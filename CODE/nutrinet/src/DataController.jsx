@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import GraphController from './graph/GraphController.jsx'
 import MapController from './map/MapController.jsx'
+import Home from './Home.jsx'
 import DataDownloader from 'DataDownloader';
 import Trends from './trends/Trends.jsx'
 import { initializeApp } from "firebase/app";
@@ -80,6 +81,10 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
     <>
     <Routes>
         <Route path='/' exact
+         element={<Home
+          />}/>
+
+        <Route path='/graphs' exact
          element={<GraphController
          snackBar={snackBar}
          setSnackBar={setSnackBar}

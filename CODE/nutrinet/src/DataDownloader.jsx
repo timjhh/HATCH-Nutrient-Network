@@ -86,7 +86,7 @@ function DataDownloader(props) {
     } else {
       // Data being downloaded must be from maps dataset
       d3.csv(
-        `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri_AY.csv"
+        `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri.csv"
       ).then((res, err) => {
         console.log(res)
         console.log(countriesDL)

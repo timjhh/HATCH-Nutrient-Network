@@ -13,6 +13,10 @@ height = 600 - (margin.top+margin.bottom);
 
 const linkClr = "rgba(211,211,211, 1)";
 
+function sanitize(text) {
+  return text.split(/\_|\./).join(" ");
+}
+
 // React state for the simulation, for easy class access
 const [sim, setSim] = useState(null);
 
@@ -226,7 +230,7 @@ const [sim, setSim] = useState(null);
 
     // Labels
     node.append("text")
-    .text((d) => d.id)
+    .text((d) => sanitize(d.id))
         //.attr('x', -radius) // Optional styling for large circles
         //.style("font-size", "10px")
         .attr('x', 4)

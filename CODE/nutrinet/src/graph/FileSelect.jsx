@@ -15,6 +15,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
+
+function sanitize(text) {
+  return text.split(/\_|\./).join(" ");
+}
+
 function FileSelect(props) {
   return (
     <Paper
