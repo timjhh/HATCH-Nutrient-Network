@@ -1,13 +1,11 @@
 import React from 'react';
 import './App.css';
 
-import { Grid, Paper, List, ListItem, Box, Button, ButtonGroup, ButtonBase,Tooltip } from '@mui/material/';
+import { Grid, Paper, List, ListItem, Box, Button, ButtonGroup,Tooltip } from '@mui/material/';
 import graphs from "./images/graph.png"
 import maps from "./images/map.png"
-import trends from "./images/trends.png"
 import dl from "./images/dl.png"
 import t2 from "./images/trends2.png"
-import { Image } from '@mui/icons-material';
 import Typography from '@mui/material/Typography';
 
 
@@ -47,9 +45,8 @@ function Footer() {
                 px={0}
                 sx={{
                     ':hover': {
-                      bgcolor: 'primary.main', // theme.palette.primary.main
-                      color: 'white',
-                    },
+                      boxShadow:'0 10px 0px rgba(0,0,0, .4)',
+                    }
                   }}
                 style={{ color: 'black',fontWeight: "bold", minWidth: "25%",minHeight: "100px", backgroundImage: `url(${d[0]})`,}}>{d[1]}</Button>
             </Tooltip>

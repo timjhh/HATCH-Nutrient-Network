@@ -496,7 +496,7 @@ function MapGraphs(props) {
 
     d3.select("#scatterL1").text(props.variable1 + " (" + scatterX + ")");
     d3.select("#scatterL2").text(props.variable2 + " (" + scatterY + ")");
-    
+
     svgScatter
       .selectAll("circle")
       .data(props.currentSNA)

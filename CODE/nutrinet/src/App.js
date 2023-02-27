@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import "./App.css";
 
 import Grid from "@mui/material/Grid";
-
+import Footer from "Footer";
 import Navigation from "./Navigation.jsx";
 import DataController from "./DataController.jsx";
-import Footer from "Footer";
 import { createTheme, ThemeProvider } from "@mui/material";
 const theme = createTheme({
   typography: {
@@ -13,7 +12,11 @@ const theme = createTheme({
   },
 });
 
+
+
 function App() {
+  const [footerText, setFooterText] = useState(null)
+
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
@@ -22,14 +25,13 @@ function App() {
         <Grid container spacing={0}>
           <Grid item xs={1} xl={2}></Grid>
           <Grid item xs={10} xl={8} justify="center" alignItems="center">
-            <DataController />
+            <DataController setFooterText={setFooterText} />
           </Grid>
 
           <Grid item xs={1} xl={2}></Grid>
         </Grid>
-
-        <Footer />
       </div>
+      <Footer text={footerText}/>
     </ThemeProvider>
   );
 }

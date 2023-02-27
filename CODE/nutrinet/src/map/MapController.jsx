@@ -3,14 +3,7 @@ import Map from "./Map.jsx";
 import NutriSelect from "./NutriSelect.jsx";
 import MapGraphs from "./MapGraphs.jsx";
 
-import {
-  Grid,
-  Stack,
-  Switch,
-  Paper,
-  FormControl,
-  LinearProgress,
-} from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 
 import * as d3 from "d3";
 
@@ -98,9 +91,14 @@ function MapController(props) {
 
   // This scale will always be constant as its domain does not change
   const gdpScale = d3
-  .scaleOrdinal()
-  .domain(["Low income","Lower middle income", "Upper middle income", "High income"])
-  .range(d3.range(0, colors2d.length));
+    .scaleOrdinal()
+    .domain([
+      "Low income",
+      "Lower middle income",
+      "Upper middle income",
+      "High income",
+    ])
+    .range(d3.range(0, colors2d.length));
 
   // const colors1d = ["#e8e8e8", "#c8e1e1", "#a6d9d9", "#81d1d1", "#5ac8c8", "#dec8d9", "#c8c8d9", "#a6c8d9", "#81c8d1", "#5ac8c8", "#d3a7cb", "#c8a7cb", "#a6a7cb", "#81a7cb", "#5aa7c8", "#c986bc", "#c886bc", "#a686bc", "#8186bc", "#5a86bc", "#be64ac", "#be64ac", "#a664ac", "#8164ac", "#5a64ac"];
   // const colors2d = [
@@ -112,6 +110,10 @@ function MapController(props) {
   // ];
 
   useEffect(() => {
+    props.setFooterText(
+      <b>*This variable is mixed with a categorical income classification</b>
+    );
+
     d3.csv(
       `${process.env.PUBLIC_URL}` + "./DATA_INPUTS/SocioEconNutri.csv"
     ).then((res, err) => {
@@ -124,7 +126,6 @@ function MapController(props) {
       setSources(Array.from(d3.group(res, (d) => d.Source).keys()));
     });
   }, []);
-
 
   useEffect(() => {
     if (bigData.length > 0) {
@@ -141,22 +142,26 @@ function MapController(props) {
 
     /// If we are using a socio-econ variable and country does not have a record for this source
     // try to find other sources that do exist for this country and fill in socioecon vars
-    if(props.socioEconVars.includes(variable1) || props.socioEconVars.includes(variable2)) {
-      if(data.length < props.countries.length) {
-        let used = data.map(e => e["Country"])
-        let unused = props.countries.filter(c => !used.includes(c))
-        unused.forEach(u => {
-          let t = bigData.find(b => b.Year === String(year) && b.Country === u)
-          if(t) {
-            props.nutrients.forEach(n => {
-              t[("Kg_"+n)] = "NA"
-            })
-            data.push(t)
+    if (
+      props.socioEconVars.includes(variable1) ||
+      props.socioEconVars.includes(variable2)
+    ) {
+      if (data.length < props.countries.length) {
+        let used = data.map((e) => e["Country"]);
+        let unused = props.countries.filter((c) => !used.includes(c));
+        unused.forEach((u) => {
+          let t = bigData.find(
+            (b) => b.Year === String(year) && b.Country === u
+          );
+          if (t) {
+            props.nutrients.forEach((n) => {
+              t["Kg_" + n] = "NA";
+            });
+            data.push(t);
           }
-        })
+        });
       }
     }
-
 
     let m1 = d3.max(data, (d) => parseFloat(d[variable1]));
     let m2 = d3.max(data, (d) => parseFloat(d[variable2]));
@@ -208,12 +213,14 @@ function MapController(props) {
 
       // Special case: GDP is null
       // In which case, use 'income' variable according to World Bank Classifier
-      if(variable1 === "GDP" && d[variable1] === "NA") v1 = gdpScale(d["income"])
-      if(variable2 === "GDP" && d[variable2] === "NA") v2 = gdpScale(d["income"])
+      if (variable1 === "GDP" && d[variable1] === "NA")
+        v1 = gdpScale(d["income"]);
+      if (variable2 === "GDP" && d[variable2] === "NA")
+        v2 = gdpScale(d["income"]);
       try {
         // Apply a color if it's found, else apply our default null coloring(defined above)
         d.color =
-          (v1 === undefined || v2 === undefined || isNaN(v1) || isNaN(v2))
+          v1 === undefined || v2 === undefined || isNaN(v1) || isNaN(v2)
             ? nullclr
             : colors2d[v2][v1];
       } catch (e) {

@@ -51,6 +51,10 @@ function DataDownloader(props) {
   }
 
   useEffect(() => {
+    // props.setFooterText("Hello World")
+  }, [])
+
+  useEffect(() => {
     updateCanDownload(downloading);
   }, [countriesDL, yearsDL, sourcesDL]);
 

@@ -12,7 +12,7 @@ import { initializeApp } from "firebase/app";
 import { Snackbar, Alert } from '@mui/material';
 import { getDatabase } from "firebase/database";
 
-function DataController() {
+function DataController(props) {
 
   const [selected, setSelected] = useState(null);
   const [threshold,setThreshold] = useState(false);
@@ -82,7 +82,7 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
     <Routes>
         <Route path='/' exact
          element={<Home
-          />}/>
+          {...props} />}/>
 
         <Route path='/graphs' exact
          element={<GraphController
@@ -95,7 +95,7 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
          paperElevation={paperElevation}
          selected={selected} setSelected={setSelected}
          threshold={threshold} setThreshold={setThreshold}
-         countries={countries} sources={sources} years={years}/>}/>
+         countries={countries} sources={sources} years={years} {...props}/>}/>
 
         <Route path='/maps'
           element={<MapController
@@ -105,7 +105,7 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
           nutrients={nutrients}
           paperElevation={paperElevation}
           selected={selected} setSelected={setSelected}
-          countries={countries} sources={sources}/>}/>
+          countries={countries} sources={sources} {...props}/>}/>
 
         <Route path='/data'
           element={<DataDownloader 
@@ -116,7 +116,8 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
             paperElevation={paperElevation}
             countries={countries}
             sources={sources}
-            years={years} />}/>
+            years={years}
+            {...props} />}/>
 
         <Route path='/trends'
           element={<Trends
@@ -125,7 +126,8 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
             paperElevation={paperElevation}
             countries={countries}
             sources={sources}
-            years={years} />}/>
+            years={years}
+            {...props} />}/>
 
     </Routes>
 
@@ -139,6 +141,7 @@ const socioEconVars = ["Population", "GDP", "Life_Expectancy", "Infant_Mortality
       </Alert>
     </Snackbar>
 
+    
 
     </>
 
