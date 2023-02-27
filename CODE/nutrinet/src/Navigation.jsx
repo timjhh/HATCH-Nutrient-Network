@@ -17,7 +17,7 @@ const Navigation = () => {
 
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "flex-start", alignItems: 'flex-center' }}>
-            <Button sx={{ml: 2,color:'white'}} href="/graphs" variant="text">Graphs</Button>  
+            <Button sx={{ml: 2}} href="/graphs" variant="text">Graphs</Button>  
         </Box>
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
