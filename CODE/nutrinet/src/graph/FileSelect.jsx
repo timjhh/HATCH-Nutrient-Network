@@ -109,7 +109,7 @@ function FileSelect(props) {
             alignItems="center"
             justifyContent={"center"}
           >
-            <Typography align="start">Railway</Typography>
+            <Typography>Railway</Typography>
             <Switch
               id="bipSwitch"
               checked={props.bipartite}
@@ -118,7 +118,7 @@ function FileSelect(props) {
               }}
               name="bipartite"
             />
-            <Typography align="end">Force-Directed</Typography>
+            <Typography>Force-Directed</Typography>
           </Stack>
         </Grid>
 

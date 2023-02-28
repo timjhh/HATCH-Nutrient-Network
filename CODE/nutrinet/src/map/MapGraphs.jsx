@@ -242,6 +242,13 @@ function MapGraphs(props) {
     var svg = d3
       .select("#mapGraphs")
       .select("svg")
+      .on("click", (event) => {
+        // On any extraneous click, de-select highlighted node
+        if(event.srcElement.tagName === "svg") {
+          
+          props.setSelected(null)
+        }
+      })
       .append("g")
       .attr("class", "scatterplot")
       .attr("height", hHeight)
