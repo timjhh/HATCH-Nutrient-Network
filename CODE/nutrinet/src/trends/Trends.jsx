@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Paper, Grid } from "@mui/material";
+import { Paper, Grid, Typography } from "@mui/material";
 import VarSelect from "./VarSelect";
 import * as d3 from "d3";
 import Chart from "./Chart";
@@ -179,6 +179,7 @@ function Trends(props) {
               Value: parseFloat(e[vr]),
               Color: d.color,
               key: d.label,
+              displayLabel: d.displayLabel
             };
           }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
@@ -215,6 +216,27 @@ function Trends(props) {
 
   return (
     <Grid container>
+
+      <Grid item xs={12} mb={2}>
+        <Paper
+          sx={{ p: 2 }}
+          elevation={props.paperElevation}
+          style={{ fontSize: "1em", fontWeight: "lighter" }}
+        >
+          <Typography variant={"h4"} style={{ textAlign: "center" }}>
+            Using This Tool
+          </Typography>
+
+          <Typography variant={"p"}>
+            This interactive line graph visualizes trends in nutrient, crop and socioeconomic variables over time.
+            To start, select a country, variable and source(if applicable) and select "Add Line"(maximum of {MAX_LINES}).
+            Some variables, such as Population are not affected by a source and thus cannot be paired with one. To delete a line, either
+            click the "Clear All" button to erase all lines in the graph, or hover over and select the "x" on its matching colored chip.
+            Hovering over a line will also reveal its label
+            See the 'highlights' section for some hand-picked collections of variables.
+          </Typography>
+        </Paper>
+      </Grid>
 
       <Grid item xs={12}>
           <VarSelect

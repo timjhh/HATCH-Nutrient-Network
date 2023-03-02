@@ -44,3 +44,10 @@ p {
     grid-template-rows: auto 1fr auto;
     gap: 3rem
 }
+.navButton {
+    display: "inline-flex";
+    flex-direction: "column";
+    justify-content: "flex-start";
+    align-items: 'flex-center';
+    color: "#DCB245"
+}

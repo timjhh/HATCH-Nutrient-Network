@@ -174,7 +174,7 @@ function DataDownloader(props) {
               <FormControlLabel
                 value="map"
                 control={<Radio />}
-                label="Summarized, Across Crops (Used in Maps)"
+                label="Summarized, Across Crops (Used in Maps and Trends)"
               />
             </RadioGroup>
           </FormControl>

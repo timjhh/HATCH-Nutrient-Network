@@ -113,7 +113,7 @@ function updateLineChart() {
 
 function genLineChart() {
   
-  var data = d3.group(props.lineData, d => d.key)
+  var data = d3.group(props.lineData, d => d.displayLabel)
 
   let scaleX = d3.scaleTime()
   .domain(d3.extent(props.data, d => new Date(d.Year)))

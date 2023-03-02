@@ -17,19 +17,19 @@ const Navigation = () => {
 
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "flex-start", alignItems: 'flex-center' }}>
-            <Button sx={{ml: 2}} href="/graphs" variant="text">Graphs</Button>  
+            <Button sx={{ml: 2, color:"white"}} className="navButton" href="/graphs" variant="text">Graphs</Button>  
         </Box>
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-            <Button href="/maps" variant="text">Maps</Button>    
+            <Button sx={{color:"white"}} className="navButton" href="/maps" variant="text">Maps</Button>    
         </Box>
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-            <Button href="/trends" variant="text">Trends</Button>    
+            <Button sx={{color:"white"}} className="navButton" href="/trends" variant="text">Trends</Button>    
         </Box>
 
         <Box sx={{ display: "inline-flex", flexDirection: "column", justifyContent: "center" }}>
-            <Button href="/data" variant="text">Data</Button>    
+            <Button sx={{color:"white"}} className="navButton" href="/data" variant="text">Data</Button>    
         </Box>
     
         <Box sx={{ width: 1, display: "inline-flex", justifyContent: "flex-end", px:4 }}>

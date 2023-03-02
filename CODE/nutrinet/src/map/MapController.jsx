@@ -278,8 +278,8 @@ function MapController(props) {
             stronger color, and stronger relationships become a stronger blend
             of colors. Clicking on any square from the legend will highlight all
             countries on the map with that color. Clicking anywhere on the map
-            or graphs will deselect a country. You can also select a country on
-            the map to highlight it in the scatterplot. Hovering over any
+            or graphs will deselect a country. You can select a country on
+            the map to highlight it in the scatterplot, or select a point on the scatterplot to highlight it on the map. Hovering over any
             country will show a tooltip with information about the selected
             variables. Some countries that are missing one or both variables
             will be colored black.
