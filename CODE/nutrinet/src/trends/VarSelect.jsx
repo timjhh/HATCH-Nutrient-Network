@@ -94,6 +94,7 @@ function VarSelect(props) {
                       <InputLabel id="country-select-label">Country</InputLabel>
                       <Select
                         labelId="mcountry-select-label"
+                        aria-labelledby="country-select"
                         id="country-select"
                         value={props.country}
                         label="Variable One"
@@ -115,6 +116,7 @@ function VarSelect(props) {
                       <Select
                         labelId="variable-select-label"
                         id="variable-select"
+                        aria-labelledby="variable-select"
                         value={props.variable}
                         label="Variable"
                         onChange={(e) => {
@@ -142,6 +144,7 @@ function VarSelect(props) {
                       </InputLabel>
                       <Select
                         labelId="source-select-label"
+                        aria-labelledby="source-select"
                         id="source-select"
                         value={props.source}
                         disabled={props.socioEconVars.includes(props.variable)}
@@ -158,9 +161,10 @@ function VarSelect(props) {
                       </Select>
                     </FormControl>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography>Linear</Typography>
+                      <Typography><label for="scale-type-switch">Linear</label></Typography>
                       <Switch
                         id="scaleVar1Switch"
+                        aria-labelledby="scale-type-switch"
                         checked={props.scaleType !== "Linear"}
                         onChange={() => {
                           props.setScaleType(
@@ -169,16 +173,17 @@ function VarSelect(props) {
                         }}
                         name="scaleTypeSwitch"
                       />
-                      <Typography>Log</Typography>
+                      <Typography><label for="scale-type-switch">Log</label></Typography>
                     </Stack>
 
                     <FormControl sx={{ m: 2 }}>
-                      <Button variant="contained" onClick={() => addLine()}>
+                      <Button aria-labelledby="add-line-button" variant="contained" onClick={() => addLine()}>
                         Add Line
                       </Button>
                       <Button
                         sx={{ my: 1 }}
                         variant="contained"
+                        aria-labelledby="clear-lines-button"
                         onClick={() => props.setLines([])}
                       >
                         Clear All

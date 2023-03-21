@@ -129,7 +129,7 @@ function GraphController(props) {
       } else {
         // In this case, highlighted must be a crop
         let subset = timeData.filter((d) => highlighted === d.FAO_CropName);
-        console.log(subset)
+        console.log(subset);
         yearDist = subset.map((v) => [v.Year, getNonZeroVals(v)]);
       }
     } else {

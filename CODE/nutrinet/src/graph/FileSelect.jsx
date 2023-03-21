@@ -1,20 +1,6 @@
 import React from "react";
 
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-
-import Switch from "@mui/material/Switch";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-
+import {Grid, Typography, Stack, Switch, FormControl, InputLabel, MenuItem, Select, Paper, Autocomplete, TextField} from "@mui/material"
 
 function sanitize(text) {
   return text.split(/\_|\./).join(" ");
@@ -35,6 +21,7 @@ function FileSelect(props) {
             <Autocomplete
               disablePortal
               id="country-select"
+              aria-labelledby="country-select"
               options={props.countries}
               value={props.country}
               onChange={(d, e) => {
@@ -50,7 +37,8 @@ function FileSelect(props) {
           <FormControl sx={{ width: 1, mt:2 }}>
             <Autocomplete
               disablePortal
-              id="highlight_nodes"
+              id="variable-select"
+              aria-labelledby={"variable select"}
               options={props.highlightOptions}
               value={props.highlighted}
               groupBy={(option) =>
@@ -69,6 +57,7 @@ function FileSelect(props) {
             <Select
               labelId="source-select-label"
               id="source-select"
+              aria-labelledby="source-select"
               value={props.source}
               label="Source"
               onChange={(e) => {
@@ -88,6 +77,7 @@ function FileSelect(props) {
             <Autocomplete
               disablePortal
               id="year-select"
+              aria-labelledby="year-select"
               options={props.years}
               value={props.year}
               freeSolo
@@ -104,12 +94,13 @@ function FileSelect(props) {
 
         <Grid item xs={12}>
           <Stack
+            aria-labelledby="bipartite-select"
             sx={{ width: 1 }}
             direction="row"
             alignItems="center"
             justifyContent={"center"}
           >
-            <Typography>Railway</Typography>
+            <label htmlFor="bipartite-select">Railway</label>
             <Switch
               id="bipSwitch"
               checked={props.bipartite}
@@ -118,13 +109,15 @@ function FileSelect(props) {
               }}
               name="bipartite"
             />
-            <Typography>Force-Directed</Typography>
+            <label htmlFor="bipartite-select">Force-Directed</label>
           </Stack>
         </Grid>
 
         <Grid item xs={12}>
           <Typography sx={{ textAlign: "center", width: 1 }}>
+          <label htmlFor="thresholded-selector">
             Thresholded?
+          </label>
           </Typography>
           <Stack
             sx={{ width: 1 }}
@@ -133,8 +126,9 @@ function FileSelect(props) {
             alignItems="center"
             justifyContent={"center"}
           >
-            <Typography>N</Typography>
+            <label htmlFor="thresholded-selector">N</label>
             <Switch
+              for="threshold"
               id="thrSwitch"
               checked={props.threshold}
               onChange={() => {
@@ -142,7 +136,7 @@ function FileSelect(props) {
               }}
               name="threshold"
             />
-            <Typography>Y</Typography>
+            <label htmlFor="thresholded-selector">Y</label>
           </Stack>
         </Grid>
       </Grid>

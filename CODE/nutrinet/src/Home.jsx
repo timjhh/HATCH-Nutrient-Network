@@ -39,16 +39,17 @@ function Footer() {
       <Grid item xs={12} sx={{width:"100%"}}>
         <ButtonGroup m={0} p={0} sx={{width:"100%", height: "20%"}} variant="text" aria-label="text button group">
         {descriptions.map((d,idx) => (
-            <Tooltip title={d[2]}>
+            <Tooltip title={d[2]} key={"tooltiphome"+idx}>
                 <Button
                 href={d[3]}
+                aria-labelledby={"button " + d[2]}
                 px={0}
                 sx={{
                     ':hover': {
                       boxShadow:'0 10px 0px rgba(0,0,0, .4)',
                     }
                   }}
-                style={{ color: 'black',fontWeight: "bold", minWidth: "25%",minHeight: "100px", backgroundImage: `url(${d[0]})`,}}>{d[1]}</Button>
+                style={{ color: 'black',fontWeight: "bold", minWidth: "25%",minHeight: "100px", backgroundImage: `url(${d[0]})`}}><mark style={{backgroundColor: "rgba(255, 255, 255, 0.9)", border:'0.25em solid black', padding: '0.2em'}}>{d[1]}</mark></Button>
             </Tooltip>
         
         ))}
