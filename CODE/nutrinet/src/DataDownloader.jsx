@@ -144,9 +144,9 @@ function DataDownloader(props) {
     >
       {props.loaded ? (
         <>
-          <Typography mb={2} variant={"h4"} sx={{ textAlign: "center" }}>
-            Download This Data
-          </Typography>
+            <Typography mb={3} variant={"h1"} style={{ textAlign: "center", fontSize: '4em' }}>
+              Using This Tool
+            </Typography>
           <Typography variant={"p"} sx={{ textAlign: "center" }}>
             Download data used for the "graphs" page containing many crops
             across years, and nutrients provided by this crop. Some general data

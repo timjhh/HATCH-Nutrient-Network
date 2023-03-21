@@ -97,7 +97,7 @@ function updateLineChart() {
         .remove()))
     )
     .attr("fill", "none")
-    .attr("id", "grLine")
+    .attr("id", (d,idx) => "grLine"+idx)
     .on("mouseover", tip.show)
     .on("mouseout", tip.hide)
     .attr("stroke", d => d[1][0].Color)

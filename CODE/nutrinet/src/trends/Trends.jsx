@@ -65,25 +65,6 @@ function Trends(props) {
     {label: "Custom", data: []}
   ]
 
-  // const colors = [
-  //   "#e8e8e8",
-  //   "#bddede",
-  //   "#8ed4d4",
-  //   "#5ac8c8",
-  //   "#dabdd4",
-  //   "#bdbdd4",
-  //   "#8ebdd4",
-  //   "#5abdc8",
-  //   "#cc92c1",
-  //   "#bd92c1",
-  //   "#8e92c1",
-  //   "#5a92c1",
-  //   "#be64ac",
-  //   "#bd64ac",
-  //   "#8e64ac",
-  //   "#5a64ac",
-  // ];
-
   const colors = [
     "#1f77b4",
     "#ff7f0e",
@@ -223,9 +204,9 @@ function Trends(props) {
           elevation={props.paperElevation}
           style={{ fontSize: "1em", fontWeight: "lighter" }}
         >
-          <Typography variant={"h4"} style={{ textAlign: "center" }}>
-            Using This Tool
-          </Typography>
+            <Typography variant={"h1"} style={{ textAlign: "center", fontSize: '4em' }}>
+              Using This Tool
+            </Typography>
 
           <Typography variant={"p"}>
             This interactive line graph visualizes trends in nutrient, crop and socioeconomic variables over time.

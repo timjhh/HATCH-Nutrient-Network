@@ -161,9 +161,10 @@ function VarSelect(props) {
                       </Select>
                     </FormControl>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography><label for="scale-type-switch">Linear</label></Typography>
+                      <Typography><label htmlFor="scale-type-switch">Linear</label></Typography>
+                      <label htmlFor="scale-type-switch" aria-label="scale-type-switch">
                       <Switch
-                        id="scaleVar1Switch"
+                        id="scaleSwitch"
                         aria-labelledby="scale-type-switch"
                         checked={props.scaleType !== "Linear"}
                         onChange={() => {
@@ -173,7 +174,8 @@ function VarSelect(props) {
                         }}
                         name="scaleTypeSwitch"
                       />
-                      <Typography><label for="scale-type-switch">Log</label></Typography>
+                      </label>
+                      <Typography><label htmlFor="scale-type-switch">Log</label></Typography>
                     </Stack>
 
                     <FormControl sx={{ m: 2 }}>
@@ -224,7 +226,7 @@ function VarSelect(props) {
                         key={d.label + idx}
                       >
                         <Chip
-                          sx={{ m: 0.25, backgroundColor: d.color, stroke: 1 }}
+                          sx={{ m: 0.25, backgroundColor: 'white', fontWeight:'bold',border:('0.5em solid '+d.color)}}
                           onClick={() => props.setSelected(d)}
                           onDelete={() => props.removeLine(d.label)}
                           key={d.label + idx}
@@ -243,19 +245,19 @@ function VarSelect(props) {
               elevation={props.paperElevation}
               sx={{ p: 2, background: "primary.main" }}
             >
-              <MenuList>
-                <Typography variant={"h5"} sx={{ fontSize: "1.2em", my: 1 }}>
+                <Typography variant={"h2"} sx={{ fontSize: "1.2em", my: 1, fontWeight:"bold" }}>
                   Highlights
                 </Typography>
                 <Divider />
+              <MenuList>
                 {props.presets.map((d, idx) => (
-                  <MenuItem key={"preset" + idx}>
+                  <MenuItem key={"preset" + idx} onClick={(e) => props.setPreset(d)}>
                     {d.label === props.preset.label && (
                       <ListItemIcon>
                         <Check />
                       </ListItemIcon>
                     )}
-                    <ListItemText onClick={(e) => props.setPreset(d)} inset>
+                    <ListItemText inset>
                       {d.label}
                     </ListItemText>
                   </MenuItem>
@@ -266,7 +268,7 @@ function VarSelect(props) {
           </Grid>
         </Grid>
       ) : (
-        <LinearProgress />
+        <LinearProgress id="varSelectLoadingBar" role="progressbar" aria-label="var-select-loading-bar" aria-labelledby="var-select-loading-bar" />
       )}
     </>
   );
