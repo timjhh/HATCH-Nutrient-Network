@@ -101,6 +101,7 @@ function FileSelect(props) {
             justifyContent={"center"}
           >
             <label htmlFor="bipartite-select">Railway</label>
+            <label htmlFor="bipartite-switch" aria-label="bipartite-switch">
             <Switch
               id="bipSwitch"
               checked={props.bipartite}
@@ -109,13 +110,14 @@ function FileSelect(props) {
               }}
               name="bipartite"
             />
+            </label>
             <label htmlFor="bipartite-select">Force-Directed</label>
           </Stack>
         </Grid>
 
         <Grid item xs={12}>
           <Typography sx={{ textAlign: "center", width: 1 }}>
-          <label htmlFor="thresholded-selector">
+          <label htmlFor="thresholded-selector" aria-label="threshold-label">
             Thresholded?
           </label>
           </Typography>
@@ -127,8 +129,9 @@ function FileSelect(props) {
             justifyContent={"center"}
           >
             <label htmlFor="thresholded-selector">N</label>
+            <label htmlFor="threshold-switch" aria-label="threshold-switch">
             <Switch
-              for="threshold"
+              htmlFor="threshold"
               id="thrSwitch"
               checked={props.threshold}
               onChange={() => {
@@ -136,6 +139,7 @@ function FileSelect(props) {
               }}
               name="threshold"
             />
+            </label>
             <label htmlFor="thresholded-selector">Y</label>
           </Stack>
         </Grid>

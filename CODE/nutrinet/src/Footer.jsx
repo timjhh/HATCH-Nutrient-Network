@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 
 function Footer(props) {
   return (
+    <footer>
     <Grid
       className="footer-sticky"
       container
@@ -54,6 +55,7 @@ function Footer(props) {
 
       <Grid item xs={0} md={2}></Grid>
     </Grid>
+    </footer>
   );
 }
 

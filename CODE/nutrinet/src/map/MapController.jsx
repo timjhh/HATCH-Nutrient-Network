@@ -267,9 +267,9 @@ function MapController(props) {
           elevation={props.paperElevation}
           style={{ fontSize: "1em", fontWeight: "lighter" }}
         >
-          <Typography variant={"h4"} style={{ textAlign: "center" }}>
-            Using This Tool
-          </Typography>
+            <Typography variant={"h1"} style={{ textAlign: "center", fontSize: '4em' }}>
+              Using This Tool
+            </Typography>
 
           <Typography variant={"p"}>
             In this interactive choropleth, bivariate relationships can be

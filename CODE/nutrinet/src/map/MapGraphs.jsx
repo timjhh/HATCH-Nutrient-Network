@@ -657,15 +657,20 @@ function MapGraphs(props) {
             alignItems="center"
           >
             <Typography>Linear</Typography>
-            <Switch
-              id="scatterX"
-              aria-labelledby="scatter-xaxis-switch"
-              checked={scatterX === "Log"}
-              onChange={() => {
-                scatterX === "Log" ? setScatterX("Linear") : setScatterX("Log");
-              }}
-              name="scatterX"
-            />
+            <label htmlFor="scatter-xaxis-switch" aria-label="scatter-xaxis-switch">
+              <Switch
+                id="scatterX"
+                role="switch"
+                aria-labelledby="scatter-xaxis-switch"
+                aria-label="scatter-xaxis-switch"
+                aria-checked={scatterX === "Log"}
+                checked={scatterX === "Log"}
+                onChange={() => {
+                  scatterX === "Log" ? setScatterX("Linear") : setScatterX("Log");
+                }}
+                name="scatterX"
+              />
+            </label>
             <Typography>Log</Typography>
           </Stack>
 
@@ -682,15 +687,20 @@ function MapGraphs(props) {
             alignItems="center"
           >
             <Typography>Linear</Typography>
-            <Switch
-              id="scatterY"
-              aria-labelledby="scatter-yaxis-switch"
-              checked={scatterY === "Log"}
-              onChange={() => {
-                scatterY === "Log" ? setScatterY("Linear") : setScatterY("Log");
-              }}
-              name="scatterY"
-            />
+            <label htmlFor="scatter-yaxis-switch" aria-label="scatter-yaxis-switch">
+              <Switch
+                id="scatterY"
+                aria-labelledby="scatter-yaxis-switch"
+                aria-label="scatter-yaxis-switch"
+                role="switch"
+                aria-checked={scatterY === "Log"}
+                checked={scatterY === "Log"}
+                onChange={() => {
+                  scatterY === "Log" ? setScatterY("Linear") : setScatterY("Log");
+                }}
+                name="scatterY"
+              />
+            </label>
             <Typography>Log</Typography>
           </Stack>
         </FormControl>

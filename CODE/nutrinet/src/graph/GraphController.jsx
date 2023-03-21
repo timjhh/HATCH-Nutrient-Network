@@ -129,7 +129,6 @@ function GraphController(props) {
       } else {
         // In this case, highlighted must be a crop
         let subset = timeData.filter((d) => highlighted === d.FAO_CropName);
-        console.log(subset);
         yearDist = subset.map((v) => [v.Year, getNonZeroVals(v)]);
       }
     } else {
@@ -304,7 +303,7 @@ function GraphController(props) {
             elevation={props.paperElevation}
             style={{ fontSize: "1em", fontWeight: "lighter" }}
           >
-            <Typography variant={"h4"} style={{ textAlign: "center" }}>
+            <Typography variant={"h1"} style={{ textAlign: "center", fontSize: '4em' }}>
               Using This Tool
             </Typography>
 
@@ -369,7 +368,7 @@ function GraphController(props) {
                 setHighlighted={setHighlighted}
               />
             ) : (
-              <LinearProgress />
+              <LinearProgress id="graphLoadingBar" role="progressbar" aria-label="graph-loading-bar" aria-labelledby="graph-loading-bar" />
             )}
           </Paper>
 
@@ -436,7 +435,11 @@ function GraphController(props) {
                       </p>
                     }
                   >
-                    <IconButton sx={{ pl: 0 }}>
+                    <IconButton sx={{ pl: 0 }} aria-label="Strength between a crop and nutrient is the amount of a
+                        nutrient present in the crop, normalized between [0,max
+                        of these crops]. This is the average strength of all
+                        connections. On Average, each crop contributes this much to each
+                        nutrient composition">
                       <InfoIcon fontSize="small" sx={{ width: 0.8 }} />
                     </IconButton>
                   </Tooltip>
@@ -479,7 +482,7 @@ function GraphController(props) {
                 {...props}
               />
             ) : (
-              <LinearProgress />
+              <LinearProgress id="settingsLoadingBar" role="progressbar" aria-label="graph-loading-bar" aria-labelledby="settings-loading-bar" />
             )}
           </Box>
 
@@ -498,7 +501,7 @@ function GraphController(props) {
       <Grid container mt={1} spacing={2}>
         <Grid item xs={12}>
           <Paper elevation={props.paperElevation} sx={{ px: 2, py: 3 }}>
-            <Typography mb={2} variant={"h4"} sx={{ textAlign: "center" }}>
+            <Typography mb={2} variant={"h2"} sx={{ textAlign: "center" }}>
               Keystone Crops
             </Typography>
             <Typography variant={"p"} my={1}>

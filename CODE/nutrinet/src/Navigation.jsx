@@ -8,7 +8,7 @@ const Navigation = () => {
 
     return (
 
-
+        <nav>
         <Box spacing={0}  sx={{ width: 1, mb: 4, bgcolor: '#8f97cf', display: 'inline-flex', alignItems: 'center' }}>
         
         <Typography sx={{ fontWeight: 'light', ml:2, fontSize: "2.5em" }} variant="p" gutterBottom component="div">
@@ -44,6 +44,7 @@ const Navigation = () => {
           
 
       </Box>
+      </nav>
     )
 
 }

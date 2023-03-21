@@ -28,7 +28,7 @@ function Footer() {
 
     <Grid item xs={12} mb={5} sx={{border:1}}>
     
-    <Typography mt={-2} style={{textAlign: "center", fontWeight: "lighter",fontSize:"6em"}}>NutriNet</Typography>
+    <Typography mt={-2} style={{textAlign: "center", fontWeight: "lighter",fontSize:"6em"}} variant={'h1'}>NutriNet</Typography>
     <Typography mt={-2} mb={2} style={{textAlign: "center", fontWeight: "lighter",fontSize:"1.5em"}}>Global relationships between crop diversity and nutritional stability</Typography>
     
     </Grid>

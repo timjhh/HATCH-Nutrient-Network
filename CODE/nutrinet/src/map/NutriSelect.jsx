@@ -42,13 +42,15 @@ function NutriSelect(props) {
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
                 <label htmlFor="var-1-scale-select">Quantile</label>
-                <Switch id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { 
+                <label htmlFor="var-1-scale-switch" aria-label="var-1-scale-switch">
+                <Switch aria-label="scale-var1-switch" aria-checked={props.scaleType1 !== "Quantile"} role="switch" id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { 
                   
                   props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile");
                   props.setHighlight(null); 
                   props.setSelected(null);
                   
                   }} name="scaleType1" />
+                </label>
                 <label htmlFor="var-1-scale-select">Log</label>
              </Stack>
 
@@ -69,12 +71,14 @@ function NutriSelect(props) {
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
                 <label htmlFor="var-2-scale-select">Quantile</label>
-                <Switch id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => {
+                <label htmlFor="var-2-scale-switch" aria-label="var-2-scale-switch">
+                <Switch aria-label="scale-var2-switch" aria-checked={props.scaleType2 !== "Quantile"}  role="switch" id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => {
                   props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") 
                   props.setHighlight(null);
                   props.setSelected(null);
                 }} 
                 name="scaleType2" />
+                </label>
                 <label htmlFor="var-2-scale-select">Log</label>
             </Stack>
 
