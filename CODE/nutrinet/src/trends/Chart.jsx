@@ -58,7 +58,7 @@ function Chart(props) {
 
     var tip = d3
       .tip()
-      .attr("id", "d3Tip")
+      .attr("id", "d3-tip")
       .attr("class", "d3-tip")
       .html(function (event, d) {
         return d[0];
@@ -103,7 +103,7 @@ function Chart(props) {
           )
       )
       .attr("fill", "none")
-      .attr("id", "grLine")
+      .attr("id", (d,idx) => "grLine"+idx)
       .on("mouseover", tip.show)
       .on("mouseout", tip.hide)
       .attr("stroke", (d) => d[1][0].Color)
@@ -111,85 +111,6 @@ function Chart(props) {
 
     g.call(tip);
   }
-
-  function genLineChart() {
-    var data = d3.group(props.lineData, (d) => d.label);
-
-    let scaleX = d3
-      .scaleTime()
-      .domain(d3.extent(props.data, (d) => new Date(d.Year)))
-      .range([margin.left, width]);
-
-    scaleX.ticks(d3.timeYear.every(5));
-
-    let scaleY =
-      props.scaleType === "Linear" ? d3.scaleLinear() : d3.scaleSymlog();
-
-    scaleY
-      .domain([0, d3.max(props.lineData, (d) => d.Value)])
-      .range([height, margin.top]);
-
-    var svg = d3
-      .select("#lineGraph")
-      .append("svg")
-      .attr("viewBox", [
-        0,
-        0,
-        width + margin.left + margin.right,
-        height + margin.bottom,
-      ])
-      .attr("transform", "translate(" + margin.left / 2 + ",0)")
-      .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-
-    svg
-      .append("text")
-      .attr("x", width / 2 - (margin.left + margin.right))
-      .attr("y", margin.top / 2)
-      .attr("font-weight", "light")
-      .attr("id", "lcTitle");
-      
-  const g = d3.select("#lines")
-    .selectAll("path")
-    .data(data)
-    .join(
-      enter => enter.append("path")
-        .attr("opacity", 0)
-        .transition()
-        .duration(500)
-        .attr("opacity", 0.8)
-        .attr("d", d => d3.line()
-        .x(d => scaleX(new Date(d.Year)))
-        .y(d => scaleY(+d.Value))
-        (d[1])
-        ),
-      update => update
-        .call(update => update.transition()
-        .duration(500)
-        .attr("d", d => d3.line()
-        .x(d => scaleX(new Date(d.Year)))
-        .y(d => scaleY(+d.Value))
-        (d[1])
-        ),
-      exit => exit
-        .call(exit => exit.transition()
-        .duration(500)
-        .attr("opacity", 0)
-        .remove()))
-    )
-    .attr("fill", "none")
-    .attr("id", (d,idx) => "grLine"+idx)
-    .on("mouseover", tip.show)
-    .on("mouseout", tip.hide)
-    .attr("stroke", d => d[1][0].Color)
-    .attr("stroke-width", STROKE_WIDTH)
-    // .attr("d", d => d3.line()
-    //   .x(d => scaleX(new Date(d.Year)))
-    //   .y(d => scaleY(+d.Value))
-    //   (d[1])
-    //   )
-      g.call(tip);
-
-}
 
 function genLineChart() {
   
@@ -256,7 +177,7 @@ function genLineChart() {
       .data(data)
       .join("path")
       .attr("fill", "none")
-      .attr("class", "grLine")
+      .attr("class", (d,idx) => "grLine"+idx)
       .attr("stroke", (d) => d[1][0].Color)
       .attr("stroke-width", STROKE_WIDTH)
       .on("mouseover", tip.show)

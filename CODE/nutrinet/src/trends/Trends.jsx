@@ -42,7 +42,6 @@ function Trends(props) {
     "Iceland - CropRichness - Import_kg",
     "Faroe Islands - CropRichness - Import_kg",
     "Greenland - CropRichness - Import_kg",
-    "Denmark - Population - Import_kg"
   ];
 
   const ps4 = [
@@ -167,7 +166,6 @@ function Trends(props) {
               Value: parseFloat(e[vr]),
               Color: d.color,
               key: d.label,
-              // displayLabel: d.displayLabel
             };
           }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
@@ -195,7 +193,6 @@ function Trends(props) {
         lns.push({
           label: ps,
           color: clr,
-          // displayLabel: displayLabel
         });
       });
     setLines(lns);
@@ -279,6 +276,7 @@ function Trends(props) {
             lines={lines}
             lineData={lineData}
             loaded={loaded}
+            years={years}
           />
         </Paper>
 
