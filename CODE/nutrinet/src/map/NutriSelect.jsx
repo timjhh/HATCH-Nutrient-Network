@@ -24,10 +24,11 @@ function NutriSelect(props) {
 
 
             <FormControl sx={{ m: 2 }}>
-              <InputLabel id="country-select-label">First Variable</InputLabel>
+              <InputLabel id="variable1-select-label">First Variable</InputLabel>
               <Select
-                labelId="mcountry-select-label"
-                id="country-select"
+                labelId="variable1-select-label"
+                aria-labelledby="variable1-select"
+                id="variable1-select"
                 value={props.variable1}
                 label="Variable One"
                 onChange={(e) => { props.setVariable1(e.target.value) }}
@@ -40,22 +41,25 @@ function NutriSelect(props) {
 
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
-                <Typography>Quantile</Typography>
-                <Switch id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { 
+                <label htmlFor="var-1-scale-select">Quantile</label>
+                <label htmlFor="var-1-scale-switch" aria-label="var-1-scale-switch">
+                <Switch aria-label="scale-var1-switch" aria-checked={props.scaleType1 !== "Quantile"} role="switch" id="scaleVar1Switch" checked={props.scaleType1 !== "Quantile"} onChange={() => { 
                   
                   props.scaleType1 === "Quantile" ? props.setScaleType1("Logarithm") : props.setScaleType1("Quantile");
                   props.setHighlight(null); 
                   props.setSelected(null);
                   
                   }} name="scaleType1" />
-                <Typography>Log</Typography>
+                </label>
+                <label htmlFor="var-1-scale-select">Log</label>
              </Stack>
 
             <FormControl sx={{ m: 2 }}>
               <InputLabel id="country-select-label">Second Variable</InputLabel>
               <Select
-                labelId="mcountry-select-label"
-                id="country-select"
+                labelId="variable2-select-label"
+                aria-labelledby="variable2-select"
+                id="variable2-select"
                 value={props.variable2}
                 label="Variable Two"
                 onChange={(e) => { props.setVariable2(e.target.value) }}
@@ -66,14 +70,16 @@ function NutriSelect(props) {
               </Select>
             </FormControl>
             <Stack sx={{  }} direction="row" spacing={1} alignItems="center">
-                <Typography>Quantile</Typography>
-                <Switch id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => {
+                <label htmlFor="var-2-scale-select">Quantile</label>
+                <label htmlFor="var-2-scale-switch" aria-label="var-2-scale-switch">
+                <Switch aria-label="scale-var2-switch" aria-checked={props.scaleType2 !== "Quantile"}  role="switch" id="scaleVar2Switch" checked={props.scaleType2 !== "Quantile"} onChange={() => {
                   props.scaleType2 === "Quantile" ? props.setScaleType2("Logarithm") : props.setScaleType2("Quantile") 
                   props.setHighlight(null);
                   props.setSelected(null);
                 }} 
                 name="scaleType2" />
-                <Typography>Log</Typography>
+                </label>
+                <label htmlFor="var-2-scale-select">Log</label>
             </Stack>
 
 
@@ -82,6 +88,7 @@ function NutriSelect(props) {
               <InputLabel id="source-select-label">Source</InputLabel>
               <Select
                 labelId="source-select-label"
+                aria-labelledby="source-select"
                 id="source-select"
                 value={props.source}
                 label="Source"
@@ -101,6 +108,7 @@ function NutriSelect(props) {
               <Select
                 labelId="year-select-label"
                 id="year-select"
+                aria-labelledby="year-select"
                 value={props.year}
                 label="Year"
                 onChange={(e) => { props.setYear(e.target.value) }}

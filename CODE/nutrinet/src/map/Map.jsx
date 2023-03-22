@@ -141,6 +141,7 @@ function Map(props) {
 
         d3.select("#sliderP")
           .datum({})
+          .attr("aria-label", "zoom-slider")
           .attr("type", "range")
           .attr("value", zoom.scaleExtent()[0])
           .attr("min", zoom.scaleExtent()[0])
@@ -248,7 +249,7 @@ function Map(props) {
 
       var tip = d3
         .tip()
-        .attr("id", "d3Tip")
+        .attr("id", "d3-Tip")
         .attr("class", "d3-tip")
         .direction("s")
         .html(function (event, d) {
@@ -310,7 +311,7 @@ function Map(props) {
 
   return (
     <>
-      <div id="map">
+      <div id="map" >
         <input
           type="range"
           onChange={(e) => {

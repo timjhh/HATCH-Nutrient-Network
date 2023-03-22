@@ -93,10 +93,10 @@ function MapGraphs(props) {
       .attr(
         "transform",
         "translate(" +
-          (margin.left + margin.right + 70) +
-          "," +
-          margin.top * 2 +
-          ")"
+        (margin.left + margin.right + 70) +
+        "," +
+        margin.top * 2 +
+        ")"
       );
     //.attr("transform", "rotate(135)");
 
@@ -244,8 +244,8 @@ function MapGraphs(props) {
       .select("svg")
       .on("click", (event) => {
         // On any extraneous click, de-select highlighted node
-        if(event.srcElement.tagName === "svg") {
-          
+        if (event.srcElement.tagName === "svg") {
+
           props.setSelected(null)
         }
       })
@@ -266,10 +266,10 @@ function MapGraphs(props) {
       .attr(
         "x",
         hWidth / 2 -
-          hMargin.right -
-          hMargin.left -
-          hMargin.right -
-          props.variable1.length
+        hMargin.right -
+        hMargin.left -
+        hMargin.right -
+        props.variable1.length
       )
       .attr("y", hHeight + hMargin.bottom + 10)
       .attr("font-weight", "bold")
@@ -407,10 +407,10 @@ function MapGraphs(props) {
       .attr(
         "transform",
         "translate(" +
-          (margin.left + margin.right / 2) +
-          "," +
-          (height / 2 + margin.top) +
-          ")"
+        (margin.left + margin.right / 2) +
+        "," +
+        (height / 2 + margin.top) +
+        ")"
       )
       //.attr("transform", "translate(" + (width-hMargin.right-hMargin.left-hWidth) + "," + (height-hMargin.top-hMargin.bottom-hHeight) + ")")
       .append("g")
@@ -645,7 +645,9 @@ function MapGraphs(props) {
 
         <FormControl sx={{ width: 1 }}>
           <Typography align="center" sx={{ fontWeight: "bold" }}>
-            Scatterplot X Scale
+            <label htmlFor="scatterplot-x-scale">
+              Scatterplot X Scale
+            </label>
           </Typography>
           <Stack
             justifyContent="center"
@@ -655,19 +657,27 @@ function MapGraphs(props) {
             alignItems="center"
           >
             <Typography>Linear</Typography>
-            <Switch
-              id="scatterX"
-              checked={scatterX === "Log"}
-              onChange={() => {
-                scatterX === "Log" ? setScatterX("Linear") : setScatterX("Log");
-              }}
-              name="scatterX"
-            />
+            <label htmlFor="scatter-xaxis-switch" aria-label="scatter-xaxis-switch">
+              <Switch
+                id="scatterX"
+                role="switch"
+                aria-labelledby="scatter-xaxis-switch"
+                aria-label="scatter-xaxis-switch"
+                aria-checked={scatterX === "Log"}
+                checked={scatterX === "Log"}
+                onChange={() => {
+                  scatterX === "Log" ? setScatterX("Linear") : setScatterX("Log");
+                }}
+                name="scatterX"
+              />
+            </label>
             <Typography>Log</Typography>
           </Stack>
 
           <Typography align="center" sx={{ width: 1, fontWeight: "bold" }}>
-            Scatterplot Y Scale
+            <label htmlFor="scatterplot-y-scale">
+              Scatterplot Y Scale
+            </label>
           </Typography>
           <Stack
             justifyContent="center"
@@ -677,14 +687,20 @@ function MapGraphs(props) {
             alignItems="center"
           >
             <Typography>Linear</Typography>
-            <Switch
-              id="scatterY"
-              checked={scatterY === "Log"}
-              onChange={() => {
-                scatterY === "Log" ? setScatterY("Linear") : setScatterY("Log");
-              }}
-              name="scatterY"
-            />
+            <label htmlFor="scatter-yaxis-switch" aria-label="scatter-yaxis-switch">
+              <Switch
+                id="scatterY"
+                aria-labelledby="scatter-yaxis-switch"
+                aria-label="scatter-yaxis-switch"
+                role="switch"
+                aria-checked={scatterY === "Log"}
+                checked={scatterY === "Log"}
+                onChange={() => {
+                  scatterY === "Log" ? setScatterY("Linear") : setScatterY("Log");
+                }}
+                name="scatterY"
+              />
+            </label>
             <Typography>Log</Typography>
           </Stack>
         </FormControl>

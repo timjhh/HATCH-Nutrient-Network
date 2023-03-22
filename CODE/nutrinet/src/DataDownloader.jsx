@@ -144,9 +144,9 @@ function DataDownloader(props) {
     >
       {props.loaded ? (
         <>
-          <Typography mb={2} variant={"h4"} sx={{ textAlign: "center" }}>
-            Download This Data
-          </Typography>
+            <Typography mb={3} variant={"h1"} style={{ textAlign: "center", fontSize: '4em' }}>
+              Using This Tool
+            </Typography>
           <Typography variant={"p"} sx={{ textAlign: "center" }}>
             Download data used for the "graphs" page containing many crops
             across years, and nutrients provided by this crop. Some general data
@@ -191,6 +191,7 @@ function DataDownloader(props) {
               data={countriesDL}
               setData={setCountriesDL}
               options={props.countries}
+              aria-labelledby="countries-picker"
             />
 
             <Divider orientation="vertical" flexItem />
@@ -200,6 +201,7 @@ function DataDownloader(props) {
               data={yearsDL}
               setData={setYearsDL}
               options={props.years}
+              aria-labelledby="years-picker"
             />
 
             <Divider orientation="vertical" flexItem />
@@ -209,12 +211,15 @@ function DataDownloader(props) {
               data={sourcesDL}
               setData={setSourcesDL}
               options={props.sources}
+              aria-labelledby="sources-picker"
             />
           </Box>
           <Button
             disabled={!canDownload || downloading}
             variant="contained"
             onClick={downloadData}
+            aria-labelledby="download-button"
+            type="submit"
           >
             {dlLabel}
             {downloading && <CircularProgress color="inherit" size="1rem" />}
