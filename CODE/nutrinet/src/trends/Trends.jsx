@@ -41,7 +41,8 @@ function Trends(props) {
     "Finland - CropRichness - Import_kg",
     "Iceland - CropRichness - Import_kg",
     "Faroe Islands - CropRichness - Import_kg",
-    "Greenland - CropRichness - Import_kg"
+    "Greenland - CropRichness - Import_kg",
+    "Denmark - Population - Import_kg"
   ];
 
   const ps4 = [
@@ -56,8 +57,14 @@ function Trends(props) {
     "Germany - CropRichnessy - Production_kg",
     "Switzerland - CropRichness - Production_kg",
   ]
+  
+  const ps5 = [
+    "Denmark - Population",
+    "Sweden - Population"
+  ]
 
   const presets = [
+    {label: "Test", data:ps5},
     {label: "Scandinavia Imports", data: ps3},
     {label: "Central America Exports", data: ps2},
     {label: "Southeast Asia", data:ps1},
@@ -152,8 +159,8 @@ function Trends(props) {
         let vars = d.label.split(" - ");
         let ctry = vars[0];
         let vr = vars[1];
-        let src = vars[2];
-
+        let src = vars[2] ? vars[2] : source;
+      
         let datum = data.filter((e) => e.Country === ctry && e.Source === src);
         
         // Fill in the gaps in our data with 0 values
@@ -179,7 +186,7 @@ function Trends(props) {
               Value: parseFloat(e[vr]),
               Color: d.color,
               key: d.label,
-              displayLabel: d.displayLabel
+              // displayLabel: d.displayLabel
             };
           }).sort((a, b) => parseInt(a.Year) - parseInt(b.Year))
         );
@@ -191,22 +198,23 @@ function Trends(props) {
   // State update for switching presets
   // Each preset should have a label and data attribute
   // Data should be in the form of an array containing labels in the format of
-  // "Country - Source - Variable"
+  // "Country - Variable - Source"
   useEffect(() => {
     if(preset === null || preset.label === "Custom" || preset.data.length === 0) return;
     setLines([])
     let lns = []
     preset.data.forEach((ps,idx) => {
         const clr = colors[idx%MAX_LINES]
-  
+
         let v = ps.split(" - ")[1]
-        const displayLabel = sanitize(props.socioEconVars.includes(v) ? ps.split(" - ", 2).join(" - ")
-        : ps)
+        ps = props.socioEconVars.includes(v) ? 
+        ps.split(" - ", 2).join(" - ")
+        : ps
 
         lns.push({
           label: ps,
           color: clr,
-          displayLabel: displayLabel
+          // displayLabel: displayLabel
         });
       });
     setLines(lns);

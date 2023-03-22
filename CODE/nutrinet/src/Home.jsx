@@ -71,7 +71,7 @@ function Footer() {
             crop diversity from nutritional diversity. To that end, this web-app was developed to visualize food system diversity and stability.
         
             In our first paper, bipartite graphs were algorithmically deconstructed to test the robustness of a country's imports and production. In this continuation
-            of research, we can see numerous relationships between crops, nutrients, and extraneous variables. This gives us the ability to find new variable relationships, or look at what nutrients may be in danger of extinction. Visualizing graphs also
+            of research, we can see numerous relationships between crops, nutrients, and socioeconomic variables. This gives us the ability to find new variable relationships, or look at what nutrients may be in danger of extinction. Visualizing graphs also
             allows us to easily see the robustness or size of a country's crop network with helpful diagnostic information.
             <br/><br/>
             This is an open-source application lisenced under GNU General Public License v2.0. Data was gathered from publicly available sources at the following locations:
