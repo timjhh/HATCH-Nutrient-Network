@@ -1,3 +1,4 @@
+# Helper script to merge many files in a directory into one. Used for FAO data to combine all 41 years worth.
 require(dplyr)
 require(tidyverse)
 
