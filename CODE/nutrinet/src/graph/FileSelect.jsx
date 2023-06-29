@@ -1,6 +1,7 @@
 import React from "react";
 
-import {Grid, Typography, Stack, Switch, FormControl, InputLabel, MenuItem, Select, Paper, Autocomplete, TextField} from "@mui/material"
+import {Grid, Typography, Stack, Switch, FormControl, InputLabel, MenuItem, Select, Paper, Autocomplete, TextField, IconButton, Tooltip} from "@mui/material"
+import InfoIcon from "@mui/icons-material/Info";
 
 function sanitize(text) {
   return text.split(/\_|\./).join(" ");
@@ -120,6 +121,11 @@ function FileSelect(props) {
           <label htmlFor="thresholded-selector" aria-label="threshold-label">
             Thresholded?
           </label>
+          <Tooltip title="This feature is currently unavailable.">
+                    <IconButton sx={{ pl: 0, pb: 2 }}>
+                      <InfoIcon fontSize="small" sx={{ width: 0.8 }} />
+                    </IconButton>
+                  </Tooltip>
           </Typography>
           <Stack
             sx={{ width: 1 }}

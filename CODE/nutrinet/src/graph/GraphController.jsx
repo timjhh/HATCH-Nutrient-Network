@@ -403,7 +403,7 @@ function GraphController(props) {
                   >
                     <b>Density</b>
                   </Typography>
-                  <Tooltip title="Total amount of links divided by the largest amount possible">
+                  <Tooltip title="Total amount of links divided by the largest amount possible.">
                     <IconButton sx={{ pl: 0 }}>
                       <InfoIcon fontSize="small" sx={{ width: 0.8 }} />
                     </IconButton>
