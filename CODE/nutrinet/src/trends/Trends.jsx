@@ -56,14 +56,8 @@ function Trends(props) {
     "Germany - CropRichnessy - Production_kg",
     "Switzerland - CropRichness - Production_kg",
   ]
-  
-  const ps5 = [
-    "Denmark - Population",
-    "Sweden - Population"
-  ]
 
   const presets = [
-    {label: "Test", data:ps5},
     {label: "Scandinavia Imports", data: ps3},
     {label: "Central America Exports", data: ps2},
     {label: "Southeast Asia", data:ps1},
